@@ -1,0 +1,18 @@
+# id	left	top	right	bottom	texture_id
+[SPRITES]
+#Bush1
+80000	3	80	130	143	30
+#smallBush
+80010	55	7	70	22	30
+#bigCloud
+80040	75	2	122	24	30
+#smallCloud
+80050	130	1	161	23	30	
+#Box1
+80020	136	70	223	149	30
+#Pipe
+80030	5	28	36	75	30
+
+
+# ani_id	sprite1_id	time1	sprite2_id	time2	...
+[ANIMATIONS]
