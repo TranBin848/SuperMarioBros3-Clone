@@ -18,3 +18,4 @@ height	480
 10	textures\enemies.png
 20	textures\misc.png
 30	textures\misc-2.png
+40	textures\item.png

@@ -1,4 +1,4 @@
-#include <iostream>
+﻿#include <iostream>
 #include <fstream>
 #include "AssetIDs.h"
 
@@ -10,7 +10,8 @@
 #include "Coin.h"
 #include "Platform.h"
 #include "BgObject.h"
-
+#include "ItemBox.h"
+#include "Giant.h"
 #include "SampleKeyEventHandler.h"
 
 using namespace std;
@@ -120,6 +121,17 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 	case OBJECT_TYPE_GOOMBA: obj = new CGoomba(x,y); break;
 	case OBJECT_TYPE_BRICK: obj = new CBrick(x,y); break;
 	case OBJECT_TYPE_COIN: obj = new CCoin(x, y); break;
+	case OBJECT_TYPE_ITEMBOX: {
+		/*int item = atoi(tokens[3].c_str());
+		CGameObject* it = NULL;
+		switch (item) {
+			case OBJECT_TYPE_COIN: it = new CCoin(x, y); break;
+			case OBJECT_TYPE_GIANT: break;
+		}
+		it->SetPosition(x, y);
+		objects.push_back(it);*/
+		obj = new CItemBox(x, y); break;
+	}
 	case OBJECT_TYPE_BGOBJECT:
 	{
 		float cell_width = (float)atof(tokens[3].c_str());
@@ -333,4 +345,24 @@ void CPlayScene::PurgeDeletedObjects()
 	objects.erase(
 		std::remove_if(objects.begin(), objects.end(), CPlayScene::IsGameObjectDeleted),
 		objects.end());
+}
+
+void CPlayScene::AddObject(LPGAMEOBJECT obj)
+{
+	if (obj != nullptr)
+	{
+		objects.push_back(obj);
+	}
+}
+void CPlayScene::InsertObjectBefore(LPGAMEOBJECT target, LPGAMEOBJECT newObj)
+{
+	auto it = std::find(objects.begin(), objects.end(), target);
+	if (it != objects.end())
+	{
+		objects.insert(it, newObj); // chèn trước target
+	}
+	else
+	{
+		objects.push_back(newObj); // fallback: nếu không tìm thấy thì thêm vào cuối
+	}
 }

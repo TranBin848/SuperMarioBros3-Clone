@@ -1,4 +1,4 @@
-#include <algorithm>
+﻿#include <algorithm>
 #include "debug.h"
 
 #include "Mario.h"
@@ -7,7 +7,8 @@
 #include "Goomba.h"
 #include "Coin.h"
 #include "Portal.h"
-
+#include "ItemBox.h"
+#include "Giant.h"
 #include "Collision.h"
 
 void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
@@ -53,6 +54,10 @@ void CMario::OnCollisionWith(LPCOLLISIONEVENT e)
 		OnCollisionWithCoin(e);
 	else if (dynamic_cast<CPortal*>(e->obj))
 		OnCollisionWithPortal(e);
+	else if (dynamic_cast<CItemBox*>(e->obj))
+		OnCollisionWithItemBox(e);
+	else if (dynamic_cast<CGiant*>(e->obj))
+		OnCollisonWithGiant(e);
 }
 
 void CMario::OnCollisionWithGoomba(LPCOLLISIONEVENT e)
@@ -89,10 +94,32 @@ void CMario::OnCollisionWithGoomba(LPCOLLISIONEVENT e)
 	}
 }
 
+void CMario::OnCollisionWithItemBox(LPCOLLISIONEVENT e) {
+	CItemBox* itb = dynamic_cast<CItemBox*>(e->obj);
+	if (!itb) return;
+
+	// Chỉ xử lý nếu Mario nhảy đụng vào đáy ItemBox
+	if (itb->GetState() == ITEMBOX_STATE_IDLE && e->ny >0) {
+		itb->SetState(ITEMBOX_STATE_BOUNCING);
+	}
+}
+
 void CMario::OnCollisionWithCoin(LPCOLLISIONEVENT e)
 {
 	e->obj->Delete();
 	coin++;
+}
+
+void CMario::OnCollisonWithGiant(LPCOLLISIONEVENT e)
+{
+	CGiant* g = dynamic_cast<CGiant*>(e->obj);
+	if (g->GetState() == GIANT_STATE_ACTIVATE)
+	{
+		float currentY = y;
+		level = MARIO_LEVEL_BIG;
+		y = currentY - MARIO_BIG_BBOX_HEIGHT;
+		e->obj->Delete();
+	}
 }
 
 void CMario::OnCollisionWithPortal(LPCOLLISIONEVENT e)
