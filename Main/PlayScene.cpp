@@ -12,6 +12,7 @@
 #include "BgObject.h"
 #include "ItemBox.h"
 #include "Giant.h"
+#include "VenusFire.h"
 #include "SampleKeyEventHandler.h"
 
 using namespace std;
@@ -121,16 +122,17 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 	case OBJECT_TYPE_GOOMBA: obj = new CGoomba(x,y); break;
 	case OBJECT_TYPE_BRICK: obj = new CBrick(x,y); break;
 	case OBJECT_TYPE_COIN: obj = new CCoin(x, y); break;
+	case OBJECT_TYPE_VENUSFIRE: obj = new CVenusFire(x,y); break;
 	case OBJECT_TYPE_ITEMBOX: {
-		/*int item = atoi(tokens[3].c_str());
-		CGameObject* it = NULL;
+		int flag = atoi(tokens[3].c_str());
+		/*CGameObject* it = NULL;
 		switch (item) {
 			case OBJECT_TYPE_COIN: it = new CCoin(x, y); break;
 			case OBJECT_TYPE_GIANT: break;
 		}
 		it->SetPosition(x, y);
 		objects.push_back(it);*/
-		obj = new CItemBox(x, y); break;
+		obj = new CItemBox(x, y, flag); break;
 	}
 	case OBJECT_TYPE_BGOBJECT:
 	{

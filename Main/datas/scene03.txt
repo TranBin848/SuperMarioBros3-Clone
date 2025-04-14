@@ -9,6 +9,8 @@ datas\floor.txt
 datas\bgObject.txt
 datas\itembox.txt
 datas\giant.txt
+datas\venusfire.txt
+datas\fire.txt
 #
 [OBJECTS]
 # type	x	y	extra_settings per object type
@@ -21,6 +23,9 @@ datas\giant.txt
 #6	290	117	87	79	1	80020	80020	80020
 6	140	45	1	1	1	80040	80040	80040
 6	360	30	1	1	1	80050	80050	80050
+
+#VENUS_FIRE
+9	370	125
 
 #Plaform
 5	301	117	35	79	1	80111	80111	80111	
@@ -35,8 +40,13 @@ datas\giant.txt
 # MARIO
 0	120	10
 
-7	196	102
-7	180	102
+#ITEMBOX
+7	180	102	1
+7	196	102	1	
+7	233	57	1
+7	249	57	0
+
+
 
 #Platform
 5	0	165	47	15	14	70000	70000	70000

@@ -2,6 +2,7 @@
 #include "Mario.h"
 #include "Giant.h"
 #include "PlayScene.h"
+#include "Coin.h"
 void CItemBox::Render()
 {
 	int aniId = ID_ANI_ITEMBOX_IDLE;
@@ -10,6 +11,7 @@ void CItemBox::Render()
 		aniId = ID_ANI_ITEMBOX_BOUNCING;
 	}
 	CAnimations::GetInstance()->Get(aniId)->Render(x, y);
+    RenderBoundingBox();
 }
 
 void CItemBox::GetBoundingBox(float& l, float& t, float& r, float& b)
@@ -23,18 +25,6 @@ void CItemBox::GetBoundingBox(float& l, float& t, float& r, float& b)
 void CItemBox::OnCollisionWith(LPCOLLISIONEVENT e)
 {
 	if (!e->obj->IsBlocking()) return;
-    /*if (dynamic_cast<CGiant*>(e->obj))
-    {
-        if (state != ITEMBOX_STATE_ACTIVATE) return;
-        CGiant* giant = dynamic_cast<CGiant*>(e -> obj);
-        if (giant)
-        {
-            if (giant->GetState() == GIANT_STATE_IDLE)
-            {
-                giant->SetState(GIANT_STATE_ACTIVATE);
-            }
-        }
-    }*/
 }
 
 void CItemBox::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
@@ -49,50 +39,67 @@ void CItemBox::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
             if (y > originalY) {
                 y = originalY;
                 SetState(ITEMBOX_STATE_ACTIVATE);
-                for (LPGAMEOBJECT obj : *coObjects)
+                LPGAMEOBJECT newItem = nullptr;
+                if (flagCoin == 0)
                 {
-                    CMario* mario = dynamic_cast<CMario*>(obj);
-                    if (mario)
+                    for (LPGAMEOBJECT obj : *coObjects)
                     {
-                        int level = mario->GetLevel();
-                        LPGAMEOBJECT newItem = nullptr;
+                        CMario* mario = dynamic_cast<CMario*>(obj);
+                        if (mario)
+                        {
+                            int level = mario->GetLevel();
+                            
 
-                        if (level == MARIO_LEVEL_SMALL)
-                        {
-                            newItem = new CGiant(x, y); // xuất hiện phía trên
-                            if (newItem->GetState() == GIANT_STATE_IDLE)
+                            if (level == MARIO_LEVEL_SMALL)
                             {
-                                newItem->SetState(GIANT_STATE_ACTIVATE);
+                                newItem = new CGiant(x, y); // xuất hiện phía trên
+                                if (newItem->GetState() == GIANT_STATE_IDLE)
+                                {
+                                    newItem->SetState(GIANT_STATE_ACTIVATE);
+                                }
                             }
-                        }
-                        else if (level == MARIO_LEVEL_BIG)
-                        {
-                            newItem = new CGiant(x, y);
-                            if (newItem->GetState() == GIANT_STATE_IDLE)
+                            else if (level == MARIO_LEVEL_BIG)
                             {
-                                newItem->SetState(GIANT_STATE_ACTIVATE);
+                                newItem = new CGiant(x, y);
+                                if (newItem->GetState() == GIANT_STATE_IDLE)
+                                {
+                                    newItem->SetState(GIANT_STATE_ACTIVATE);
+                                }
                             }
+                            CGiant* giant = dynamic_cast<CGiant*>(newItem);
+                            if (giant) {
+                                giant->SetWalkingDirection(bounceDirection);
+                            }
+                            break; // chỉ xử lý 1 Mario
+                            
                         }
+                    }
+                }
+                else
+                {
+                    newItem = new CCoin(x, y);
+                    if (newItem->GetState() == COIN_STATE_IDLE)
+                    {
+                        newItem->SetState(COIN_STATE_BOUNCING);
+                    }
+                }
+                if (newItem)
+                {
+                    CPlayScene* scene = dynamic_cast<CPlayScene*>(CGame::GetInstance()->GetCurrentScene());
+                    if (scene)
+                    {
+                        scene->InsertObjectBefore(this, newItem); // hoặc push vào vector<objects> tùy bạn tổ chức
 
-                        if (newItem)
-                        {
-                            CPlayScene* scene = dynamic_cast<CPlayScene*>(CGame::GetInstance()->GetCurrentScene());
-                            if (scene)
-                            {
-                                scene->InsertObjectBefore(this, newItem); // hoặc push vào vector<objects> tùy bạn tổ chức
-                            }
-                        }
-                        break; // chỉ xử lý 1 Mario
                     }
                 }
             }
         }
         else {
             y -= ITEMBOX_BOUNCE_SPEED * dt; // Di chuyển lên trên
-            if (y < originalY - ITEMBOX_BOUNCE_HEIGHT)
+            if (y < originalY - 10.0f)
             {
                 pickable = false;
-                y = originalY - ITEMBOX_BOUNCE_HEIGHT;
+                y = originalY - 10.0f;
             }
         }
     }

@@ -23,8 +23,12 @@ class CItemBox : public CGameObject {
 protected:
 	float originalY; // Lưu vị trí ban đầu
 	bool pickable;
+	int flagCoin;
+	int bounceDirection = 1; // mặc định từ trái
+
 public:
-	CItemBox(float x, float y) : CGameObject(x, y) {
+	CItemBox(float x, float y, int fl) : CGameObject(x, y) {
+		flagCoin = fl;
 		originalY = y;
 		pickable = true;
 		SetState(ITEMBOX_STATE_IDLE);
@@ -34,4 +38,6 @@ public:
 	virtual void OnCollisionWith(LPCOLLISIONEVENT e);
 	void GetBoundingBox(float& l, float& t, float& r, float& b);
 	int IsBlocking() { return 1; }
+	void SetBounceDirection(int dir) { bounceDirection = dir; }
+	int GetBounceDirection() const { return bounceDirection; }
 };

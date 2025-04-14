@@ -24,6 +24,7 @@ public:
 	float originalY;
 	float originalX;
 	bool isActivating;
+	int walkingDirection = -1;
 	CGiant(float x, float y) : CGameObject(x, y) {
 		originalY = y;
 		originalX = x;
@@ -40,5 +41,7 @@ public:
 	virtual int IsCollidable() { return 1; };
 	int IsBlocking() { return 0; }
 	void SetState(int state);
+	void SetWalkingDirection(int dir) { walkingDirection = dir; }
+
 
 };

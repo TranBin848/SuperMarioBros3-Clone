@@ -6,6 +6,7 @@ void CGiant::Render()
 	CAnimations* animations = CAnimations::GetInstance();
 	if (state == GIANT_STATE_ACTIVATE)
 		animations->Get(ID_ANI_GIANT)->Render(x, y);
+	RenderBoundingBox();
 }
 
 void CGiant::GetBoundingBox(float& l, float& t, float& r, float& b)
@@ -38,7 +39,6 @@ void CGiant::OnNoCollision(DWORD dt)
 void CGiant::OnCollisionWith(LPCOLLISIONEVENT e)
 {
 	if (!e->obj->IsBlocking()) return;
-	if (dynamic_cast<CItemBox*>(e->obj)) return;
 	if (dynamic_cast<CGoomba*>(e->obj)) return;
 	if (e->ny != 0)
 	{
@@ -56,10 +56,10 @@ void CGiant::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		y -= GIANT_BOUNCE_SPEED * dt;
 		if (round(y) == (originalY - GIANT_BBOX_HEIGHT)) {
 			isActivating = false;
-			vx = -GIANT_WALKING_SPEED;
+			vx = walkingDirection * GIANT_WALKING_SPEED;
 		}
 	}
-	if (round(x) == originalX - GIANT_BBOX_HEIGHT)
+	if (round(x) == originalX - GIANT_BBOX_HEIGHT || round(x) == originalX + GIANT_BBOX_HEIGHT)
 	{
 		ay = GIANT_GRAVITY;
 	}

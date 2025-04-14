@@ -11,6 +11,7 @@
 #include "Giant.h"
 #include "Collision.h"
 
+CMario* CMario::__instance = nullptr;
 void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 {
 	vy += ay * dt;
@@ -98,8 +99,13 @@ void CMario::OnCollisionWithItemBox(LPCOLLISIONEVENT e) {
 	CItemBox* itb = dynamic_cast<CItemBox*>(e->obj);
 	if (!itb) return;
 
-	// Chỉ xử lý nếu Mario nhảy đụng vào đáy ItemBox
-	if (itb->GetState() == ITEMBOX_STATE_IDLE && e->ny >0) {
+	if (itb->GetState() == ITEMBOX_STATE_IDLE && e->ny > 0) {
+		// Truyền hướng Mario chạm vào (trái/phải)
+		float marioX = x;
+		float itemboxX = itb->GetX();
+
+		int direction = marioX < itemboxX ? 1 : -1; // 1 là từ trái, -1 là từ phải
+		itb->SetBounceDirection(direction); // Thêm hàm này
 		itb->SetState(ITEMBOX_STATE_BOUNCING);
 	}
 }
