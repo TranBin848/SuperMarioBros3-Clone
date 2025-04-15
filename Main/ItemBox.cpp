@@ -11,7 +11,6 @@ void CItemBox::Render()
 		aniId = ID_ANI_ITEMBOX_BOUNCING;
 	}
 	CAnimations::GetInstance()->Get(aniId)->Render(x, y);
-    RenderBoundingBox();
 }
 
 void CItemBox::GetBoundingBox(float& l, float& t, float& r, float& b)
