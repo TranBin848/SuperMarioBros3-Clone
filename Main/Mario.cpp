@@ -5,6 +5,8 @@
 #include "Game.h"
 
 #include "Goomba.h"
+#include "Koopa.h"
+
 #include "Coin.h"
 #include "Portal.h"
 #include "ItemBox.h"
@@ -59,6 +61,30 @@ void CMario::OnCollisionWith(LPCOLLISIONEVENT e)
 		OnCollisionWithItemBox(e);
 	else if (dynamic_cast<CGiant*>(e->obj))
 		OnCollisonWithGiant(e);
+	else if (dynamic_cast<CKoopa*>(e->obj))
+		OnCollisionWithKoopa(e);
+}
+
+void CMario::OnCollisionWithKoopa(LPCOLLISIONEVENT e) {
+	CKoopa* koopa = dynamic_cast<CKoopa*>(e->obj);
+	if (e->ny < 0)
+	{
+		if (koopa->GetState() == KOOPA_STATE_WALKING)
+		{
+			koopa->SetState(KOOPA_STATE_SHELL);
+			vy = -MARIO_JUMP_DEFLECT_SPEED;
+		}
+		else if (koopa->GetState() == KOOPA_STATE_SHELL)
+		{
+			koopa->SetState(KOOPA_STATE_ACTIVATE);
+			vy = -MARIO_JUMP_DEFLECT_SPEED;
+		}
+		else if (koopa->GetState() == KOOPA_STATE_ACTIVATE)
+		{
+			koopa->SetState(KOOPA_STATE_SHELL);
+			vy = -MARIO_JUMP_DEFLECT_SPEED;
+		}
+	}
 }
 
 void CMario::OnCollisionWithGoomba(LPCOLLISIONEVENT e)

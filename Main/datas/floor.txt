@@ -6,5 +6,6 @@
 #Big_floor
 55100	1	1	48	32	60
 55101	58	1	81	32	60
+55102	85	1	102	32	60
 # ani_id	sprite1_id	time1	sprite2_id	time2	...
 [ANIMATIONS]

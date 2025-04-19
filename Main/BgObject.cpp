@@ -19,7 +19,6 @@ void CBgObject::Render()
 	}
 	if (length > 1)
 		s->Get(this->spriteIdEnd)->Draw(xx, y);
-
 }
 
 void CBgObject::GetBoundingBox(float& l, float& t, float& r, float& b)

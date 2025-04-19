@@ -21,7 +21,7 @@ void CAnimation::Render(float x, float y)
 	{
 		currentFrame = 0;
 		lastFrameTime = now;
-	}
+	}	
 	else
 	{
 		DWORD t = frames[currentFrame]->GetTime();
