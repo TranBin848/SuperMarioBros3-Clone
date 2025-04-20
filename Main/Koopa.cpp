@@ -11,6 +11,8 @@ CKoopa::CKoopa(float x, float y) :CGameObject(x, y)
 	this->ax = 0;
 	this->ay = KOOPA_GRAVITY;
 	die_start = -1;
+	shell_start = 0;
+	return_start = 0;
 	SetState(KOOPA_STATE_WALKING);
 }
 
@@ -61,14 +63,14 @@ void CKoopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		vy += ay * dt;
 
 		// Cập nhật sensor phía trước
-		if (sensor)
+		if (sensor && state == KOOPA_STATE_WALKING)
 		{
 			float sensor_offset_x = (vx > 0 ? KOOPA_BBOX_WIDTH / 2 + 1 : -KOOPA_BBOX_WIDTH / 2 - 1);
 			float sensor_x = x + sensor_offset_x;
 			float sensor_y = y + KOOPA_BBOX_HEIGHT / 2 + 1;
 
 			sensor->SetPosition(sensor_x, sensor_y);
-			if(state == KOOPA_STATE_WALKING) sensor->Update(dt, coObjects);
+			sensor->Update(dt, coObjects);
 		}
 	}
 	
@@ -77,8 +79,22 @@ void CKoopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		// Mai rùa đứng yên, không rơi
 		vx = 0;
 		vy = 0;
+		// Kiểm tra timeout
+		if (GetTickCount64() - shell_start > KOOPA_SHELL_TIMEOUT)
+		{
+			SetState(KOOPA_STATE_RETURN);
+		}
 	}
-	
+	else if (state == KOOPA_STATE_RETURN)
+	{
+		vx = 0;
+		vy = 0;
+
+		if (GetTickCount64() - return_start > 1000) // sau 1 giây
+		{
+			SetState(KOOPA_STATE_WALKING);
+		}
+	}
 	CGameObject::Update(dt, coObjects);
 	CCollision::GetInstance()->Process(this, dt, coObjects);
 
@@ -88,9 +104,16 @@ void CKoopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 void CKoopa::Render()
 {
 	int aniId = ID_ANI_KOOPA_WALKING;
-	if (state == KOOPA_STATE_SHELL || state == KOOPA_STATE_ACTIVATE)
+	if (state == KOOPA_STATE_SHELL)
 	{
 		aniId = ID_ANI_KOOPA_SHELL;
+	}
+	if (state == KOOPA_STATE_ACTIVATE) {
+		aniId = ID_ANI_KOOPA_ACTIVATE;
+	}
+	else if (state == KOOPA_STATE_RETURN)
+	{
+		aniId = ID_ANI_KOOPA_RETURN;
 	}
 	if (vx > 0 && state == KOOPA_STATE_WALKING)	aniId += 100;
 	CAnimations::GetInstance()->Get(aniId)->Render(x, y);
@@ -105,7 +128,7 @@ void CKoopa::SetState(int state)
 	{
 		y += (KOOPA_BBOX_HEIGHT - KOOPA_BBOX_HEIGHT_SHELL) / 2.0f;
 	}
-	else if ((this->state == KOOPA_STATE_SHELL || this->state == KOOPA_STATE_ACTIVATE) &&
+	else if ((this->state == KOOPA_STATE_SHELL || this->state == KOOPA_STATE_ACTIVATE || this -> state == KOOPA_STATE_RETURN) &&
 		state == KOOPA_STATE_WALKING)
 	{
 		// Ngược lại, từ shell/activate -> walking thì phải nâng Koopa lên
@@ -118,13 +141,22 @@ void CKoopa::SetState(int state)
 		vx = 0;
 		vy = 0;
 		ay = 0;
+		shell_start = GetTickCount64(); // Ghi lại thời gian vào shell
 		break;
 	case KOOPA_STATE_WALKING:
+		shell_start = 0; // Không cần đếm thời gian nữa
 		vx = -KOOPA_WALKING_SPEED;
 		break;
 	case KOOPA_STATE_ACTIVATE:
 		vx = (vx >= 0) ? KOOPA_ACTIVATE_SPEED : -KOOPA_ACTIVATE_SPEED; // hướng chạy tiếp
-		ay = KOOPA_GRAVITY;
+		/*ay = KOOPA_GRAVITY;*/
 		break;
+	case KOOPA_STATE_RETURN:
+		vx = 0;
+		vy = 0;
+		ay = 0;
+		return_start = GetTickCount64(); // Ghi lại thời điểm bắt đầu return
+		break;
+
 	}
 }

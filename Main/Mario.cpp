@@ -27,6 +27,10 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 		untouchable_start = 0;
 		untouchable = 0;
 	}
+	if (kick_start > 0 && GetTickCount64() - kick_start > MARIO_KICK_DURATION)
+	{
+		kick_start = 0;
+	}
 
 	CCollision::GetInstance()->Process(this, dt, coObjects);
 }
@@ -69,20 +73,37 @@ void CMario::OnCollisionWithKoopa(LPCOLLISIONEVENT e) {
 	CKoopa* koopa = dynamic_cast<CKoopa*>(e->obj);
 	if (e->ny < 0)
 	{
-		if (koopa->GetState() == KOOPA_STATE_WALKING)
+		int koopaState = koopa->GetState();
+
+		switch (koopaState)
 		{
+		case KOOPA_STATE_WALKING:
+		case KOOPA_STATE_ACTIVATE:
 			koopa->SetState(KOOPA_STATE_SHELL);
-			vy = -MARIO_JUMP_DEFLECT_SPEED;
+			break;
+
+		case KOOPA_STATE_SHELL:
+			koopa->SetState(KOOPA_STATE_ACTIVATE);
+			break;
 		}
-		else if (koopa->GetState() == KOOPA_STATE_SHELL)
+
+		vy = -MARIO_JUMP_DEFLECT_SPEED;
+	}
+	else if (e->nx != 0) // Va chạm từ bên trái/phải
+	{
+		if (koopa->GetState() == KOOPA_STATE_SHELL)
 		{
 			koopa->SetState(KOOPA_STATE_ACTIVATE);
-			vy = -MARIO_JUMP_DEFLECT_SPEED;
-		}
-		else if (koopa->GetState() == KOOPA_STATE_ACTIVATE)
-		{
-			koopa->SetState(KOOPA_STATE_SHELL);
-			vy = -MARIO_JUMP_DEFLECT_SPEED;
+
+			// Mario sẽ đá Koopa theo hướng phù hợp
+			if (e->nx > 0)
+			{// Koopa bên trái => Mario đá sang trái
+				SetState(MARIO_STATE_KICK_LEFT);
+			}
+			else
+			{// Koopa bên phải => Mario đá sang phải
+				SetState(MARIO_STATE_KICK_RIGHT);
+			}
 		}
 	}
 }
@@ -166,6 +187,11 @@ void CMario::OnCollisionWithPortal(LPCOLLISIONEVENT e)
 int CMario::GetAniIdSmall()
 {
 	int aniId = -1;
+	// Ưu tiên xét state KICK trước
+	if (state == MARIO_STATE_KICK_RIGHT)
+		return ID_ANI_MARIO_SMALL_KICK_RIGHT;
+	else if (state == MARIO_STATE_KICK_LEFT)
+		return ID_ANI_MARIO_SMALL_KICK_LEFT;
 	if (!isOnPlatform)
 	{
 		if (abs(ax) == MARIO_ACCEL_RUN_X)
@@ -228,6 +254,8 @@ int CMario::GetAniIdSmall()
 int CMario::GetAniIdBig()
 {
 	int aniId = -1;
+	// Ưu tiên anim đá nếu đang đá
+	
 	if (!isOnPlatform)
 	{
 		if (abs(ax) == MARIO_ACCEL_RUN_X)
@@ -280,6 +308,14 @@ int CMario::GetAniIdBig()
 
 	if (aniId == -1) aniId = ID_ANI_MARIO_IDLE_RIGHT;
 
+	if (kick_start > 0)
+	{
+		if (nx > 0)
+			aniId = ID_ANI_MARIO_KICK_RIGHT;
+		else
+			aniId = ID_ANI_MARIO_KICK_LEFT;
+	}
+
 	return aniId;
 }
 
@@ -298,8 +334,8 @@ void CMario::Render()
 	animations->Get(aniId)->Render(x, y);
 
 	//RenderBoundingBox();
-	
-	DebugOutTitle(L"Coins: %d", coin);
+
+	DebugOutTitle(L"Coins: %d", kick_start);
 }
 
 void CMario::SetState(int state)
@@ -333,6 +369,21 @@ void CMario::SetState(int state)
 		ax = -MARIO_ACCEL_WALK_X;
 		nx = -1;
 		break;
+	case MARIO_STATE_KICK_RIGHT:
+		if (isSitting) break;
+		maxVx = MARIO_WALKING_SPEED;
+		ax = MARIO_ACCEL_WALK_X;
+		nx = 1;
+		kick_start = GetTickCount64();  // Đánh dấu thời điểm đá
+		break;
+	case MARIO_STATE_KICK_LEFT:
+		if (isSitting) break;
+		maxVx = -MARIO_WALKING_SPEED;
+		ax = -MARIO_ACCEL_WALK_X;
+		nx = -1;
+		kick_start = GetTickCount64();  // Đánh dấu thời điểm đá
+		break;
+
 	case MARIO_STATE_JUMP:
 		if (isSitting) break;
 		if (isOnPlatform)
