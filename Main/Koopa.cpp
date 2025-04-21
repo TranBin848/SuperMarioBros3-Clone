@@ -13,12 +13,14 @@ CKoopa::CKoopa(float x, float y) :CGameObject(x, y)
 	die_start = -1;
 	shell_start = 0;
 	return_start = 0;
+	just_activated = false;
+	this->renderLayer = 5;
 	SetState(KOOPA_STATE_WALKING);
 }
 
 void CKoopa::GetBoundingBox(float& left, float& top, float& right, float& bottom)
 {
-	if (state == KOOPA_STATE_SHELL || state == KOOPA_STATE_ACTIVATE)
+	if (state == KOOPA_STATE_SHELL || state == KOOPA_STATE_ACTIVATE || state == KOOPA_STATE_RETURN)
 	{
 		left = x - KOOPA_BBOX_WIDTH / 2;
 		top = y - KOOPA_BBOX_HEIGHT_SHELL / 2;
@@ -57,47 +59,63 @@ void CKoopa::OnCollisionWith(LPCOLLISIONEVENT e)
 
 void CKoopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
-	if (state == KOOPA_STATE_WALKING || state == KOOPA_STATE_ACTIVATE)
-	{
-		vx += ax * dt;
-		vy += ay * dt;
-
-		// Cập nhật sensor phía trước
-		if (sensor && state == KOOPA_STATE_WALKING)
-		{
-			float sensor_offset_x = (vx > 0 ? KOOPA_BBOX_WIDTH / 2 + 1 : -KOOPA_BBOX_WIDTH / 2 - 1);
-			float sensor_x = x + sensor_offset_x;
-			float sensor_y = y + KOOPA_BBOX_HEIGHT / 2 + 1;
-
-			sensor->SetPosition(sensor_x, sensor_y);
-			sensor->Update(dt, coObjects);
-		}
-	}
-	
-	else if (state == KOOPA_STATE_SHELL)
-	{
-		// Mai rùa đứng yên, không rơi
-		vx = 0;
-		vy = 0;
-		// Kiểm tra timeout
-		if (GetTickCount64() - shell_start > KOOPA_SHELL_TIMEOUT)
-		{
-			SetState(KOOPA_STATE_RETURN);
-		}
-	}
-	else if (state == KOOPA_STATE_RETURN)
+	if (isBeingHeld)
 	{
 		vx = 0;
 		vy = 0;
-
-		if (GetTickCount64() - return_start > 1000) // sau 1 giây
-		{
-			SetState(KOOPA_STATE_WALKING);
-		}
+		return; // Không update vật lý khi bị cầm
 	}
-	CGameObject::Update(dt, coObjects);
-	CCollision::GetInstance()->Process(this, dt, coObjects);
+		
+	else
+	{
+		if (state == KOOPA_STATE_WALKING || state == KOOPA_STATE_ACTIVATE)
+		{
+			vx += ax * dt;
+			if (state == KOOPA_STATE_ACTIVATE && just_activated)
+			{
+				just_activated = false; // Đặt lại flag sau frame đầu tiên
+			}
+			else
+			{
+				vy += ay * dt; // Chỉ cập nhật vy từ frame thứ hai trở đi
+			}
 
+			// Cập nhật sensor phía trước
+			if (sensor && state == KOOPA_STATE_WALKING)
+			{
+				float sensor_offset_x = (vx > 0 ? KOOPA_BBOX_WIDTH / 2 + 1 : -KOOPA_BBOX_WIDTH / 2 - 1);
+				float sensor_x = x + sensor_offset_x;
+				float sensor_y = y + KOOPA_BBOX_HEIGHT / 2 + 1;
+
+				sensor->SetPosition(sensor_x, sensor_y);
+				sensor->Update(dt, coObjects);
+			}
+		}
+
+		else if (state == KOOPA_STATE_SHELL)
+		{
+			// Mai rùa đứng yên, không rơi
+			vx = 0;
+			vy = 0;
+			// Kiểm tra timeout
+			if (GetTickCount64() - shell_start > KOOPA_SHELL_TIMEOUT)
+			{
+				SetState(KOOPA_STATE_RETURN);
+			}
+		}
+		else if (state == KOOPA_STATE_RETURN)
+		{
+			vx = 0;
+			vy = 0;
+
+			if (GetTickCount64() - return_start > 1000) // sau 1 giây
+			{
+				SetState(KOOPA_STATE_WALKING);
+			}
+		}
+		CGameObject::Update(dt, coObjects);
+		CCollision::GetInstance()->Process(this, dt, coObjects);
+	}
 }
 
 
@@ -139,23 +157,22 @@ void CKoopa::SetState(int state)
 	{
 	case KOOPA_STATE_SHELL:
 		vx = 0;
-		vy = 0;
-		ay = 0;
 		shell_start = GetTickCount64(); // Ghi lại thời gian vào shell
+		just_activated = false; // Thêm dòng này
 		break;
 	case KOOPA_STATE_WALKING:
 		shell_start = 0; // Không cần đếm thời gian nữa
 		vx = -KOOPA_WALKING_SPEED;
+		just_activated = false; // Thêm dòng này
 		break;
 	case KOOPA_STATE_ACTIVATE:
 		vx = (vx >= 0) ? KOOPA_ACTIVATE_SPEED : -KOOPA_ACTIVATE_SPEED; // hướng chạy tiếp
-		/*ay = KOOPA_GRAVITY;*/
+		just_activated = true; // Thêm dòng này
 		break;
 	case KOOPA_STATE_RETURN:
 		vx = 0;
-		vy = 0;
-		ay = 0;
 		return_start = GetTickCount64(); // Ghi lại thời điểm bắt đầu return
+		just_activated = false; // Thêm dòng này
 		break;
 
 	}

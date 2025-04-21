@@ -21,6 +21,44 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 
 	if (abs(vx) > abs(maxVx)) vx = maxVx;
 
+	if (isHolding && heldKoopa != nullptr)
+	{
+		LPGAME game = CGame::GetInstance();
+		if (!game->IsKeyDown(DIK_A))
+		{
+			// Thả Koopa ra
+			isHolding = false;
+			heldKoopa->SetIsBeingHeld(false);
+
+			// Koopa chuyển sang trạng thái ACTIVE
+			heldKoopa->SetState(KOOPA_STATE_ACTIVATE);
+
+			// Đá theo hướng Mario đang nhìn
+			if (nx > 0)
+			{
+				SetState(MARIO_STATE_KICK_RIGHT);
+				heldKoopa->SetSpeed(KOOPA_ACTIVATE_SPEED, 0); // Koopa bay phải
+			}
+			else
+			{
+				SetState(MARIO_STATE_KICK_LEFT);
+				heldKoopa->SetSpeed(-KOOPA_ACTIVATE_SPEED, 0); // Koopa bay trái
+
+			}
+
+			heldKoopa = nullptr;
+		}
+		else
+		{
+			float offsetX = (nx > 0) ? 14.0f : -14.0f;
+			float offsetY = 0.0f; // Có thể điều chỉnh để Koopa nằm thấp hơn tay một chút
+
+			heldKoopa->SetPosition(x + offsetX, y + offsetY);
+			heldKoopa->SetSpeed(0, 0);
+		}
+		
+	}
+
 	// reset untouchable timer if untouchable time has passed
 	if ( GetTickCount64() - untouchable_start > MARIO_UNTOUCHABLE_TIME) 
 	{
@@ -93,17 +131,30 @@ void CMario::OnCollisionWithKoopa(LPCOLLISIONEVENT e) {
 	{
 		if (koopa->GetState() == KOOPA_STATE_SHELL)
 		{
-			koopa->SetState(KOOPA_STATE_ACTIVATE);
-
-			// Mario sẽ đá Koopa theo hướng phù hợp
-			if (e->nx > 0)
-			{// Koopa bên trái => Mario đá sang trái
-				SetState(MARIO_STATE_KICK_LEFT);
+			if (!isHolding && (this->state == MARIO_STATE_RUNNING_LEFT || this->state == MARIO_STATE_RUNNING_RIGHT))
+			{
+				// Mario cầm Koopa
+				heldKoopa = koopa;
+				isHolding = true;
+				koopa->SetIsBeingHeld(true); // Thêm hàm này trong Koopa
 			}
 			else
-			{// Koopa bên phải => Mario đá sang phải
-				SetState(MARIO_STATE_KICK_RIGHT);
+			{
+				koopa->SetState(KOOPA_STATE_ACTIVATE);
+
+				// Mario sẽ đá Koopa theo hướng phù hợp
+				if (e->nx > 0)
+				{// Koopa bên trái => Mario đá sang trái
+					SetState(MARIO_STATE_KICK_LEFT);
+					koopa->SetSpeed(-KOOPA_ACTIVATE_SPEED, 0); // Koopa bay trái
+				}
+				else
+				{// Koopa bên phải => Mario đá sang phải
+					SetState(MARIO_STATE_KICK_RIGHT);
+					koopa->SetSpeed(KOOPA_ACTIVATE_SPEED, 0); // Koopa bay phải
+				}
 			}
+			
 		}
 	}
 }
@@ -260,10 +311,21 @@ int CMario::GetAniIdBig()
 	{
 		if (abs(ax) == MARIO_ACCEL_RUN_X)
 		{
-			if (nx >= 0)
-				aniId = ID_ANI_MARIO_JUMP_RUN_RIGHT;
+			if (!isHolding)
+			{
+				if (nx >= 0)
+					aniId = ID_ANI_MARIO_JUMP_RUN_RIGHT;
+				else
+					aniId = ID_ANI_MARIO_JUMP_RUN_LEFT;
+			}
 			else
-				aniId = ID_ANI_MARIO_JUMP_RUN_LEFT;
+			{
+				if (nx >= 0)
+					aniId = ID_ANI_MARIO_RUNSHELLRIGHT;
+				else
+					aniId = ID_ANI_MARIO_RUNSHELLLEFT;
+			}
+			
 		}
 		else
 		{
@@ -290,18 +352,31 @@ int CMario::GetAniIdBig()
 			else if (vx > 0)
 			{
 				if (ax < 0)
-					aniId = ID_ANI_MARIO_BRACE_RIGHT;
+				{
+					if (!isHolding)	aniId = ID_ANI_MARIO_BRACE_RIGHT;
+					else if (isHolding) aniId = ID_ANI_MARIO_RUNSHELLLEFT;
+				}
+					
 				else if (ax == MARIO_ACCEL_RUN_X)
-					aniId = ID_ANI_MARIO_RUNNING_RIGHT;
+				{
+					if (!isHolding)	aniId = ID_ANI_MARIO_RUNNING_RIGHT;
+					else if (isHolding) aniId = ID_ANI_MARIO_RUNSHELLRIGHT;
+				}
 				else if (ax == MARIO_ACCEL_WALK_X)
 					aniId = ID_ANI_MARIO_WALKING_RIGHT;
 			}
 			else // vx < 0
 			{
 				if (ax > 0)
-					aniId = ID_ANI_MARIO_BRACE_LEFT;
+				{
+					if (!isHolding)	aniId = ID_ANI_MARIO_BRACE_LEFT;
+					else if (isHolding) aniId = ID_ANI_MARIO_RUNSHELLRIGHT;
+				}
 				else if (ax == -MARIO_ACCEL_RUN_X)
-					aniId = ID_ANI_MARIO_RUNNING_LEFT;
+				{
+					if (!isHolding) aniId = ID_ANI_MARIO_RUNNING_LEFT;
+					else if (isHolding) aniId = ID_ANI_MARIO_RUNSHELLLEFT;
+				}
 				else if (ax == -MARIO_ACCEL_WALK_X)
 					aniId = ID_ANI_MARIO_WALKING_LEFT;
 			}

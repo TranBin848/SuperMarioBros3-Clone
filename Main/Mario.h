@@ -1,6 +1,6 @@
 #pragma once
 #include "GameObject.h"
-
+#include "Koopa.h"
 #include "Animation.h"
 #include "Animations.h"
 
@@ -28,7 +28,10 @@
 #define MARIO_STATE_RELEASE_JUMP    301
 
 #define MARIO_STATE_RUNNING_RIGHT	400
+#define MARIO_STATE_SHELLRUNNING_RIGHT	401
 #define MARIO_STATE_RUNNING_LEFT	500
+#define MARIO_STATE_SHELLRUNNING_LEFT	501
+
 
 #define MARIO_STATE_SIT				600
 #define MARIO_STATE_SIT_RELEASE		601
@@ -62,6 +65,10 @@
 #define ID_ANI_MARIO_KICK_RIGHT 1021
 #define ID_ANI_MARIO_KICK_LEFT 1020
 
+#define ID_ANI_MARIO_RUNSHELLRIGHT	1050	
+#define ID_ANI_MARIO_RUNSHELLLEFT	1051	
+#define ID_ANI_MARIO_STAND			1052
+
 #define ID_ANI_MARIO_DIE 999
 
 // SMALL MARIO
@@ -89,9 +96,6 @@
 
 #define GROUND_Y 160.0f
 
-
-
-
 #define	MARIO_LEVEL_SMALL	1
 #define	MARIO_LEVEL_BIG		2
 
@@ -105,13 +109,14 @@
 #define MARIO_SMALL_BBOX_WIDTH  13
 #define MARIO_SMALL_BBOX_HEIGHT 12
 
-
 #define MARIO_UNTOUCHABLE_TIME 2500
 #define MARIO_KICK_DURATION 100
 
 class CMario : public CGameObject
 {
 	BOOLEAN isSitting;
+	bool isHolding = false;
+
 	float maxVx;
 	float ax;				// acceleration on x 
 	float ay;				// acceleration on y 
@@ -136,6 +141,7 @@ class CMario : public CGameObject
 public:
 	static CMario* __instance;
 	static CMario* GetInstance() { return __instance; }
+	CKoopa* heldKoopa = nullptr;
 	CMario(float x, float y) : CGameObject(x, y)
 	{
 		__instance = this; // Gán instance
@@ -150,6 +156,7 @@ public:
 		kick_start = -1;
 		isOnPlatform = false;
 		coin = 0;
+		this->renderLayer = 10;
 	}
 	void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
 	void Render();

@@ -14,6 +14,7 @@
 #include "Giant.h"
 #include "VenusFire.h"
 #include "Koopa.h"
+#include "Obstacle.h"
 #include "SampleKeyEventHandler.h"
 
 using namespace std;
@@ -122,18 +123,19 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 		break;
 	case OBJECT_TYPE_GOOMBA: obj = new CGoomba(x,y); break;
 	case OBJECT_TYPE_KOOPA: obj = new CKoopa(x,y); break;
-	case OBJECT_TYPE_BRICK: obj = new CBrick(x,y); break;
+	case OBJECT_TYPE_OBSTACLE:
+	{
+		float cell_width = (float)atof(tokens[3].c_str());
+		float cell_height = (float)atof(tokens[4].c_str());
+		int sprite_id = atoi(tokens[5].c_str());
+		obj = new CObstacle(x, y, cell_width, cell_height, sprite_id); 
+		break;
+	}
+	
 	case OBJECT_TYPE_COIN: obj = new CCoin(x, y); break;
 	case OBJECT_TYPE_VENUSFIRE: obj = new CVenusFire(x,y); break;
 	case OBJECT_TYPE_ITEMBOX: {
 		int flag = atoi(tokens[3].c_str());
-		/*CGameObject* it = NULL;
-		switch (item) {
-			case OBJECT_TYPE_COIN: it = new CCoin(x, y); break;
-			case OBJECT_TYPE_GIANT: break;
-		}
-		it->SetPosition(x, y);
-		objects.push_back(it);*/
 		obj = new CItemBox(x, y, flag); break;
 	}
 	case OBJECT_TYPE_BGOBJECT:
@@ -312,8 +314,16 @@ void CPlayScene::Update(DWORD dt)
 
 void CPlayScene::Render()
 {
-	for (int i = 0; i < objects.size(); i++)
-		objects[i]->Render();
+	// Tạo bản sao vector object để không làm thay đổi thứ tự update
+	std::vector<LPGAMEOBJECT> sortedObjects = objects;
+
+	// Sắp xếp theo renderLayer tăng dần (vẽ sau thì đè lên trước)
+	std::sort(sortedObjects.begin(), sortedObjects.end(),
+		[](LPGAMEOBJECT a, LPGAMEOBJECT b) {
+			return a->GetRenderLayer() < b->GetRenderLayer();
+		});
+	for (int i = 0; i < sortedObjects.size(); i++)
+		sortedObjects[i]->Render();
 }
 
 /*

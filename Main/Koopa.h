@@ -8,8 +8,8 @@
 #define KOOPA_ACTIVATE_SPEED 0.2f
 
 #define KOOPA_BBOX_WIDTH 16
-#define KOOPA_BBOX_HEIGHT 24
-#define KOOPA_BBOX_HEIGHT_SHELL	15
+#define KOOPA_BBOX_HEIGHT 23
+#define KOOPA_BBOX_HEIGHT_SHELL	14
 
 #define KOOPA_SHELL_TIMEOUT 4000
 
@@ -30,7 +30,8 @@ protected:
 
 	float ax;
 	float ay;
-
+	bool just_activated; // Thêm biến này
+	bool isBeingHeld = false;
 	ULONGLONG die_start;
 	ULONGLONG shell_start;
 	ULONGLONG return_start;
@@ -39,14 +40,13 @@ protected:
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
 	virtual void Render();
 
-	virtual int IsCollidable() { return 1; };
+	virtual int IsCollidable() { return !isBeingHeld ? 1 : 0; };
 	virtual int IsBlocking() { return 0; }
 	virtual void OnNoCollision(DWORD dt);
 	virtual void OnCollisionWith(LPCOLLISIONEVENT e);
-	
-
 public:
 	CKoopa(float x, float y);
 	virtual void SetState(int state);
 	virtual void SetVX() { vx = -vx; };
+	void SetIsBeingHeld(bool held) { isBeingHeld = held; }
 };
