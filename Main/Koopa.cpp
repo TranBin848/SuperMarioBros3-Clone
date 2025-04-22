@@ -1,4 +1,5 @@
 ﻿#include "Koopa.h"
+#include "ItemBox.h"
 CKoopa::CKoopa(float x, float y) :CGameObject(x, y)
 {
 	sensor = new CKoopaSensor(x, y);
@@ -46,7 +47,8 @@ void CKoopa::OnCollisionWith(LPCOLLISIONEVENT e)
 {
 	if (!e->obj->IsBlocking()) return;
 	if (dynamic_cast<CKoopa*>(e->obj)) return;
-
+	else if (dynamic_cast<CItemBox*>(e->obj))
+		OnCollisionWithItemBox(e);
 	if (e->ny != 0)
 	{
 		vy = 0;
@@ -55,8 +57,22 @@ void CKoopa::OnCollisionWith(LPCOLLISIONEVENT e)
 	{
 		vx = -vx;
 	}
+	
 }
+void CKoopa::OnCollisionWithItemBox(LPCOLLISIONEVENT e) {
+	CItemBox* itb = dynamic_cast<CItemBox*>(e->obj);
+	if (!itb) return;
 
+	if (itb->GetState() == ITEMBOX_STATE_IDLE) {
+		// Truyền hướng Mario chạm vào (trái/phải)
+		float marioX = CMario::GetInstance()->GetX();
+		float itemboxX = itb->GetX();
+
+		int direction = marioX < itemboxX ? 1 : -1; // 1 là từ trái, -1 là từ phải
+		itb->SetBounceDirection(direction); // Thêm hàm này
+		itb->SetState(ITEMBOX_STATE_BOUNCING);
+	}
+}
 void CKoopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
 	if (isBeingHeld)

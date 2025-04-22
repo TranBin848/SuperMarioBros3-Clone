@@ -9,6 +9,7 @@ datas\floor.txt
 datas\bgObject.txt
 datas\itembox.txt
 datas\giant.txt
+datas\leaf.txt
 datas\venusfire.txt
 datas\fire.txt
 datas\koopa.txt

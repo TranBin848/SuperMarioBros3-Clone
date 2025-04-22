@@ -1,6 +1,7 @@
 ﻿#include "ItemBox.h"
 #include "Mario.h"
 #include "Giant.h"
+#include "Leaf.h"
 #include "PlayScene.h"
 #include "Coin.h"
 void CItemBox::Render()
@@ -48,7 +49,6 @@ void CItemBox::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
                         {
                             int level = mario->GetLevel();
                             
-
                             if (level == MARIO_LEVEL_SMALL)
                             {
                                 newItem = new CGiant(x, y); // xuất hiện phía trên
@@ -59,18 +59,13 @@ void CItemBox::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
                             }
                             else if (level == MARIO_LEVEL_BIG)
                             {
-                                newItem = new CGiant(x, y);
-                                if (newItem->GetState() == GIANT_STATE_IDLE)
+                                newItem = new CLeaf(x, y);
+                                if (newItem->GetState() == LEAF_STATE_IDLE)
                                 {
-                                    newItem->SetState(GIANT_STATE_ACTIVATE);
+                                    newItem->SetState(LEAF_STATE_RISING);
                                 }
                             }
-                            CGiant* giant = dynamic_cast<CGiant*>(newItem);
-                            if (giant) {
-                                giant->SetWalkingDirection(bounceDirection);
-                            }
                             break; // chỉ xử lý 1 Mario
-                            
                         }
                     }
                 }

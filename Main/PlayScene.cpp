@@ -12,6 +12,7 @@
 #include "BgObject.h"
 #include "ItemBox.h"
 #include "Giant.h"
+#include "Leaf.h"
 #include "VenusFire.h"
 #include "Koopa.h"
 #include "Obstacle.h"

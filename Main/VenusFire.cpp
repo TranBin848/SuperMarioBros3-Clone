@@ -29,7 +29,7 @@ void CVenusFire::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	CMario::GetInstance()->GetPosition(marioX, marioY);
 	float dx = abs(marioX - x);
 
-	if (dx <= 150.0f)
+	if (1/*dx <= 150.0f*/)
 	{
 		if (isWaiting)
 		{
