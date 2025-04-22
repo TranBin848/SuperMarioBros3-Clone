@@ -30,6 +30,9 @@
 *.a
 *.lib
 
+Debug/
+packages/
+
 # Executables
 *.exe
 *.out
