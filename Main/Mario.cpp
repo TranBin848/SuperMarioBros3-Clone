@@ -298,10 +298,6 @@ int CMario::GetAniIdSmall()
 	return aniId;
 }
 
-
-//
-// Get animdation ID for big Mario
-//
 int CMario::GetAniIdBig()
 {
 	int aniId = -1;
@@ -394,6 +390,97 @@ int CMario::GetAniIdBig()
 	return aniId;
 }
 
+int CMario::GetAniIdTanuki() {
+	int aniId = -1;
+	// Ưu tiên anim đá nếu đang đá
+
+	if (!isOnPlatform)
+	{
+		if (abs(ax) == MARIO_ACCEL_RUN_X)
+		{
+			if (!isHolding)
+			{
+				if (nx >= 0)
+					aniId = ID_ANI_TANUKI_JUMP_RUN_RIGHT;
+				else
+					aniId = ID_ANI_TANUKI_JUMP_RUN_LEFT;
+			}
+			else
+			{
+				if (nx >= 0)
+					aniId = ID_ANI_TANUKI_RUNSHELLRIGHT;
+				else
+					aniId = ID_ANI_TANUKI_RUNSHELLLEFT;
+			}
+
+		}
+		else
+		{
+			if (nx >= 0)
+				aniId = ID_ANI_TANUKI_JUMP_WALK_RIGHT;
+			else
+				aniId = ID_ANI_TANUKI_JUMP_WALK_LEFT;
+		}
+	}
+	else
+		if (isSitting)
+		{
+			if (nx > 0)
+				aniId = ID_ANI_TANUKI_SIT_RIGHT;
+			else
+				aniId = ID_ANI_TANUKI_SIT_LEFT;
+		}
+		else
+			if (vx == 0)
+			{
+				if (nx > 0) aniId = ID_ANI_TANUKI_IDLE_RIGHT;
+				else aniId = ID_ANI_TANUKI_IDLE_LEFT;
+			}
+			else if (vx > 0)
+			{
+				if (ax < 0)
+				{
+					if (!isHolding)	aniId = ID_ANI_TANUKI_BRACE_RIGHT;
+					else if (isHolding) aniId = ID_ANI_TANUKI_RUNSHELLLEFT;
+				}
+
+				else if (ax == MARIO_ACCEL_RUN_X)
+				{
+					if (!isHolding)	aniId = ID_ANI_TANUKI_RUNNING_RIGHT;
+					else if (isHolding) aniId = ID_ANI_TANUKI_RUNSHELLRIGHT;
+				}
+				else if (ax == MARIO_ACCEL_WALK_X)
+					aniId = ID_ANI_TANUKI_WALKING_RIGHT;
+			}
+			else // vx < 0
+			{
+				if (ax > 0)
+				{
+					if (!isHolding)	aniId = ID_ANI_TANUKI_BRACE_LEFT;
+					else if (isHolding) aniId = ID_ANI_TANUKI_RUNSHELLRIGHT;
+				}
+				else if (ax == -MARIO_ACCEL_RUN_X)
+				{
+					if (!isHolding) aniId = ID_ANI_TANUKI_RUNNING_LEFT;
+					else if (isHolding) aniId = ID_ANI_TANUKI_RUNSHELLLEFT;
+				}
+				else if (ax == -MARIO_ACCEL_WALK_X)
+					aniId = ID_ANI_TANUKI_WALKING_LEFT;
+			}
+
+	if (aniId == -1) aniId = ID_ANI_TANUKI_IDLE_RIGHT;
+
+	if (kick_start > 0)
+	{
+		if (nx > 0)
+			aniId = ID_ANI_TANUKI_KICK_RIGHT;
+		else
+			aniId = ID_ANI_TANUKI_KICK_LEFT;
+	}
+
+	return aniId;
+}
+
 void CMario::Render()
 {
 	CAnimations* animations = CAnimations::GetInstance();
@@ -405,11 +492,10 @@ void CMario::Render()
 		aniId = GetAniIdBig();
 	else if (level == MARIO_LEVEL_SMALL)
 		aniId = GetAniIdSmall();
+	else if (level == MARIO_LEVEL_TANUKI)
+		aniId = GetAniIdTanuki();
 
 	animations->Get(aniId)->Render(x, y);
-
-	//RenderBoundingBox();
-
 	DebugOutTitle(L"Coins: %d", kick_start);
 }
 
@@ -527,7 +613,24 @@ void CMario::GetBoundingBox(float &left, float &top, float &right, float &bottom
 			bottom = top + MARIO_BIG_BBOX_HEIGHT;
 		}
 	}
-	else
+	else if (level == MARIO_LEVEL_TANUKI)
+	{
+		if (isSitting)
+		{
+			left = x - MARIO_BIG_SITTING_BBOX_WIDTH / 2;
+			top = y - MARIO_BIG_SITTING_BBOX_HEIGHT / 2;
+			right = left + MARIO_BIG_SITTING_BBOX_WIDTH;
+			bottom = top + MARIO_BIG_SITTING_BBOX_HEIGHT;
+		}
+		else
+		{
+			left = x - MARIO_TANUKI_BBOX_WIDTH / 2;
+			top = y - MARIO_TANUKI_BBOX_HEIGHT / 2;
+			right = left + MARIO_TANUKI_BBOX_WIDTH;
+			bottom = top + MARIO_TANUKI_BBOX_HEIGHT;
+		}
+	}
+	else if(level == MARIO_LEVEL_SMALL)
 	{
 		left = x - MARIO_SMALL_BBOX_WIDTH/2;
 		top = y - MARIO_SMALL_BBOX_HEIGHT/2;
@@ -538,11 +641,27 @@ void CMario::GetBoundingBox(float &left, float &top, float &right, float &bottom
 
 void CMario::SetLevel(int l)
 {
-	// Adjust position to avoid falling off platform
-	if (this->level == MARIO_LEVEL_SMALL)
-	{
-		y -= (MARIO_BIG_BBOX_HEIGHT - MARIO_SMALL_BBOX_HEIGHT) / 2;
-	}
+	int oldHeight, newHeight;
+
+	// Lấy chiều cao cũ
+	if (level == MARIO_LEVEL_SMALL)
+		oldHeight = MARIO_SMALL_BBOX_HEIGHT;
+	else if (level == MARIO_LEVEL_TANUKI)
+		oldHeight = MARIO_TANUKI_BBOX_HEIGHT;
+	else // Mặc định BIG
+		oldHeight = MARIO_BIG_BBOX_HEIGHT;
+
+	// Lấy chiều cao mới
+	if (l == MARIO_LEVEL_SMALL)
+		newHeight = MARIO_SMALL_BBOX_HEIGHT;
+	else if (l == MARIO_LEVEL_TANUKI)
+		newHeight = MARIO_TANUKI_BBOX_HEIGHT;
+	else // Mặc định BIG
+		newHeight = MARIO_BIG_BBOX_HEIGHT;
+
+	// Điều chỉnh y để không rơi xuyên nền
+	y -= (newHeight - oldHeight) / 2.0f;
+
 	level = l;
 }
 

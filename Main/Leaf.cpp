@@ -56,7 +56,6 @@ void CLeaf::OnCollisionWith(LPCOLLISIONEVENT e)
 	{
 		vy = 0;
 		vx = 0; // Dừng di chuyển ngang
-		SetState(LEAF_STATE_GROUNDED);
 	}
 	else if (e->nx != 0) // Va chạm ngang (tường)
 	{
@@ -80,36 +79,17 @@ void CLeaf::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	}
 	else if (state == LEAF_STATE_FALLING)
 	{
+		vy += LEAF_GRAVITY * dt;
+
+		if (vy > 0.05f) vy = 0.05f; // Giới hạn tốc độ rơi
+
 		ULONGLONG now = GetTickCount64();
-		float t = (float)(now - sway_start) / 1000.0f;
+		float sway_phase = (float)(now - sway_start) / LEAF_SWAY_PERIOD;
+		float amplitude = 32.0f;
+		float sin_value = sin(2 * 3.14159f * sway_phase);
 
-		float frequency = 1.0f / (LEAF_SWAY_PERIOD / 1000.0f); // Hz
-		float omega = 2 * 3.14159f * frequency;
-
-		float amplitudeX = 36.0f;
-		float stepAmount = 8.0f; // mỗi lần rìa xong thì rơi xuống thêm 8px
-
-		// Dao động X theo sin
-		float sin_val = sin(omega * t);
-		x = originalX + amplitudeX * sin_val;
-
-		bool hasStepped = false;
-		float stepY = 0.0f;
-		// Phát hiện chạm rìa biên độ và chỉ rơi xuống một lần mỗi lần chạm
-		if ((sin_val >= 0.99f || sin_val <= -0.99f) && !hasStepped)
-		{
-			stepY += stepAmount;
-			hasStepped = true; // tránh rơi nhiều lần khi sin vẫn ở đỉnh
-		}
-		else if (abs(sin_val) < 0.9f) // reset lại cờ khi rời khỏi rìa
-		{
-			hasStepped = false;
-		}
-
-		y = startY + stepY;
-
-		// Cập nhật hướng
-		walkingDirection = (cos(omega * t) >= 0) ? 1 : -1;
+		x = originalX + amplitude * sin_value;
+		walkingDirection = (sin_value > 0) ? 1 : -1;
 	}
 	else if (state == LEAF_STATE_GROUNDED)
 	{
