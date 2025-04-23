@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "GameObject.h"
 #include "Koopa.h"
 #include "Animation.h"
@@ -38,6 +38,8 @@
 
 #define MARIO_STATE_KICK_RIGHT		700
 #define MARIO_STATE_KICK_LEFT		701
+
+#define MARIO_STATE_TRANSFORM_TANUKI	800
 
 #pragma region ANIMATION_ID
 
@@ -121,6 +123,7 @@
 #define ID_ANI_TANUKI_RUNSHELLRIGHT	2450	
 #define ID_ANI_TANUKI_RUNSHELLLEFT	2451	
 
+#define ID_ANI_TRANSFORM_TANUKI		2511
 #pragma endregion
 
 
@@ -160,7 +163,13 @@ class CMario : public CGameObject
 	int untouchable; 
 	ULONGLONG untouchable_start;
 	ULONGLONG kick_start;
+	ULONGLONG transform_start = 0;
 	BOOLEAN isOnPlatform;
+	
+	bool isTransforming = false;
+	bool finishTransforming = false;
+	int transform_from = -1;
+	int transform_to = -1;
 	int coin; 
 
 	void OnCollisionWithGoomba(LPCOLLISIONEVENT e);
@@ -180,7 +189,7 @@ public:
 	CKoopa* heldKoopa = nullptr;
 	CMario(float x, float y) : CGameObject(x, y)
 	{
-		__instance = this; // G�n instance
+		__instance = this; // Gán instance
 		isSitting = false;
 		maxVx = 0.0f;
 		ax = 0.0f;

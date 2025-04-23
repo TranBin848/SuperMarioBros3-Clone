@@ -21,6 +21,17 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 
 	if (abs(vx) > abs(maxVx)) vx = maxVx;
 
+	if (isTransforming)
+	{
+		if (GetTickCount64() - transform_start >= 500)
+		{
+			isTransforming = false;
+			finishTransforming = true;
+			SetLevel(transform_to);
+		}
+		return;
+	}
+
 	if (isHolding && heldKoopa != nullptr)
 	{
 		LPGAME game = CGame::GetInstance();
@@ -485,16 +496,19 @@ void CMario::Render()
 {
 	CAnimations* animations = CAnimations::GetInstance();
 	int aniId = -1;
-
-	if (state == MARIO_STATE_DIE)
-		aniId = ID_ANI_MARIO_DIE;
-	else if (level == MARIO_LEVEL_BIG)
-		aniId = GetAniIdBig();
-	else if (level == MARIO_LEVEL_SMALL)
-		aniId = GetAniIdSmall();
-	else if (level == MARIO_LEVEL_TANUKI)
-		aniId = GetAniIdTanuki();
-
+	
+	
+		if (state == MARIO_STATE_DIE)
+			aniId = ID_ANI_MARIO_DIE;
+		else if (isTransforming)
+			aniId = ID_ANI_TRANSFORM_TANUKI;
+		else if (level == MARIO_LEVEL_BIG)
+			aniId = GetAniIdBig();
+		else if (level == MARIO_LEVEL_SMALL)
+			aniId = GetAniIdSmall();
+		else if (level == MARIO_LEVEL_TANUKI)
+			aniId = GetAniIdTanuki();
+	
 	animations->Get(aniId)->Render(x, y);
 	DebugOutTitle(L"Coins: %d", kick_start);
 }
@@ -641,6 +655,16 @@ void CMario::GetBoundingBox(float &left, float &top, float &right, float &bottom
 
 void CMario::SetLevel(int l)
 {
+	
+	if (level == MARIO_LEVEL_BIG && l == MARIO_LEVEL_TANUKI && !finishTransforming)
+	{
+		isTransforming = true;
+		transform_start = GetTickCount64();
+		transform_from = level;
+		transform_to = l;
+		return;
+	}
+	finishTransforming = false;
 	int oldHeight, newHeight;
 
 	// Lấy chiều cao cũ
