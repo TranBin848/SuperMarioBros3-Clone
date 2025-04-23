@@ -6,6 +6,8 @@
 
 #include "Goomba.h"
 #include "Koopa.h"
+#include "VenusFire.h"
+#include "Fire.h"
 
 #include "Coin.h"
 #include "Portal.h"
@@ -17,11 +19,6 @@
 CMario* CMario::__instance = nullptr;
 void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 {
-	vy += ay * dt;
-	vx += ax * dt;
-
-	if (abs(vx) > abs(maxVx)) vx = maxVx;
-
 	if (isTransforming)
 	{
 		if (GetTickCount64() - transform_start >= 1000)
@@ -32,6 +29,13 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 		}
 		return;
 	}
+
+	vy += ay * dt;
+	vx += ax * dt;
+
+	if (abs(vx) > abs(maxVx)) vx = maxVx;
+
+	
 
 	if (isHolding && heldKoopa != nullptr)
 	{
@@ -119,6 +123,8 @@ void CMario::OnCollisionWith(LPCOLLISIONEVENT e)
 		OnCollisionWithKoopa(e);
 	else if (dynamic_cast<CLeaf*>(e->obj))
 		OnCollisionWithLeaf(e);
+	else if (dynamic_cast<CVenusFire*>(e->obj) || dynamic_cast<CFire*>(e->obj))
+		OnCollisionWithDmgObject(e);
 }
 
 void CMario::OnCollisionWithKoopa(LPCOLLISIONEVENT e) {
@@ -168,7 +174,25 @@ void CMario::OnCollisionWithKoopa(LPCOLLISIONEVENT e) {
 					koopa->SetSpeed(KOOPA_ACTIVATE_SPEED, 0); // Koopa bay phải
 				}
 			}
-			
+		}
+		if (untouchable == 0)
+		{
+			if (koopa->GetState() != KOOPA_STATE_SHELL)
+			{
+				if (level == MARIO_LEVEL_BIG)
+				{
+					SetLevel(MARIO_LEVEL_SMALL);
+				}
+				else if (level == MARIO_LEVEL_TANUKI)
+				{
+					SetLevel(MARIO_LEVEL_BIG);
+				}
+				else
+				{
+					DebugOut(L">>> Mario DIE >>> \n");
+					SetState(MARIO_STATE_DIE);
+				}
+			}
 		}
 	}
 }
@@ -192,10 +216,13 @@ void CMario::OnCollisionWithGoomba(LPCOLLISIONEVENT e)
 		{
 			if (goomba->GetState() != GOOMBA_STATE_DIE)
 			{
-				if (level > MARIO_LEVEL_SMALL)
+				if (level == MARIO_LEVEL_BIG)
 				{
-					level = MARIO_LEVEL_SMALL;
-					StartUntouchable();
+					SetLevel(MARIO_LEVEL_SMALL);
+				}
+				else if (level == MARIO_LEVEL_TANUKI)
+				{
+					SetLevel(MARIO_LEVEL_BIG);
 				}
 				else
 				{
@@ -248,6 +275,24 @@ void CMario::OnCollisionWithLeaf(LPCOLLISIONEVENT e)
 	}
 }
 
+void CMario::OnCollisionWithDmgObject(LPCOLLISIONEVENT e) {
+	if (untouchable == 0)
+	{
+		if (level == MARIO_LEVEL_BIG)
+		{
+			SetLevel(MARIO_LEVEL_SMALL);
+		}
+		else if (level == MARIO_LEVEL_TANUKI)
+		{
+			SetLevel(MARIO_LEVEL_BIG);
+		}
+		else
+		{
+			DebugOut(L">>> Mario DIE >>> \n");
+			SetState(MARIO_STATE_DIE);
+		}
+	}
+}
 
 void CMario::OnCollisionWithPortal(LPCOLLISIONEVENT e)
 {
@@ -506,6 +551,16 @@ int CMario::GetAniIdTanuki() {
 
 void CMario::Render()
 {
+	if (untouchable)
+	{
+		// Cứ mỗi 100ms thì chớp tắt 1 lần (render 1 lần, bỏ qua 1 lần)
+		if ((GetTickCount64() / 100) % 2 == 0)
+		{
+			// Không render gì cả
+			return;
+		}
+	}
+
 	CAnimations* animations = CAnimations::GetInstance();
 	int aniId = -1;
 	
@@ -699,6 +754,9 @@ void CMario::SetLevel(int l)
 		transform_start = GetTickCount64();
 		transform_from = level;
 		transform_to = l;
+
+		StartUntouchable();
+
 		return;
 	}
 	if (level == MARIO_LEVEL_BIG && l == MARIO_LEVEL_TANUKI && !finishTransforming)
@@ -715,6 +773,9 @@ void CMario::SetLevel(int l)
 		transform_start = GetTickCount64();
 		transform_from = level;
 		transform_to = l;
+
+		StartUntouchable();
+
 		return;
 	}
 	finishTransforming = false;
