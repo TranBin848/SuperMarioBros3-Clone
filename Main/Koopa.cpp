@@ -57,7 +57,6 @@ void CKoopa::OnCollisionWith(LPCOLLISIONEVENT e)
 	{
 		vx = -vx;
 	}
-	
 }
 void CKoopa::OnCollisionWithItemBox(LPCOLLISIONEVENT e) {
 	CItemBox* itb = dynamic_cast<CItemBox*>(e->obj);

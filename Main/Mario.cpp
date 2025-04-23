@@ -11,6 +11,7 @@
 #include "Portal.h"
 #include "ItemBox.h"
 #include "Giant.h"
+#include "Leaf.h"
 #include "Collision.h"
 
 CMario* CMario::__instance = nullptr;
@@ -116,6 +117,8 @@ void CMario::OnCollisionWith(LPCOLLISIONEVENT e)
 		OnCollisonWithGiant(e);
 	else if (dynamic_cast<CKoopa*>(e->obj))
 		OnCollisionWithKoopa(e);
+	else if (dynamic_cast<CLeaf*>(e->obj))
+		OnCollisionWithLeaf(e);
 }
 
 void CMario::OnCollisionWithKoopa(LPCOLLISIONEVENT e) {
@@ -230,12 +233,21 @@ void CMario::OnCollisonWithGiant(LPCOLLISIONEVENT e)
 	CGiant* g = dynamic_cast<CGiant*>(e->obj);
 	if (g->GetState() == GIANT_STATE_ACTIVATE)
 	{
-		float currentY = y;
-		level = MARIO_LEVEL_BIG;
-		y = currentY - MARIO_BIG_BBOX_HEIGHT;
+		SetLevel(MARIO_LEVEL_BIG);
 		e->obj->Delete();
 	}
 }
+
+void CMario::OnCollisionWithLeaf(LPCOLLISIONEVENT e)
+{
+	CLeaf* l = dynamic_cast<CLeaf*>(e->obj);
+	if (l->GetState() == LEAF_STATE_FALLING || l -> GetState() == LEAF_STATE_RISING)
+	{
+		e->obj->Delete();
+		SetLevel(MARIO_LEVEL_TANUKI);
+	}
+}
+
 
 void CMario::OnCollisionWithPortal(LPCOLLISIONEVENT e)
 {
@@ -507,6 +519,10 @@ void CMario::Render()
 			{
 				aniId = ID_ANI_TRANSFORM_TANUKI;
 			}
+			else if (transform_from == MARIO_LEVEL_TANUKI && transform_to == MARIO_LEVEL_BIG)
+			{
+				aniId = ID_ANI_TRANSFORM_TANUKI;
+			}
 			else if (transform_from == MARIO_LEVEL_SMALL && transform_to == MARIO_LEVEL_BIG)
 			{
 				aniId = (nx > 0) ? ID_ANI_TRANSFORM_BIG_RIGHT : ID_ANI_TRANSFORM_BIG_LEFT;
@@ -686,6 +702,14 @@ void CMario::SetLevel(int l)
 		return;
 	}
 	if (level == MARIO_LEVEL_BIG && l == MARIO_LEVEL_TANUKI && !finishTransforming)
+	{
+		isTransforming = true;
+		transform_start = GetTickCount64();
+		transform_from = level;
+		transform_to = l;
+		return;
+	}
+	if (level == MARIO_LEVEL_TANUKI && l == MARIO_LEVEL_BIG && !finishTransforming)
 	{
 		isTransforming = true;
 		transform_start = GetTickCount64();

@@ -57,7 +57,7 @@ void CItemBox::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
                                     newItem->SetState(GIANT_STATE_ACTIVATE);
                                 }
                             }
-                            else if (level == MARIO_LEVEL_BIG)
+                            else if (level == MARIO_LEVEL_BIG || level == MARIO_LEVEL_TANUKI)
                             {
                                 newItem = new CLeaf(x, y);
                                 if (newItem->GetState() == LEAF_STATE_IDLE)
