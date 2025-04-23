@@ -23,7 +23,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 
 	if (isTransforming)
 	{
-		if (GetTickCount64() - transform_start >= 500)
+		if (GetTickCount64() - transform_start >= 1000)
 		{
 			isTransforming = false;
 			finishTransforming = true;
@@ -501,7 +501,21 @@ void CMario::Render()
 		if (state == MARIO_STATE_DIE)
 			aniId = ID_ANI_MARIO_DIE;
 		else if (isTransforming)
-			aniId = ID_ANI_TRANSFORM_TANUKI;
+		{
+			// Giai đoạn biến hình: chọn anim theo transform type
+			if (transform_from == MARIO_LEVEL_BIG && transform_to == MARIO_LEVEL_TANUKI)
+			{
+				aniId = ID_ANI_TRANSFORM_TANUKI;
+			}
+			else if (transform_from == MARIO_LEVEL_SMALL && transform_to == MARIO_LEVEL_BIG)
+			{
+				aniId = (nx > 0) ? ID_ANI_TRANSFORM_BIG_RIGHT : ID_ANI_TRANSFORM_BIG_LEFT;
+			}
+			else if (transform_from == MARIO_LEVEL_BIG && transform_to == MARIO_LEVEL_SMALL)
+			{
+				aniId = (nx > 0) ? ID_ANI_TRANSFORM_SMALL_RIGHT : ID_ANI_TRANSFORM_SMALL_LEFT;
+			}
+		}
 		else if (level == MARIO_LEVEL_BIG)
 			aniId = GetAniIdBig();
 		else if (level == MARIO_LEVEL_SMALL)
@@ -655,7 +669,22 @@ void CMario::GetBoundingBox(float &left, float &top, float &right, float &bottom
 
 void CMario::SetLevel(int l)
 {
-	
+	if (level == MARIO_LEVEL_SMALL && l == MARIO_LEVEL_BIG && !finishTransforming)
+	{
+		isTransforming = true;
+		transform_start = GetTickCount64();
+		transform_from = level;
+		transform_to = l;
+		return;
+	}
+	if (level == MARIO_LEVEL_BIG && l == MARIO_LEVEL_SMALL && !finishTransforming)
+	{
+		isTransforming = true;
+		transform_start = GetTickCount64();
+		transform_from = level;
+		transform_to = l;
+		return;
+	}
 	if (level == MARIO_LEVEL_BIG && l == MARIO_LEVEL_TANUKI && !finishTransforming)
 	{
 		isTransforming = true;
