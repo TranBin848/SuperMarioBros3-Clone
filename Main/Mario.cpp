@@ -595,7 +595,6 @@ void CMario::Render()
 			aniId = GetAniIdTanuki();
 	
 	animations->Get(aniId)->Render(x, y);
-	DebugOutTitle(L"Coins: %d", kick_start);
 }
 
 void CMario::SetState(int state)

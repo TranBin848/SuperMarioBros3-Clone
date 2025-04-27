@@ -5,7 +5,7 @@
 void CVenusFire::GetBoundingBox(float& l, float& t, float& r, float& b)
 {
 	l = x - VENUSFIRE_BBOX_WIDTH / 2;
-	t = y - VENUSFIRE_BBOX_HEIGHT / 2;
+	t = y - VENUSFIRE_BBOX_HEIGHT / 2 + 5.0f;
 	r = l + VENUSFIRE_BBOX_WIDTH;
 	b = t + VENUSFIRE_BBOX_HEIGHT;
 }
@@ -26,10 +26,12 @@ void CVenusFire::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	CGameObject::Update(dt, coObjects);
 
 	float marioX, marioY;
-	CMario::GetInstance()->GetPosition(marioX, marioY);
+	marioX = CMario::GetInstance()->GetX();
+	marioY = CMario::GetInstance()->GetY();
 	float dx = abs(marioX - x);
-
-	if (1/*dx <= 150.0f*/)
+	bool inRange = (dx <= 230.0f);
+	DebugOutTitle(L"Khoang cach: %f", dx);
+	if (inRange)
 	{
 		if (isWaiting)
 		{
@@ -42,13 +44,19 @@ void CVenusFire::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			// Đang chờ, không làm gì cả
 			return;
 		}
-
+		else {
+			if (dx < 42.0f)
+			{
+				if (y == originalY) return;
+			}
+		}
 		if (isGoingUp)
 		{
+			state = VENUSFIRE_STATE_ARISE;
 			y -= VENUSFIRE_ARISE_SPEED * dt;
-			if (y <= originalY - VENUSFIRE_BBOX_HEIGHT)
+			if (y <= originalY - VENUSFIRE_HEIGHT)
 			{
-				y = originalY - VENUSFIRE_BBOX_HEIGHT;
+				y = originalY - VENUSFIRE_HEIGHT;
 
 				if (!isAtTop)
 				{
@@ -108,7 +116,7 @@ void CVenusFire::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 						hasShot = true;
 						isWaiting = true;
 						wait_start = GetTickCount64();
-						isAtTop = false; // reset để lần sau lên lại
+						isAtTop = false; 
 					}
 				}
 			}
@@ -125,10 +133,28 @@ void CVenusFire::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			}
 		}
 	}
+	else
+	{
+		if (dx > 230.0f)
+		{
+			state = VENUSFIRE_STATE_ARISE;
+			y += VENUSFIRE_ARISE_SPEED * dt;
+			if (y >= originalY)
+			{
+				isGoingUp = false;
+				y = originalY;
+				isWaiting = true;
+				wait_start = GetTickCount64();
+			}
+			hasShot = true;
+			isWaiting = true;
+			wait_start = GetTickCount64();
+			isAtTop = false; // reset để lần sau lên lại
+		}
+	}
 
 	CCollision::GetInstance()->Process(this, dt, coObjects);
 }
-
 
 void CVenusFire::Render()
 {
@@ -146,22 +172,6 @@ void CVenusFire::Render()
 		if (marioX > x) aniId += 4;
 	}
 	CAnimations::GetInstance()->Get(aniId)->Render(x, y);
+	RenderBoundingBox();
 }
 
-//void CGoomba::SetState(int state)
-//{
-//	CGameObject::SetState(state);
-//	switch (state)
-//	{
-//	case GOOMBA_STATE_DIE:
-//		die_start = GetTickCount64();
-//		y += (GOOMBA_BBOX_HEIGHT - GOOMBA_BBOX_HEIGHT_DIE) / 2;
-//		vx = 0;
-//		vy = 0;
-//		ay = 0;
-//		break;
-//	case GOOMBA_STATE_WALKING:
-//		vx = -GOOMBA_WALKING_SPEED;
-//		break;
-//	}
-//}
