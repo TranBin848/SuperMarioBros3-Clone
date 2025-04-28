@@ -1,9 +1,9 @@
 ﻿#pragma once
 #include "GameObject.h"
 #include "Koopa.h"
+#include "EnemyActivator.h"
 #include "Animation.h"
 #include "Animations.h"
-
 #include "debug.h"
 
 #define MARIO_WALKING_SPEED		0.1f
@@ -182,7 +182,6 @@ class CMario : public CGameObject
 	void OnCollisonWithGiant(LPCOLLISIONEVENT e);
 	void OnCollisionWithKoopa(LPCOLLISIONEVENT e);
 	void OnCollisionWithLeaf(LPCOLLISIONEVENT e);
-	void OnCollisionWithVenusTree(LPCOLLISIONEVENT e);
 	void OnCollisionWithDmgObject(LPCOLLISIONEVENT e);
 
 
@@ -201,7 +200,13 @@ public:
 		maxVx = 0.0f;
 		ax = 0.0f;
 		ay = MARIO_GRAVITY; 
-
+		LPGAMEOBJECT ea = new CEnemyActivator();
+		ea->SetPosition(x + 100.0f, y);
+		CPlayScene* scene = dynamic_cast<CPlayScene*>(CGame::GetInstance()->GetCurrentScene());
+		if (scene)
+		{
+			scene->AddObject(ea);
+		}
 		level = MARIO_LEVEL_BIG;
 		untouchable = 0;
 		untouchable_start = -1;

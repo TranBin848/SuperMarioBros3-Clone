@@ -15,8 +15,11 @@
 #include "Leaf.h"
 #include "VenusFire.h"
 #include "Koopa.h"
+#include "Goomba.h"
 #include "Obstacle.h"
+#include "Mario.h"
 #include "SampleKeyEventHandler.h"
+
 
 using namespace std;
 
