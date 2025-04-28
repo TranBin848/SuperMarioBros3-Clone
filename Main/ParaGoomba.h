@@ -1,0 +1,50 @@
+﻿#pragma once
+#include "GameObject.h"
+
+#define GOOMBA_GRAVITY 0.001f
+#define GOOMBA_WALKING_SPEED 0.05f
+
+#define GOOMBA_BBOX_WIDTH			16
+#define GOOMBA_BBOX_HEIGHT_NOWING	20
+#define GOOMBA_BBOX_HEIGHT_WING		22
+#define GOOMBA_BBOX_HEIGHT_DIE		6
+
+#define GOOMBA_DIE_TIMEOUT 500
+
+#define GOOMBA_STATE_WALKING_NOWING		100
+#define GOOMBA_STATE_WALKING_FLAPWING	200
+#define GOOMBA_STATE_FLY				300
+#define GOOMBA_STATE_DIE				400
+
+#define ID_ANI_PARAGOOMBA_WALKING 5100
+#define ID_ANI_GOOMBA_WALK_FLAPWING_RIGHT	5101
+#define ID_ANI_GOOMBA_WALK_FLAPWING_LEFT	5102
+#define ID_ANI_GOOMBA_FLYRIGHT				5103
+#define ID_ANI_GOOMBA_FLYLEFT				5104
+#define ID_ANI_PARAGOOMBA_DIE 5105
+
+class CParaGoomba : public CGameObject
+{
+protected:
+	float ax;
+	float ay;
+
+	ULONGLONG die_start;
+	ULONGLONG nextStateTime; // thời điểm để đổi state tiếp theo
+	ULONGLONG lastJumpTime;
+	DWORD stateDelay;        // thời gian delay giữa các state
+
+	virtual void GetBoundingBox(float& left, float& top, float& right, float& bottom);
+	virtual void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
+	virtual void Render();
+
+	virtual int IsCollidable() { return 1; };
+	virtual int IsBlocking() { return 0; }
+	virtual void OnNoCollision(DWORD dt);
+
+	virtual void OnCollisionWith(LPCOLLISIONEVENT e);
+
+public:
+	CParaGoomba(float x, float y);
+	virtual void SetState(int state);
+};

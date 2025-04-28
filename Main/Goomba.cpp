@@ -49,6 +49,7 @@ void CGoomba::OnCollisionWith(LPCOLLISIONEVENT e)
 
 void CGoomba::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 {
+	if (!isActivated) return;
 	CGameObject::Update(dt, coObjects);
 
 	vy += ay * dt;
@@ -73,7 +74,7 @@ void CGoomba::Render()
 	}
 
 	CAnimations::GetInstance()->Get(aniId)->Render(x,y);
-	RenderBoundingBox();
+	/*RenderBoundingBox();*/
 }
 
 void CGoomba::SetState(int state)

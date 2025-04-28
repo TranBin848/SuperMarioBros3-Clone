@@ -13,6 +13,8 @@ datas\leaf.txt
 datas\venusfire.txt
 datas\fire.txt
 datas\koopa.txt
+datas\goomba.txt
+datas\paragoomba.txt	
 #
 [OBJECTS]
 # type	x	y	extra_settings per object type
@@ -54,10 +56,15 @@ datas\koopa.txt
 1	370	133	31	47	80030
 	
 # MARIO
-0	500	30
+0	850	30
 
 #KOOPA
-10	570	112	
+10	595	112	
+
+#GOOMBA
+2	233	150
+12	890	130
+2	545	150
 
 #ITEMBOX
 7	180	102	1

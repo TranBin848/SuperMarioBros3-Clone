@@ -23,7 +23,7 @@ void CEnemyActivator::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
         if (collision)
         {
-            obj->Activate();
+            /*obj->Activate();*/
         }
     }
 }
