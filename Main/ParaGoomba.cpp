@@ -1,4 +1,5 @@
 ﻿#include "ParaGoomba.h"
+#include "Mario.h"
 
 CParaGoomba::CParaGoomba(float x, float y) :CGameObject(x, y)
 {
@@ -8,31 +9,38 @@ CParaGoomba::CParaGoomba(float x, float y) :CGameObject(x, y)
 	vx = GOOMBA_WALKING_SPEED; // Mặc định đi sang trái
 	nextStateTime = GetTickCount64(); // Thời gian để chuyển trạng thái tiếp theo
 	lastJumpTime = GetTickCount64();
-	SetState(GOOMBA_STATE_WALKING_NOWING);
+	SetState(PARAGOOMBA_STATE_WALKING_NOWING);
 }
 
 void CParaGoomba::GetBoundingBox(float& left, float& top, float& right, float& bottom)
 {
-	if (state == GOOMBA_STATE_DIE)
+	if (state == PARAGOOMBA_STATE_DIE)
 	{
 		left = x - GOOMBA_BBOX_WIDTH / 2;
 		top = y - GOOMBA_BBOX_HEIGHT_DIE / 2;
 		right = left + GOOMBA_BBOX_WIDTH;
 		bottom = top + GOOMBA_BBOX_HEIGHT_DIE;
 	}
-	else if (state == GOOMBA_STATE_WALKING_FLAPWING || state == GOOMBA_STATE_FLY)
+	else if (state == PARAGOOMBA_STATE_WALKING_FLAPWING || state == PARAGOOMBA_STATE_FLY)
 	{
 		left = x - GOOMBA_BBOX_WIDTH / 2;
 		top = y - GOOMBA_BBOX_HEIGHT_WING + GOOMBA_BBOX_HEIGHT_NOWING / 2;
 		right = left + GOOMBA_BBOX_WIDTH;
 		bottom = top + GOOMBA_BBOX_HEIGHT_WING;
 	}
-	else
+	else if(state == PARAGOOMBA_STATE_WALKING_NOWING)
 	{
 		left = x - GOOMBA_BBOX_WIDTH / 2;
 		top = y - GOOMBA_BBOX_HEIGHT_NOWING / 2;
 		right = left + GOOMBA_BBOX_WIDTH;
 		bottom = top + GOOMBA_BBOX_HEIGHT_NOWING;
+	}
+	else
+	{
+		left = x - GOOMBA_BBOX_WIDTH / 2;
+		top = y - GOOMBA_BBOX_HEIGHT_NORMAL / 2;
+		right = left + GOOMBA_BBOX_WIDTH;
+		bottom = top + GOOMBA_BBOX_HEIGHT_NORMAL;
 	}
 }
 
@@ -60,26 +68,28 @@ void CParaGoomba::OnCollisionWith(LPCOLLISIONEVENT e)
 void CParaGoomba::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
 	/*if (!isActivated) return;*/
+	float marioX, marioY;
+	CMario::GetInstance()->GetPosition(marioX, marioY);
 	CGameObject::Update(dt, coObjects);
 	ULONGLONG now = GetTickCount64();
 	if (now - nextStateTime >= stateDelay)
 	{
 		switch (state)
 		{
-		case GOOMBA_STATE_WALKING_FLAPWING:
-			SetState(GOOMBA_STATE_FLY);
+		case PARAGOOMBA_STATE_WALKING_FLAPWING:
+			SetState(PARAGOOMBA_STATE_FLY);
 			break;
 
-		case GOOMBA_STATE_FLY:
-			SetState(GOOMBA_STATE_WALKING_NOWING);
+		case PARAGOOMBA_STATE_FLY:
+			SetState(PARAGOOMBA_STATE_WALKING_NOWING);
 			break;
 
-		case GOOMBA_STATE_WALKING_NOWING:
-			SetState(GOOMBA_STATE_WALKING_FLAPWING);
+		case PARAGOOMBA_STATE_WALKING_NOWING:
+			SetState(PARAGOOMBA_STATE_WALKING_FLAPWING);
 			break;
 		}
 	}
-	if (state == GOOMBA_STATE_WALKING_FLAPWING && vy == 0)
+	if (state == PARAGOOMBA_STATE_WALKING_FLAPWING && vy == 0)
 	{
 		if (now - lastJumpTime > 150)
 		{
@@ -92,42 +102,51 @@ void CParaGoomba::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	vx += ax * dt;
 
 	// Xử lý chết
-	if ((state == GOOMBA_STATE_DIE) && (GetTickCount64() - die_start > GOOMBA_DIE_TIMEOUT))
+	if ((state == PARAGOOMBA_STATE_DIE) && (GetTickCount64() - die_start > GOOMBA_DIE_TIMEOUT))
 	{
 		isDeleted = true;
 		return;
 	}
+	if (abs(marioX - x) > 35.0f) // Tránh trường hợp đứng gần quá mà vẫn flip hướng
+	{
+		if (marioX > x)
+			vx = abs(vx); // Đi sang phải
+		else
+			vx = -abs(vx); // Đi sang trái
+	}
 	CCollision::GetInstance()->Process(this, dt, coObjects);
 }
-
 
 void CParaGoomba::Render()
 {
 	int aniId = ID_ANI_PARAGOOMBA_WALKING;
 
-	if (state == GOOMBA_STATE_DIE)
+	if (state == PARAGOOMBA_STATE_DIE)
 	{
 		aniId = ID_ANI_PARAGOOMBA_DIE;
 	}
-	else if (state == GOOMBA_STATE_WALKING_NOWING)
+	else if (state == PARAGOOMBA_STATE_WALKING_NOWING)
 	{
 		aniId = ID_ANI_PARAGOOMBA_WALKING;
 	}
-	else if (state == GOOMBA_STATE_WALKING_FLAPWING)
+	else if (state == PARAGOOMBA_STATE_WALKING_FLAPWING)
 	{
 		if (vx > 0)
 			aniId = ID_ANI_GOOMBA_WALK_FLAPWING_RIGHT;
 		else
 			aniId = ID_ANI_GOOMBA_WALK_FLAPWING_LEFT;
 	}
-	else if (state == GOOMBA_STATE_FLY)
+	else if (state == PARAGOOMBA_STATE_FLY)
 	{
 		if (vx > 0)
 			aniId = ID_ANI_GOOMBA_FLYRIGHT;
 		else
 			aniId = ID_ANI_GOOMBA_FLYLEFT;
 	}
-
+	else if (state == PARAGOOMBA_STATE_NORMAL_WALKING)
+	{
+		aniId = ID_ANI_GOOMBA_NORMALWALK;
+	}
 	CAnimations::GetInstance()->Get(aniId)->Render(x, y);
 	RenderBoundingBox();
 }
@@ -138,7 +157,7 @@ void CParaGoomba::SetState(int state)
 
 	switch (state)
 	{
-	case GOOMBA_STATE_DIE:
+	case PARAGOOMBA_STATE_DIE:
 		die_start = GetTickCount64();
 		vx = 0;
 		vy = 0;
@@ -146,14 +165,19 @@ void CParaGoomba::SetState(int state)
 		ay = 0;
 		break;
 
-	case GOOMBA_STATE_WALKING_NOWING:
+	case PARAGOOMBA_STATE_WALKING_NOWING:
 		vx = -GOOMBA_WALKING_SPEED;
 		ay = GOOMBA_GRAVITY;
 		stateDelay = 600; 
 		nextStateTime = GetTickCount64();
 		break;
 
-	case GOOMBA_STATE_WALKING_FLAPWING:
+	case PARAGOOMBA_STATE_NORMAL_WALKING:
+		vx = -GOOMBA_WALKING_SPEED;
+		ay = GOOMBA_GRAVITY;
+		break;
+
+	case PARAGOOMBA_STATE_WALKING_FLAPWING:
 		vx = -GOOMBA_WALKING_SPEED;
 		ay = GOOMBA_GRAVITY;
 		stateDelay = 900;  
@@ -161,7 +185,7 @@ void CParaGoomba::SetState(int state)
 		lastJumpTime = GetTickCount64();
 		break;
 
-	case GOOMBA_STATE_FLY:
+	case PARAGOOMBA_STATE_FLY:
 		vy = -0.35f; // Bay vút lên
 		ay = GOOMBA_GRAVITY;
 		stateDelay = 700; 
