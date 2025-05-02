@@ -128,7 +128,11 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 		break;
 	case OBJECT_TYPE_GOOMBA: obj = new CGoomba(x,y); break;
 	case OBJECT_TYPE_PARAGOOMBA: obj = new CParaGoomba(x, y); break;
-	case OBJECT_TYPE_KOOPA: obj = new CKoopa(x,y); break;
+	case OBJECT_TYPE_KOOPA:
+	{
+		bool flag = (bool)atof(tokens[3].c_str());
+		obj = new CKoopa(x, y, flag); break;
+	}
 	case OBJECT_TYPE_OBSTACLE:
 	{
 		float cell_width = (float)atof(tokens[3].c_str());

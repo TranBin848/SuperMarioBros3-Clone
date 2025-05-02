@@ -67,7 +67,7 @@ void CParaGoomba::OnCollisionWith(LPCOLLISIONEVENT e)
 
 void CParaGoomba::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
-	/*if (!isActivated) return;*/
+	if (!isActivated) return;
 	float marioX, marioY;
 	CMario::GetInstance()->GetPosition(marioX, marioY);
 	CGameObject::Update(dt, coObjects);

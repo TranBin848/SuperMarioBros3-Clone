@@ -1,6 +1,6 @@
 ﻿#include "Koopa.h"
 #include "ItemBox.h"
-CKoopa::CKoopa(float x, float y) :CGameObject(x, y)
+CKoopa::CKoopa(float x, float y, bool flag) :CGameObject(x, y)
 {
 	sensor = new CKoopaSensor(x, y);
 	sensor->SetOwner(this);
@@ -15,6 +15,7 @@ CKoopa::CKoopa(float x, float y) :CGameObject(x, y)
 	shell_start = 0;
 	return_start = 0;
 	just_activated = false;
+	isGreenKoopa = flag;
 	this->renderLayer = 5;
 	SetState(KOOPA_STATE_WALKING);
 }
@@ -62,7 +63,7 @@ void CKoopa::OnCollisionWithItemBox(LPCOLLISIONEVENT e) {
 	CItemBox* itb = dynamic_cast<CItemBox*>(e->obj);
 	if (!itb) return;
 
-	if (itb->GetState() == ITEMBOX_STATE_IDLE) {
+	if (itb->GetState() == ITEMBOX_STATE_IDLE && state != KOOPA_STATE_WALKING) {
 		// Truyền hướng Mario chạm vào (trái/phải)
 		float marioX = CMario::GetInstance()->GetX();
 		float itemboxX = itb->GetX();
@@ -97,7 +98,7 @@ void CKoopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			}
 
 			// Cập nhật sensor phía trước
-			if (sensor && state == KOOPA_STATE_WALKING)
+			if (sensor && state == KOOPA_STATE_WALKING && !isGreenKoopa)
 			{
 				float sensor_offset_x = (vx > 0 ? KOOPA_BBOX_WIDTH / 2 + 1 : -KOOPA_BBOX_WIDTH / 2 - 1);
 				float sensor_x = x + sensor_offset_x;
@@ -137,17 +138,30 @@ void CKoopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 void CKoopa::Render()
 {
-	int aniId = ID_ANI_KOOPA_WALKING;
+	int aniId = -1;
+	if (!isGreenKoopa)
+		aniId = ID_ANI_KOOPA_WALKING;
+	else
+		aniId = ID_ANI_GRKOOPA_WALKING;
 	if (state == KOOPA_STATE_SHELL)
 	{
-		aniId = ID_ANI_KOOPA_SHELL;
+		if (!isGreenKoopa) 
+			aniId = ID_ANI_KOOPA_SHELL;
+		else 
+			aniId = ID_ANI_GRKOOPA_SHELL;
 	}
 	if (state == KOOPA_STATE_ACTIVATE) {
-		aniId = ID_ANI_KOOPA_ACTIVATE;
+		if (!isGreenKoopa)
+			aniId = ID_ANI_KOOPA_ACTIVATE;
+		else
+			aniId = ID_ANI_GRKOOPA_ACTIVATE;
 	}
 	else if (state == KOOPA_STATE_RETURN)
 	{
-		aniId = ID_ANI_KOOPA_RETURN;
+		if (!isGreenKoopa)
+			aniId = ID_ANI_KOOPA_RETURN;
+		else
+			aniId = ID_ANI_GRKOOPA_RETURN;
 	}
 	if (vx > 0 && state == KOOPA_STATE_WALKING)	aniId += 100;
 	CAnimations::GetInstance()->Get(aniId)->Render(x, y);
