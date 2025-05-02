@@ -48,7 +48,7 @@ void CKoopa::OnCollisionWith(LPCOLLISIONEVENT e)
 {
 	if (!e->obj->IsBlocking()) return;
 	if (dynamic_cast<CKoopa*>(e->obj)) return;
-	else if (dynamic_cast<CItemBox*>(e->obj))
+	else if (dynamic_cast<CItemBox*>(e->obj) && state == KOOPA_STATE_ACTIVATE)
 		OnCollisionWithItemBox(e);
 	if (e->ny != 0)
 	{
@@ -75,7 +75,7 @@ void CKoopa::OnCollisionWithItemBox(LPCOLLISIONEVENT e) {
 }
 void CKoopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
-	if (!isActivated) return;
+	/*if (!isActivated) return;*/
 	if (isBeingHeld)
 	{
 		vx = 0;
@@ -186,23 +186,24 @@ void CKoopa::SetState(int state)
 	switch (state)
 	{
 	case KOOPA_STATE_SHELL:
-		vx = 0;
+		vx = 0;	
 		shell_start = GetTickCount64(); // Ghi lại thời gian vào shell
-		just_activated = false; // Thêm dòng này
+		just_activated = false; 
 		break;
 	case KOOPA_STATE_WALKING:
 		shell_start = 0; // Không cần đếm thời gian nữa
 		vx = -KOOPA_WALKING_SPEED;
-		just_activated = false; // Thêm dòng này
+		just_activated = false; 
 		break;
 	case KOOPA_STATE_ACTIVATE:
 		vx = (vx >= 0) ? KOOPA_ACTIVATE_SPEED : -KOOPA_ACTIVATE_SPEED; // hướng chạy tiếp
-		just_activated = true; // Thêm dòng này
+		y -= 1.0f;
+		just_activated = true; 
 		break;
 	case KOOPA_STATE_RETURN:
 		vx = 0;
 		return_start = GetTickCount64(); // Ghi lại thời điểm bắt đầu return
-		just_activated = false; // Thêm dòng này
+		just_activated = false; 
 		break;
 
 	}

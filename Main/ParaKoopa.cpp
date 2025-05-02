@@ -1,6 +1,6 @@
 ﻿#include "ItemBox.h"
 #include "ParaKoopa.h"
-CParaKoopa::CParaKoopa(float x, float y, bool flag) :CGameObject(x, y)
+CParaKoopa::CParaKoopa(float x, float y) :CGameObject(x, y)
 {
 	this->ax = 0;
 	this->ay = PARAKOOPA_GRAVITY;
@@ -21,12 +21,19 @@ void CParaKoopa::GetBoundingBox(float& left, float& top, float& right, float& bo
 		right = left + PARAKOOPA_BBOX_WIDTH;
 		bottom = top + PARAKOOPA_BBOX_HEIGHT_SHELL;
 	}
-	else
+	else if (state == PARAKOOPA_STATE_WALKING)
 	{
 		left = x - PARAKOOPA_BBOX_WIDTH / 2;
 		top = y - PARAKOOPA_BBOX_HEIGHT / 2;
 		right = left + PARAKOOPA_BBOX_WIDTH;
 		bottom = top + PARAKOOPA_BBOX_HEIGHT;
+	}
+	else
+	{
+		left = x - KOOPA_BBOX_WIDTH / 2;
+		top = y - KOOPA_BBOX_HEIGHT / 2;
+		right = left + KOOPA_BBOX_WIDTH;
+		bottom = top + KOOPA_BBOX_HEIGHT;
 	}
 }
 
@@ -40,10 +47,11 @@ void CParaKoopa::OnCollisionWith(LPCOLLISIONEVENT e)
 {
 	if (!e->obj->IsBlocking()) return;
 	if (dynamic_cast<CParaKoopa*>(e->obj)) return;
-	else if (dynamic_cast<CItemBox*>(e->obj))
+	else if (dynamic_cast<CItemBox*>(e->obj) && state == PARAKOOPA_STATE_ACTIVATE)
 		OnCollisionWithItemBox(e);
 	if (e->ny != 0)
 	{
+		isOnGround = true;
 		vy = 0;
 	}
 	else if (e->nx != 0)
@@ -67,20 +75,19 @@ void CParaKoopa::OnCollisionWithItemBox(LPCOLLISIONEVENT e) {
 }
 void CParaKoopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
-	if (!isActivated) return;
+	/*if (!isActivated) return;*/
 	if (isBeingHeld)
 	{
 		vx = 0;
 		vy = 0;
 		return; // Không update vật lý khi bị cầm
 	}
-
 	else
 	{
-		if (state == PARAKOOPA_STATE_WALKING || state == PARAKOOPA_STATE_ACTIVATE)
+		if (state == PARAKOOPA_STATE_ACTIVATE)
 		{
 			vx += ax * dt;
-			if (state == PARAKOOPA_STATE_ACTIVATE && just_activated)
+			if (just_activated)
 			{
 				just_activated = false; // Đặt lại flag sau frame đầu tiên
 			}
@@ -89,10 +96,25 @@ void CParaKoopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				vy += ay * dt; // Chỉ cập nhật vy từ frame thứ hai trở đi
 			}
 		}
+		else if (state == PARAKOOPA_STATE_WALKING)
+		{
+			vx += ax * dt;
 
+			if (isOnGround)
+			{
+				vy = -PARAKOOPA_JUMP_SPEED; // Nhảy lên
+				isOnGround = false;
+			}
+
+			vy += ay * dt;
+		}
+		else if (state == PARAKOOPA_STATE_NORMAL_WALKING)
+		{
+			vx += ax * dt;
+			vy += ay * dt;
+		}
 		else if (state == PARAKOOPA_STATE_SHELL)
 		{
-			// Mai rùa đứng yên, không rơi
 			vx = 0;
 			vy = 0;
 			// Kiểm tra timeout
@@ -108,7 +130,7 @@ void CParaKoopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 			if (GetTickCount64() - return_start > 1000) // sau 1 giây
 			{
-				SetState(PARAKOOPA_STATE_WALKING);
+				SetState(PARAKOOPA_STATE_NORMAL_WALKING);
 			}
 		}
 		CGameObject::Update(dt, coObjects);
@@ -116,11 +138,31 @@ void CParaKoopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	}
 }
 
-
 void CParaKoopa::Render()
 {
 	int aniId = -1;
-	
+
+	aniId = ID_ANI_PARAKOOPA_WALKING;
+	if (state == PARAKOOPA_STATE_NORMAL_WALKING)
+	{
+		aniId = ID_ANI_GRKOOPA_WALKING;
+	}
+	if (state == KOOPA_STATE_SHELL)
+	{
+		aniId = ID_ANI_GRKOOPA_SHELL;
+	}
+	if (state == KOOPA_STATE_ACTIVATE) {
+		aniId = ID_ANI_GRKOOPA_ACTIVATE;
+	}
+	else if (state == KOOPA_STATE_RETURN)
+	{
+		aniId = ID_ANI_GRKOOPA_RETURN;
+	}
+	if (vx > 0)
+	{
+		if (state == PARAKOOPA_STATE_WALKING) aniId += 100;
+		if (state == PARAKOOPA_STATE_NORMAL_WALKING) aniId += 100;
+	}
 	CAnimations::GetInstance()->Get(aniId)->Render(x, y);
 	RenderBoundingBox();
 }
@@ -131,13 +173,13 @@ void CParaKoopa::SetState(int state)
 	if ((this->state != PARAKOOPA_STATE_SHELL && this->state != PARAKOOPA_STATE_ACTIVATE) &&
 		(state == PARAKOOPA_STATE_SHELL || state == PARAKOOPA_STATE_ACTIVATE))
 	{
-		y += (PARAKOOPA_BBOX_HEIGHT - PARAKOOPA_BBOX_HEIGHT_SHELL) / 2.0f;
+		y += (KOOPA_BBOX_HEIGHT - PARAKOOPA_BBOX_HEIGHT_SHELL) / 2.0f;
 	}
 	else if ((this->state == PARAKOOPA_STATE_SHELL || this->state == PARAKOOPA_STATE_ACTIVATE || this->state == PARAKOOPA_STATE_RETURN) &&
-		state == PARAKOOPA_STATE_WALKING)
+		state == PARAKOOPA_STATE_NORMAL_WALKING)
 	{
 		// Ngược lại, từ shell/activate -> walking thì phải nâng PARAKOOPA lên
-		y -= (PARAKOOPA_BBOX_HEIGHT - PARAKOOPA_BBOX_HEIGHT_SHELL) / 2.0f;
+		y -= (KOOPA_BBOX_HEIGHT - PARAKOOPA_BBOX_HEIGHT_SHELL) / 2.0f;
 	}
 	CGameObject::SetState(state);
 	switch (state)
@@ -147,13 +189,14 @@ void CParaKoopa::SetState(int state)
 		shell_start = GetTickCount64(); // Ghi lại thời gian vào shell
 		just_activated = false;  
 		break;
-	case PARAKOOPA_STATE_WALKING:
-		shell_start = 0; // Không cần đếm thời gian nữa
-		vx = -PARAKOOPA_WALKING_SPEED;
+	case PARAKOOPA_STATE_NORMAL_WALKING:
+		shell_start = 0; 
+		vx = (vx >= 0) ? PARAKOOPA_WALKING_SPEED : -PARAKOOPA_WALKING_SPEED; // hướng chạy tiếp
 		just_activated = false; 
 		break;
 	case PARAKOOPA_STATE_ACTIVATE:
-		vx = (vx >= 0) ? PARAKOOPA_ACTIVATE_SPEED : -PARAKOOPA_ACTIVATE_SPEED; // hướng chạy tiếp
+		vx = PARAKOOPA_ACTIVATE_SPEED;	
+		y -= 1.0f;
 		just_activated = true; 
 		break;
 	case PARAKOOPA_STATE_RETURN:
@@ -161,6 +204,10 @@ void CParaKoopa::SetState(int state)
 		return_start = GetTickCount64(); // Ghi lại thời điểm bắt đầu return
 		just_activated = false;  
 		break;
-
+	case PARAKOOPA_STATE_WALKING:
+		shell_start = 0; 
+		vx = -PARAKOOPA_WALKING_SPEED;
+		just_activated = false;
+		break;
 	}
 }

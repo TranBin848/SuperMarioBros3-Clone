@@ -15,6 +15,7 @@ datas\fire.txt
 datas\koopa.txt
 datas\goomba.txt
 datas\paragoomba.txt	
+datas\parakoopa.txt
 #
 [OBJECTS]
 # type	x	y	extra_settings per object type
@@ -54,19 +55,22 @@ datas\paragoomba.txt
 
 #OBSTACLE
 1	370	133	31	47	80030
-	
+#1	880	133	31	47	80030
+#1	800	133	31	47	80030
 # MARIO
 0	720	30
 
 #KOOPA
 10	595	112	0
 10	570	112	1
+13	850	100
+#10	850	110	1
 
 #GOOMBA
 2	233	150
-12	890	130
+#12	890	130
 2	545	150
-2 	850	134
+#2 	850	134
 
 #ITEMBOX
 7	180	102	1

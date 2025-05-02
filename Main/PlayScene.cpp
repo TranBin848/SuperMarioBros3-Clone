@@ -17,6 +17,7 @@
 #include "Koopa.h"
 #include "Goomba.h"
 #include "ParaGoomba.h"
+#include "ParaKoopa.h"
 #include "Obstacle.h"
 #include "Mario.h"
 #include "SampleKeyEventHandler.h"
@@ -133,6 +134,7 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 		bool flag = (bool)atof(tokens[3].c_str());
 		obj = new CKoopa(x, y, flag); break;
 	}
+	case OBJECT_TYPE_PARAKOOPA: obj = new CParaKoopa(x, y); break;
 	case OBJECT_TYPE_OBSTACLE:
 	{
 		float cell_width = (float)atof(tokens[3].c_str());

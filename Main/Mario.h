@@ -182,6 +182,7 @@ class CMario : public CGameObject
 	void OnCollisionWithItemBox(LPCOLLISIONEVENT e);
 	void OnCollisonWithGiant(LPCOLLISIONEVENT e);
 	void OnCollisionWithKoopa(LPCOLLISIONEVENT e);
+	void OnCollisionWithParaKoopa(LPCOLLISIONEVENT e);
 	void OnCollisionWithLeaf(LPCOLLISIONEVENT e);
 	void OnCollisionWithDmgObject(LPCOLLISIONEVENT e);
 

@@ -7,6 +7,7 @@
 #include "Goomba.h"
 #include "Koopa.h"
 #include "ParaGoomba.h"
+#include "ParaKoopa.h"
 #include "VenusFire.h"
 #include "Fire.h"
 
@@ -128,6 +129,8 @@ void CMario::OnCollisionWith(LPCOLLISIONEVENT e)
 		OnCollisionWithLeaf(e);
 	else if (dynamic_cast<CVenusFire*>(e->obj) || dynamic_cast<CFire*>(e->obj))
 		OnCollisionWithDmgObject(e);
+	else if (dynamic_cast<CParaKoopa*>(e->obj))
+		OnCollisionWithParaKoopa(e);
 }
 
 void CMario::OnCollisionWithKoopa(LPCOLLISIONEVENT e) {
@@ -139,10 +142,11 @@ void CMario::OnCollisionWithKoopa(LPCOLLISIONEVENT e) {
 		switch (koopaState)
 		{
 		case KOOPA_STATE_WALKING:
+			koopa->SetState(KOOPA_STATE_SHELL);
+			break;
 		case KOOPA_STATE_ACTIVATE:
 			koopa->SetState(KOOPA_STATE_SHELL);
 			break;
-
 		case KOOPA_STATE_SHELL:
 			koopa->SetState(KOOPA_STATE_ACTIVATE);
 			break;
@@ -279,7 +283,80 @@ void CMario::OnCollisionWithParaGoomba(LPCOLLISIONEVENT e)
 		}
 	}
 }
+void CMario::OnCollisionWithParaKoopa(LPCOLLISIONEVENT e)
+{
+	CParaKoopa* koopa = dynamic_cast<CParaKoopa*>(e->obj);
+	if (e->ny < 0)
+	{
+		int koopaState = koopa->GetState();
 
+		switch (koopaState)
+		{
+		case PARAKOOPA_STATE_WALKING:
+			koopa->SetState(PARAKOOPA_STATE_NORMAL_WALKING);
+			break;
+		case PARAKOOPA_STATE_NORMAL_WALKING:
+			koopa->SetState(PARAKOOPA_STATE_SHELL);
+			break;
+		case KOOPA_STATE_ACTIVATE:
+			koopa->SetState(KOOPA_STATE_SHELL);
+			break;
+		case KOOPA_STATE_SHELL:
+			koopa->SetState(KOOPA_STATE_ACTIVATE);
+			break;
+		}
+
+		vy = -MARIO_JUMP_DEFLECT_SPEED;
+	}
+	else if (e->nx != 0) // Va chạm từ bên trái/phải
+	{
+		if (koopa->GetState() == KOOPA_STATE_SHELL)
+		{
+			if (!isHolding && (this->state == MARIO_STATE_RUNNING_LEFT || this->state == MARIO_STATE_RUNNING_RIGHT))
+			{
+				// Mario cầm Koopa
+				/*heldKoopa = koopa;*/
+				//isHolding = true;
+				//koopa->SetIsBeingHeld(true); // Thêm hàm này trong Koopa
+			}
+			else
+			{
+				koopa->SetState(KOOPA_STATE_ACTIVATE);
+
+				// Mario sẽ đá Koopa theo hướng phù hợp
+				if (e->nx > 0)
+				{// Koopa bên trái => Mario đá sang trái
+					SetState(MARIO_STATE_KICK_LEFT);
+					koopa->SetSpeed(-KOOPA_ACTIVATE_SPEED, 0); // Koopa bay trái
+				}
+				else
+				{// Koopa bên phải => Mario đá sang phải
+					SetState(MARIO_STATE_KICK_RIGHT);
+					koopa->SetSpeed(KOOPA_ACTIVATE_SPEED, 0); // Koopa bay phải
+				}
+			}
+		}
+		else
+		{
+			if (untouchable == 0)
+			{
+				if (level == MARIO_LEVEL_BIG)
+				{
+					SetLevel(MARIO_LEVEL_SMALL);
+				}
+				else if (level == MARIO_LEVEL_TANUKI)
+				{
+					SetLevel(MARIO_LEVEL_BIG);
+				}
+				else
+				{
+					DebugOut(L">>> Mario DIE >>> \n");
+					SetState(MARIO_STATE_DIE);
+				}
+			}
+		}
+	}
+}
 void CMario::OnCollisionWithItemBox(LPCOLLISIONEVENT e) {
 	CItemBox* itb = dynamic_cast<CItemBox*>(e->obj);
 	if (!itb) return;
