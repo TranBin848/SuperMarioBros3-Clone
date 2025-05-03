@@ -23,7 +23,7 @@
 #define ID_ANI_GRKOOPA_SHELL		6501
 #define ID_ANI_GRKOOPA_ACTIVATE		6502
 #define ID_ANI_GRKOOPA_RETURN		6503
-#define ID_ANI_PARAKOOPA_WALKING	5200
+
 
 class CParaKoopa : public CGameObject
 {

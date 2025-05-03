@@ -77,39 +77,6 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 				heldKoopa->SetSpeed(0, 0);
 			}
 		}
-		if (heldPrKoopa != nullptr)
-		{
-			if (!game->IsKeyDown(DIK_A))
-			{
-				// Thả Koopa ra
-				isHolding = false;
-				heldPrKoopa->SetIsBeingHeld(false);
-
-				// Koopa chuyển sang trạng thái ACTIVE
-				heldPrKoopa->SetState(PARAKOOPA_STATE_ACTIVATE);
-
-				// Đá theo hướng Mario đang nhìn
-				if (nx > 0)
-				{
-					SetState(MARIO_STATE_KICK_RIGHT);
-					heldPrKoopa->SetSpeed(PARAKOOPA_ACTIVATE_SPEED, 0); // Koopa bay phải
-				}
-				else
-				{
-					SetState(MARIO_STATE_KICK_LEFT);
-					heldPrKoopa->SetSpeed(-PARAKOOPA_ACTIVATE_SPEED, 0); // Koopa bay trái
-				}
-				heldPrKoopa = nullptr;
-			}
-			else
-			{
-				float offsetX = (nx > 0) ? 14.0f : -14.0f;
-				float offsetY = 0.0f; // Có thể điều chỉnh để Koopa nằm thấp hơn tay một chút
-
-				heldPrKoopa->SetPosition(x + offsetX, y + offsetY);
-				heldPrKoopa->SetSpeed(0, 0);
-			}
-		}
 		
 	}
 
@@ -350,10 +317,6 @@ void CMario::OnCollisionWithParaKoopa(LPCOLLISIONEVENT e)
 		{
 			if (!isHolding && (this->state == MARIO_STATE_RUNNING_LEFT || this->state == MARIO_STATE_RUNNING_RIGHT))
 			{
-				// Mario cầm Koopa
-				heldPrKoopa = koopa;
-				isHolding = true;
-				koopa->SetIsBeingHeld(true); // Thêm hàm này trong Koopa
 			}
 			else
 			{

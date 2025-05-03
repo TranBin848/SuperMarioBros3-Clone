@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include "GameObject.h"
 #include "Koopa.h"
-#include "ParaKoopa.h"
+
 #include "EnemyActivator.h"
 #include "Animation.h"
 #include "Animations.h"
@@ -28,9 +28,9 @@
 #define MARIO_STATE_JUMP			300
 #define MARIO_STATE_RELEASE_JUMP    301
 
-#define MARIO_STATE_RUNNING_RIGHT	400
+#define MARIO_STATE_RUNNING_RIGHT		400
 #define MARIO_STATE_SHELLRUNNING_RIGHT	401
-#define MARIO_STATE_RUNNING_LEFT	500
+#define MARIO_STATE_RUNNING_LEFT		500
 #define MARIO_STATE_SHELLRUNNING_LEFT	501
 
 
@@ -168,10 +168,15 @@ class CMario : public CGameObject
 	ULONGLONG untouchable_start;
 	ULONGLONG kick_start;
 	ULONGLONG transform_start = 0;
+	ULONGLONG flyChargeStart = 0;
 	BOOLEAN isOnPlatform;
 	
 	bool isTransforming = false;
 	bool finishTransforming = false;
+	
+	bool isReadyToFly = false;
+	bool isFlying = false;
+
 	int transform_from = -1;
 	int transform_to = -1;
 	int coin; 
@@ -197,7 +202,6 @@ public:
 	static CMario* GetInstance() { return __instance; }
 	
 	CKoopa* heldKoopa = nullptr;
-	CParaKoopa* heldPrKoopa = nullptr;
 
 	CMario(float x, float y) : CGameObject(x, y)
 	{

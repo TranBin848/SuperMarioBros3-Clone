@@ -206,7 +206,7 @@ void CParaKoopa::SetState(int state)
 		just_activated = false;  
 		break;
 	case PARAKOOPA_STATE_WALKING:
-		shell_start = 0; 
+		shell_start = 0;
 		vx = -PARAKOOPA_WALKING_SPEED;
 		just_activated = false;
 		break;

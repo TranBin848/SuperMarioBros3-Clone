@@ -131,7 +131,7 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 	case OBJECT_TYPE_PARAGOOMBA: obj = new CParaGoomba(x, y); break;
 	case OBJECT_TYPE_KOOPA:
 	{
-		bool flag = (bool)atof(tokens[3].c_str());
+		int flag = (int)atof(tokens[3].c_str());
 		obj = new CKoopa(x, y, flag); break;
 	}
 	case OBJECT_TYPE_PARAKOOPA: obj = new CParaKoopa(x, y); break;
