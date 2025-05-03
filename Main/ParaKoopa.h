@@ -1,7 +1,6 @@
 ﻿#pragma once
 #include "GameObject.h"
 #include "PlayScene.h"
-#include "Mario.h"
 #define PARAKOOPA_GRAVITY 0.0005f
 #define PARAKOOPA_JUMP_SPEED	0.2f
 #define PARAKOOPA_WALKING_SPEED 0.05f

@@ -2,7 +2,7 @@
 #include "GameObject.h"
 #include "KoopaSensor.h"
 #include "PlayScene.h"
-#include "Mario.h"
+
 #define KOOPA_GRAVITY 0.002f
 #define KOOPA_WALKING_SPEED 0.05f
 #define KOOPA_ACTIVATE_SPEED 0.2f

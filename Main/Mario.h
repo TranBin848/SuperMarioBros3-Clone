@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include "GameObject.h"
 #include "Koopa.h"
+#include "ParaKoopa.h"
 #include "EnemyActivator.h"
 #include "Animation.h"
 #include "Animations.h"
@@ -194,7 +195,10 @@ class CMario : public CGameObject
 public:
 	static CMario* __instance;
 	static CMario* GetInstance() { return __instance; }
+	
 	CKoopa* heldKoopa = nullptr;
+	CParaKoopa* heldPrKoopa = nullptr;
+
 	CMario(float x, float y) : CGameObject(x, y)
 	{
 		__instance = this; // Gán instance

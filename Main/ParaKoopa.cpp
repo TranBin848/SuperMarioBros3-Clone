@@ -1,5 +1,6 @@
 ﻿#include "ItemBox.h"
 #include "ParaKoopa.h"
+#include "Mario.h"
 CParaKoopa::CParaKoopa(float x, float y) :CGameObject(x, y)
 {
 	this->ax = 0;

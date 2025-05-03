@@ -1,4 +1,5 @@
 ﻿#include "Koopa.h"
+#include "Mario.h"
 #include "ItemBox.h"
 CKoopa::CKoopa(float x, float y, bool flag) :CGameObject(x, y)
 {
