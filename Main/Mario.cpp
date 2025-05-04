@@ -7,10 +7,8 @@
 #include "Goomba.h"
 #include "Koopa.h"
 #include "ParaGoomba.h"
-#include "ParaKoopa.h"
 #include "VenusFire.h"
 #include "Fire.h"
-
 #include "Coin.h"
 #include "Portal.h"
 #include "ItemBox.h"
@@ -19,6 +17,17 @@
 #include "Collision.h"
 
 CMario* CMario::__instance = nullptr;
+
+void CMario::StartFlap()
+{
+	if (!isFlying) // Nếu chưa bay, bật cờ bay lên
+		isFlying = true;
+
+	isFlapping = true;
+	flap_start = GetTickCount64();
+	vy = -0.2f; // Đẩy Mario bay lên, bạn có thể điều chỉnh lực bay tại đây
+}
+
 void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 {
 	if (isTransforming)
@@ -37,7 +46,6 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 
 	if (abs(vx) > abs(maxVx)) vx = maxVx;
 
-	
 
 	if (isHolding)
 	{
@@ -90,7 +98,10 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 	{
 		kick_start = 0;
 	}
-
+	if (isFlapping && GetTickCount64() - flap_start > 100)
+	{
+		isFlapping = false;
+	}
 	CCollision::GetInstance()->Process(this, dt, coObjects);
 }
 
@@ -132,8 +143,6 @@ void CMario::OnCollisionWith(LPCOLLISIONEVENT e)
 		OnCollisionWithLeaf(e);
 	else if (dynamic_cast<CVenusFire*>(e->obj) || dynamic_cast<CFire*>(e->obj))
 		OnCollisionWithDmgObject(e);
-	else if (dynamic_cast<CParaKoopa*>(e->obj))
-		OnCollisionWithParaKoopa(e);
 }
 
 void CMario::OnCollisionWithKoopa(LPCOLLISIONEVENT e) {
@@ -141,20 +150,28 @@ void CMario::OnCollisionWithKoopa(LPCOLLISIONEVENT e) {
 	if (e->ny < 0)
 	{
 		int koopaState = koopa->GetState();
+		int l = koopa->GetLevel();
 
-		switch (koopaState)
+		if (l == KOOPA_LEVEL_RED || l == KOOPA_LEVEL_GREEN)
 		{
-		case KOOPA_STATE_WALKING:
-			koopa->SetState(KOOPA_STATE_SHELL);
-			break;
-		case KOOPA_STATE_ACTIVATE:
-			koopa->SetState(KOOPA_STATE_SHELL);
-			break;
-		case KOOPA_STATE_SHELL:
-			koopa->SetState(KOOPA_STATE_ACTIVATE);
-			break;
+			switch (koopaState)
+			{
+			case KOOPA_STATE_WALKING:
+				koopa->SetState(KOOPA_STATE_SHELL);
+				break;
+			case KOOPA_STATE_ACTIVATE:
+				koopa->SetState(KOOPA_STATE_SHELL);
+				break;
+			case KOOPA_STATE_SHELL:
+				koopa->SetState(KOOPA_STATE_ACTIVATE);
+				break;
+			}
 		}
-
+		else if (l == KOOPA_LEVEL_PARA)
+		{
+			if (koopaState == KOOPA_STATE_WALKING)
+				koopa->SetLevel(KOOPA_LEVEL_GREEN);
+		}
 		vy = -MARIO_JUMP_DEFLECT_SPEED;
 	}
 	else if (e->nx != 0) // Va chạm từ bên trái/phải
@@ -286,76 +303,7 @@ void CMario::OnCollisionWithParaGoomba(LPCOLLISIONEVENT e)
 		}
 	}
 }
-void CMario::OnCollisionWithParaKoopa(LPCOLLISIONEVENT e)
-{
-	CParaKoopa* koopa = dynamic_cast<CParaKoopa*>(e->obj);
-	if (e->ny < 0)
-	{
-		int koopaState = koopa->GetState();
 
-		switch (koopaState)
-		{
-		case PARAKOOPA_STATE_WALKING:
-			koopa->SetState(PARAKOOPA_STATE_NORMAL_WALKING);
-			break;
-		case PARAKOOPA_STATE_NORMAL_WALKING:
-			koopa->SetState(PARAKOOPA_STATE_SHELL);
-			break;
-		case KOOPA_STATE_ACTIVATE:
-			koopa->SetState(KOOPA_STATE_SHELL);
-			break;
-		case KOOPA_STATE_SHELL:
-			koopa->SetState(KOOPA_STATE_ACTIVATE);
-			break;
-		}
-
-		vy = -MARIO_JUMP_DEFLECT_SPEED;
-	}
-	else if (e->nx != 0) // Va chạm từ bên trái/phải
-	{
-		if (koopa->GetState() == KOOPA_STATE_SHELL)
-		{
-			if (!isHolding && (this->state == MARIO_STATE_RUNNING_LEFT || this->state == MARIO_STATE_RUNNING_RIGHT))
-			{
-			}
-			else
-			{
-				koopa->SetState(KOOPA_STATE_ACTIVATE);
-
-				// Mario sẽ đá Koopa theo hướng phù hợp
-				if (e->nx > 0)
-				{// Koopa bên trái => Mario đá sang trái
-					SetState(MARIO_STATE_KICK_LEFT);
-					koopa->SetSpeed(-KOOPA_ACTIVATE_SPEED, 0); // Koopa bay trái
-				}
-				else
-				{// Koopa bên phải => Mario đá sang phải
-					SetState(MARIO_STATE_KICK_RIGHT);
-					koopa->SetSpeed(KOOPA_ACTIVATE_SPEED, 0); // Koopa bay phải
-				}
-			}
-		}
-		else
-		{
-			if (untouchable == 0)
-			{
-				if (level == MARIO_LEVEL_BIG)
-				{
-					SetLevel(MARIO_LEVEL_SMALL);
-				}
-				else if (level == MARIO_LEVEL_TANUKI)
-				{
-					SetLevel(MARIO_LEVEL_BIG);
-				}
-				else
-				{
-					DebugOut(L">>> Mario DIE >>> \n");
-					SetState(MARIO_STATE_DIE);
-				}
-			}
-		}
-	}
-}
 void CMario::OnCollisionWithItemBox(LPCOLLISIONEVENT e) {
 	CItemBox* itb = dynamic_cast<CItemBox*>(e->obj);
 	if (!itb) return;
@@ -590,10 +538,24 @@ int CMario::GetAniIdTanuki() {
 		{
 			if (!isHolding)
 			{
-				if (nx >= 0)
-					aniId = ID_ANI_TANUKI_JUMP_RUN_RIGHT;
+				if (isFlying)
+				{
+					if (nx >= 0)
+					{
+						aniId = isFlapping ? ID_ANI_TANUKI_JUMP_RUN_RIGHT_DOWN : ID_ANI_TANUKI_JUMP_RUN_RIGHT_UP;
+					}
+					else
+					{
+						aniId = isFlapping ? ID_ANI_TANUKI_JUMP_RUN_LEFT_DOWN : ID_ANI_TANUKI_JUMP_RUN_LEFT_UP;
+					}
+				}
 				else
-					aniId = ID_ANI_TANUKI_JUMP_RUN_LEFT;
+				{
+					if (nx >= 0)
+						aniId = ID_ANI_TANUKI_JUMP_WALK_RIGHT;
+					else
+						aniId = ID_ANI_TANUKI_JUMP_WALK_LEFT;
+				}
 			}
 			else
 			{
@@ -918,6 +880,15 @@ void CMario::SetLevel(int l)
 	else // Mặc định BIG
 		newHeight = MARIO_BIG_BBOX_HEIGHT;
 
+	if (l == MARIO_LEVEL_TANUKI)
+	{
+		ay = TANUKI_GRAVITY;
+	}
+	else
+	{
+		ay = MARIO_GRAVITY;
+	}
+		
 	// Điều chỉnh y để không rơi xuyên nền
 	y -= (newHeight - oldHeight) / 2.0f;
 

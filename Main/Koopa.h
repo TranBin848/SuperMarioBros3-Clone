@@ -76,6 +76,7 @@ public:
 	CKoopa(float x, float y, int flag);
 	virtual void SetState(int state);
 	void SetLevel(int l);
+	int GetLevel() { return level; };
 	virtual void SetVX() { vx = -vx; };
 	void SetIsBeingHeld(bool held) { isBeingHeld = held; }
 };

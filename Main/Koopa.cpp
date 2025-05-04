@@ -94,7 +94,7 @@ void CKoopa::OnCollisionWithItemBox(LPCOLLISIONEVENT e) {
 }
 void CKoopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
-	/*if (!isActivated) return;*/
+	if (!isActivated) return;
 	if (isBeingHeld)
 	{
 		vx = 0;

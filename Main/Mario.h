@@ -17,6 +17,7 @@
 #define MARIO_JUMP_RUN_SPEED_Y	0.6f
 
 #define MARIO_GRAVITY			0.002f
+#define TANUKI_GRAVITY			0.0005f
 
 #define MARIO_JUMP_DEFLECT_SPEED  0.4f
 
@@ -109,8 +110,10 @@
 #define ID_ANI_TANUKI_JUMP_WALK_RIGHT 2000
 #define ID_ANI_TANUKI_JUMP_WALK_LEFT 2001
 
-#define ID_ANI_TANUKI_JUMP_RUN_RIGHT 2100
-#define ID_ANI_TANUKI_JUMP_RUN_LEFT 2101
+#define ID_ANI_TANUKI_JUMP_RUN_RIGHT_UP		2100
+#define ID_ANI_TANUKI_JUMP_RUN_RIGHT_DOWN	2101
+#define ID_ANI_TANUKI_JUMP_RUN_LEFT_UP		2102
+#define ID_ANI_TANUKI_JUMP_RUN_LEFT_DOWN	2103
 
 #define ID_ANI_TANUKI_SIT_RIGHT 2200
 #define ID_ANI_TANUKI_SIT_LEFT 2201
@@ -168,14 +171,16 @@ class CMario : public CGameObject
 	ULONGLONG untouchable_start;
 	ULONGLONG kick_start;
 	ULONGLONG transform_start = 0;
-	ULONGLONG flyChargeStart = 0;
+	ULONGLONG flap_start = 0; // Thời điểm bắt đầu vỗ cánh
+
 	BOOLEAN isOnPlatform;
 	
 	bool isTransforming = false;
 	bool finishTransforming = false;
 	
-	bool isReadyToFly = false;
-	bool isFlying = false;
+	bool isFlying = false; // Mario đang trong trạng thái bay
+	bool isFlapping = false; // Mario vừa nhấn nút nhảy để vỗ cánh
+	
 
 	int transform_from = -1;
 	int transform_to = -1;
@@ -188,7 +193,6 @@ class CMario : public CGameObject
 	void OnCollisionWithItemBox(LPCOLLISIONEVENT e);
 	void OnCollisonWithGiant(LPCOLLISIONEVENT e);
 	void OnCollisionWithKoopa(LPCOLLISIONEVENT e);
-	void OnCollisionWithParaKoopa(LPCOLLISIONEVENT e);
 	void OnCollisionWithLeaf(LPCOLLISIONEVENT e);
 	void OnCollisionWithDmgObject(LPCOLLISIONEVENT e);
 
@@ -242,5 +246,7 @@ public:
 	int GetLevel() { return level; };
 	void StartUntouchable() { untouchable = 1; untouchable_start = GetTickCount64(); }
 
-	void GetBoundingBox(float& left, float& top, float& right, float& bottom);
+	virtual void GetBoundingBox(float& left, float& top, float& right, float& bottom);
+
+	void StartFlap();
 };
