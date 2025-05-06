@@ -25,11 +25,15 @@ void CMario::StartFlap()
 
 	isFlapping = true;
 	flap_start = GetTickCount64();
-	vy = -0.2f; // Đẩy Mario bay lên, bạn có thể điều chỉnh lực bay tại đây
+	if (isOnPlatform) vy = -TANUKI_JUMP_RUN_SPEED_Y;
+	else vy = -TANUKI_FLAP_SPEED_Y;
 }
 
 void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 {
+	float cx, cy;
+	CGame::GetInstance()->GetCamPos(cx,cy);
+	DebugOutTitle(L"Camera: %f", cy);
 	if (isTransforming)
 	{
 		if (GetTickCount64() - transform_start >= 1000)
@@ -731,15 +735,49 @@ void CMario::SetState(int state)
 		if (isSitting) break;
 		if (isOnPlatform)
 		{
-			if (abs(this->vx) == MARIO_RUNNING_SPEED)
-				vy = -MARIO_JUMP_RUN_SPEED_Y;
+			if (level != MARIO_LEVEL_TANUKI)
+			{
+				if (abs(this->vx) == MARIO_RUNNING_SPEED)
+					vy = -MARIO_JUMP_RUN_SPEED_Y;
+				else
+					vy = -MARIO_JUMP_SPEED_Y;
+			}
 			else
-				vy = -MARIO_JUMP_SPEED_Y;
+			{
+				if (abs(this->vx) == MARIO_RUNNING_SPEED)
+					vy = -TANUKI_JUMP_RUN_SPEED_Y;
+				else
+					vy = -TANUKI_JUMP_SPEED_Y;
+				if (!isFlying) // Nếu chưa bay, bật cờ bay lên
+					isFlying = true;
+				isFlapping = true;
+				flap_start = GetTickCount64();
+			}
+		}
+		else
+		{
+			if (level == MARIO_LEVEL_TANUKI)
+			{
+				vy = -TANUKI_FLAP_SPEED_Y;
+				if (!isFlying) // Nếu chưa bay, bật cờ bay lên
+					isFlying = true;
+
+				isFlapping = true;
+				flap_start = GetTickCount64();
+			}
 		}
 		break;
 
 	case MARIO_STATE_RELEASE_JUMP:
-		if (vy < 0) vy += MARIO_JUMP_SPEED_Y / 2;
+		if (vy < 0)
+		{
+			if(level != MARIO_LEVEL_TANUKI)	vy += MARIO_JUMP_SPEED_Y / 2;
+			else
+			{
+				if (isOnPlatform) vy += TANUKI_JUMP_RUN_SPEED_Y / 2;
+				else vy += TANUKI_FLAP_SPEED_Y / 4;
+			}
+		}
 		break;
 
 	case MARIO_STATE_SIT:

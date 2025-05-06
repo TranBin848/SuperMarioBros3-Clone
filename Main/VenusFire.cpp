@@ -30,7 +30,7 @@ void CVenusFire::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	marioY = CMario::GetInstance()->GetY();
 	float dx = abs(marioX - x);
 	bool inRange = (dx <= 230.0f);
-	DebugOutTitle(L"Khoang cach: %f", dx);
+	/*DebugOutTitle(L"Khoang cach: %f", dx);*/
 	if (inRange)
 	{
 		if (isWaiting)

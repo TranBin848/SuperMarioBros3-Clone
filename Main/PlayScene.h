@@ -3,7 +3,10 @@
 #include "Textures.h"
 #include "Scene.h"
 #include "GameObject.h"
-//#include "Koopas.h"
+
+#define CAM_MAX_Y	3.0f
+#define CAM_MIN_Y	-40.0f
+
 
 class CPlayScene: public CScene
 {
