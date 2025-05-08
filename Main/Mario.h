@@ -259,6 +259,7 @@ public:
 
 	void SetLevel(int l);
 	int GetLevel() { return level; };
+	float GetAy() { return ay; }
 	void StartUntouchable() { untouchable = 1; untouchable_start = GetTickCount64(); }
 
 	virtual void GetBoundingBox(float& left, float& top, float& right, float& bottom);

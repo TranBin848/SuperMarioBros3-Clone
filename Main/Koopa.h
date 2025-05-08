@@ -16,23 +16,26 @@
 #define KOOPA_BBOX_HEIGHT_SHELL		14
 
 #define KOOPA_SHELL_TIMEOUT			4000
+#define KOOPA_DIE_TIMEOUT			500
 
 #define KOOPA_STATE_WALKING			100
 #define KOOPA_STATE_SHELL			200	
 #define KOOPA_STATE_ACTIVATE		300
 #define KOOPA_STATE_RETURN			400
+#define KOOPA_STATE_DIEBYSHELL		500
 
 //RED
-#define ID_ANI_KOOPA_WALKING 6000
-#define ID_ANI_KOOPA_SHELL 6001
-#define ID_ANI_KOOPA_ACTIVATE 6002
-#define ID_ANI_KOOPA_RETURN 6003
-
+#define ID_ANI_KOOPA_WALKING		6000
+#define ID_ANI_KOOPA_SHELL			6001
+#define ID_ANI_KOOPA_ACTIVATE		6002
+#define ID_ANI_KOOPA_RETURN			6003
+#define ID_ANI_KOOPA_DIEBYSHELL		6005
 //GREEN
-#define ID_ANI_GRKOOPA_WALKING 6500
-#define ID_ANI_GRKOOPA_SHELL 6501
-#define ID_ANI_GRKOOPA_ACTIVATE 6502
-#define ID_ANI_GRKOOPA_RETURN 6503
+#define ID_ANI_GRKOOPA_WALKING		6500
+#define ID_ANI_GRKOOPA_SHELL		6501
+#define ID_ANI_GRKOOPA_ACTIVATE		6502
+#define ID_ANI_GRKOOPA_RETURN		6503
+#define ID_ANI_GRKOOPA_DIEBYSHELL	6505
 
 //PARA
 #define ID_ANI_PARAKOOPA_WALKING	5200
@@ -67,11 +70,18 @@ protected:
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
 	virtual void Render();
 
-	virtual int IsCollidable() { return !isBeingHeld ? 1 : 0; };
+	virtual int IsCollidable() {
+		if (isBeingHeld)
+			return 0;
+		return (state == KOOPA_STATE_WALKING || state == KOOPA_STATE_ACTIVATE);
+	};
 	virtual int IsBlocking() { return 0; }
 	virtual void OnNoCollision(DWORD dt);
 	virtual void OnCollisionWith(LPCOLLISIONEVENT e);
 	void OnCollisionWithItemBox(LPCOLLISIONEVENT e);
+	void OnCollisionWithGoomba(LPCOLLISIONEVENT e);
+	void OnCollisionWithParaGoomba(LPCOLLISIONEVENT e);
+	void OnCollisionWithKoopa(LPCOLLISIONEVENT e);
 public:
 	CKoopa(float x, float y, int flag);
 	virtual void SetState(int state);

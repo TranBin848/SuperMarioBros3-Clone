@@ -18,6 +18,7 @@
 #define PARAGOOMBA_STATE_FLY				300
 #define PARAGOOMBA_STATE_NORMAL_WALKING		400
 #define PARAGOOMBA_STATE_DIE				500
+#define PARAGOOMBA_STATE_DIEBYSHELL			600
 
 #define ID_ANI_PARAGOOMBA_WALKING			5100
 #define ID_ANI_GOOMBA_WALK_FLAPWING_RIGHT	5101
@@ -26,6 +27,8 @@
 #define ID_ANI_GOOMBA_FLYLEFT				5104
 #define ID_ANI_PARAGOOMBA_DIE				5105
 #define ID_ANI_GOOMBA_NORMALWALK			5106
+#define ID_ANI_PARAGOOMBA_DIEBYSHELL		5107
+
 
 class CParaGoomba : public CGameObject
 {
@@ -42,7 +45,7 @@ protected:
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
 	virtual void Render();
 
-	virtual int IsCollidable() { return 1; };
+	virtual int IsCollidable();
 	virtual int IsBlocking() { return 0; }
 	virtual void OnNoCollision(DWORD dt);
 

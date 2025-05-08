@@ -1,4 +1,4 @@
-#include "Goomba.h"
+﻿#include "Goomba.h"
 
 CGoomba::CGoomba(float x, float y):CGameObject(x, y)
 {
@@ -32,6 +32,7 @@ void CGoomba::OnNoCollision(DWORD dt)
 	y += vy * dt;
 };
 
+
 void CGoomba::OnCollisionWith(LPCOLLISIONEVENT e)
 {
 	if (!e->obj->IsBlocking()) return; 
@@ -49,13 +50,13 @@ void CGoomba::OnCollisionWith(LPCOLLISIONEVENT e)
 
 void CGoomba::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 {
-	if (!isActivated) return;
+	/*if (!isActivated) return;*/
 	CGameObject::Update(dt, coObjects);
 
 	vy += ay * dt;
 	vx += ax * dt;
 
-	if ( (state==GOOMBA_STATE_DIE) && (GetTickCount64() - die_start > GOOMBA_DIE_TIMEOUT) )
+	if ( (state==GOOMBA_STATE_DIE || state == GOOMBA_STATE_DIEBYSHELL) && (GetTickCount64() - die_start > GOOMBA_DIE_TIMEOUT) )
 	{
 		isDeleted = true;
 		return;
@@ -71,6 +72,10 @@ void CGoomba::Render()
 	if (state == GOOMBA_STATE_DIE) 
 	{
 		aniId = ID_ANI_GOOMBA_DIE;
+	}
+	else if (state == GOOMBA_STATE_DIEBYSHELL)
+	{
+		aniId = ID_ANI_GOOMBA_DIEBYSHELL;
 	}
 
 	CAnimations::GetInstance()->Get(aniId)->Render(x,y);
@@ -89,8 +94,18 @@ void CGoomba::SetState(int state)
 			vy = 0;
 			ay = 0; 
 			break;
+		case GOOMBA_STATE_DIEBYSHELL:
+			die_start = GetTickCount64();
+			vx = 0;
+			vy = -0.6f; 
+			ay = GOOMBA_GRAVITY; 
+			break;
 		case GOOMBA_STATE_WALKING: 
 			vx = -GOOMBA_WALKING_SPEED;
 			break;
 	}
+}
+int CGoomba::IsCollidable()
+{
+	return (state != GOOMBA_STATE_DIE && state != GOOMBA_STATE_DIEBYSHELL);
 }

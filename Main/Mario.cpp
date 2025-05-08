@@ -206,7 +206,11 @@ void CMario::OnCollisionWithKoopa(LPCOLLISIONEVENT e) {
 			if (koopaState == KOOPA_STATE_WALKING)
 				koopa->SetLevel(KOOPA_LEVEL_GREEN);
 		}
-		vy = -MARIO_JUMP_DEFLECT_SPEED;
+		float accY = GetAy();
+		vy -= MARIO_JUMP_DEFLECT_SPEED;
+		if (accY == MARIO_GRAVITY) vy /= 1;
+		else if (accY == TANUKI_GRAVITY) vy /= 2;
+		else vy = 0;
 	}
 	else if (e->nx != 0) // Va chạm từ bên trái/phải
 	{
@@ -268,8 +272,12 @@ void CMario::OnCollisionWithGoomba(LPCOLLISIONEVENT e)
 		if (goomba->GetState() != GOOMBA_STATE_DIE)
 		{
 			goomba->SetState(GOOMBA_STATE_DIE);
-			vy = -MARIO_JUMP_DEFLECT_SPEED;
 		}
+		float accY = GetAy();
+		vy -= MARIO_JUMP_DEFLECT_SPEED;
+		if (accY == MARIO_GRAVITY) vy /= 1;
+		else if (accY == TANUKI_GRAVITY) vy /= 2;
+		else vy = 0;
 	}
 	else // hit by Goomba
 	{
@@ -305,14 +313,16 @@ void CMario::OnCollisionWithParaGoomba(LPCOLLISIONEVENT e)
 		if (goomba->GetState() == PARAGOOMBA_STATE_NORMAL_WALKING)
 		{
 			goomba->SetState(PARAGOOMBA_STATE_DIE);
-			vy = -MARIO_JUMP_DEFLECT_SPEED;
 		}
 		else
 		{
 			goomba->SetState(PARAGOOMBA_STATE_NORMAL_WALKING);
-			vy = -MARIO_JUMP_DEFLECT_SPEED;
 		}
-		
+		float accY = GetAy();
+		vy -= MARIO_JUMP_DEFLECT_SPEED;
+		if (accY == MARIO_GRAVITY) vy /= 1;
+		else if (accY == TANUKI_GRAVITY) vy /= 2;
+		else vy = 0;
 	}
 	else // hit by Goomba
 	{
@@ -743,7 +753,7 @@ void CMario::Render()
 			aniId = GetAniIdTanuki();
 	
 	animations->Get(aniId)->Render(x, y);
-	DebugOutTitle(L"Camera: %d", aniId);
+	
 	RenderBoundingBox();
 }
 

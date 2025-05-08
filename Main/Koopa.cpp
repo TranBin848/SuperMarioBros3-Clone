@@ -1,4 +1,6 @@
 ﻿#include "Koopa.h"
+#include "Goomba.h"
+#include "ParaGoomba.h"
 #include "Mario.h"
 #include "ItemBox.h"
 CKoopa::CKoopa(float x, float y, int flag) :CGameObject(x, y)
@@ -64,10 +66,25 @@ void CKoopa::OnNoCollision(DWORD dt)
 
 void CKoopa::OnCollisionWith(LPCOLLISIONEVENT e)
 {
+	if (state == KOOPA_STATE_ACTIVATE)
+	{
+		if (dynamic_cast<CGoomba*>(e->obj))
+		{
+			OnCollisionWithGoomba(e);
+			return;
+		}
+		else if (dynamic_cast<CParaGoomba*>(e->obj))
+		{
+			OnCollisionWithParaGoomba(e);
+			return;
+		}
+		if (dynamic_cast<CKoopa*>(e->obj))
+		{
+			OnCollisionWithKoopa(e);
+		}
+	}
 	if (!e->obj->IsBlocking()) return;
-	if (dynamic_cast<CKoopa*>(e->obj)) return;
-	else if (dynamic_cast<CItemBox*>(e->obj) && state == KOOPA_STATE_ACTIVATE)
-		OnCollisionWithItemBox(e);
+
 	if (e->ny != 0)
 	{
 		isOnGround = true;
@@ -77,6 +94,8 @@ void CKoopa::OnCollisionWith(LPCOLLISIONEVENT e)
 	{
 		vx = -vx;
 	}
+	if (dynamic_cast<CItemBox*>(e->obj) && state == KOOPA_STATE_ACTIVATE)
+		OnCollisionWithItemBox(e);
 }
 void CKoopa::OnCollisionWithItemBox(LPCOLLISIONEVENT e) {
 	CItemBox* itb = dynamic_cast<CItemBox*>(e->obj);
@@ -92,16 +111,39 @@ void CKoopa::OnCollisionWithItemBox(LPCOLLISIONEVENT e) {
 		itb->SetState(ITEMBOX_STATE_BOUNCING);
 	}
 }
+void CKoopa::OnCollisionWithGoomba(LPCOLLISIONEVENT e)
+{
+	CGoomba* goomba = dynamic_cast<CGoomba*>(e->obj);
+	if (goomba->GetState() != GOOMBA_STATE_DIEBYSHELL)
+	{
+		goomba->SetState(GOOMBA_STATE_DIEBYSHELL);
+	}
+}
+void CKoopa::OnCollisionWithKoopa(LPCOLLISIONEVENT e)
+{
+	CKoopa* kp = dynamic_cast<CKoopa*>(e->obj);
+	if (kp->GetState() != KOOPA_STATE_DIEBYSHELL)
+	{
+		kp->SetState(KOOPA_STATE_DIEBYSHELL);
+	}
+}
+void CKoopa::OnCollisionWithParaGoomba(LPCOLLISIONEVENT e)
+{
+	CParaGoomba* goomba = dynamic_cast<CParaGoomba*>(e->obj);
+	if (goomba->GetState() != PARAGOOMBA_STATE_DIEBYSHELL)
+	{
+		goomba->SetState(PARAGOOMBA_STATE_DIEBYSHELL);
+	}
+}
 void CKoopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
-	if (!isActivated) return;
+	/*if (!isActivated) return;*/
 	if (isBeingHeld)
 	{
 		vx = 0;
 		vy = 0;
 		return; // Không update vật lý khi bị cầm
 	}
-		
 	else
 	{
 		if (level == KOOPA_LEVEL_RED || level == KOOPA_LEVEL_GREEN)
@@ -167,6 +209,17 @@ void CKoopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				vy += ay * dt;
 			}
 		}
+		if (state == KOOPA_STATE_DIEBYSHELL)
+		{
+			vy += ay * dt;
+			vx += ax * dt;
+			if (GetTickCount64() - die_start > KOOPA_DIE_TIMEOUT)
+			{
+				sensor->isDeleted = true;
+				isDeleted = true;
+				return;
+			}
+		}
 		CGameObject::Update(dt, coObjects);
 		CCollision::GetInstance()->Process(this, dt, coObjects);
 	}
@@ -188,6 +241,10 @@ int CKoopa::GetAniIdRed()
 	{
 		aniId = ID_ANI_KOOPA_RETURN;
 	}
+	else if (state == KOOPA_STATE_DIEBYSHELL)
+	{
+		aniId = ID_ANI_KOOPA_DIEBYSHELL;
+	}
 	if (vx > 0 && state == KOOPA_STATE_WALKING)	aniId += 100;
 	return aniId;
 }
@@ -207,6 +264,10 @@ int CKoopa::GetAniIdGreen()
 	{
 		aniId = ID_ANI_GRKOOPA_RETURN;
 	}
+	else if (state == KOOPA_STATE_DIEBYSHELL)
+	{
+		aniId = ID_ANI_GRKOOPA_DIEBYSHELL;
+	}
 	if (vx > 0 && state == KOOPA_STATE_WALKING)	aniId += 100;
 	return aniId;
 }
@@ -214,6 +275,10 @@ int CKoopa::GetAniIdPara()
 {
 	int aniId = -1;
 	aniId = ID_ANI_PARAKOOPA_WALKING;
+	if (state == KOOPA_STATE_DIEBYSHELL)
+	{
+		aniId = ID_ANI_GRKOOPA_DIEBYSHELL;
+	}
 	if (vx > 0 && state == KOOPA_STATE_WALKING)	aniId += 100;
 	return aniId;
 }
@@ -267,6 +332,12 @@ void CKoopa::SetState(int state)
 		vx = 0;
 		return_start = GetTickCount64(); // Ghi lại thời điểm bắt đầu return
 		just_activated = false;
+		break;
+	case KOOPA_STATE_DIEBYSHELL:
+		die_start = GetTickCount64();
+		vx = 0;
+		vy = -0.6f;
+		ay = KOOPA_GRAVITY;
 		break;
 	}
 }

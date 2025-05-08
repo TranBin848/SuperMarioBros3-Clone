@@ -67,7 +67,7 @@ void CParaGoomba::OnCollisionWith(LPCOLLISIONEVENT e)
 
 void CParaGoomba::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
-	if (!isActivated) return;
+	/*if (!isActivated) return;*/
 	float marioX, marioY;
 	CMario::GetInstance()->GetPosition(marioX, marioY);
 	CGameObject::Update(dt, coObjects);
@@ -102,7 +102,7 @@ void CParaGoomba::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	vx += ax * dt;
 
 	// Xử lý chết
-	if ((state == PARAGOOMBA_STATE_DIE) && (GetTickCount64() - die_start > GOOMBA_DIE_TIMEOUT))
+	if ((state == PARAGOOMBA_STATE_DIE || state == PARAGOOMBA_STATE_DIEBYSHELL) && (GetTickCount64() - die_start > GOOMBA_DIE_TIMEOUT))
 	{
 		isDeleted = true;
 		return;
@@ -124,6 +124,10 @@ void CParaGoomba::Render()
 	if (state == PARAGOOMBA_STATE_DIE)
 	{
 		aniId = ID_ANI_PARAGOOMBA_DIE;
+	}
+	else if (state == PARAGOOMBA_STATE_DIEBYSHELL)
+	{
+		aniId = ID_ANI_PARAGOOMBA_DIEBYSHELL;
 	}
 	else if (state == PARAGOOMBA_STATE_WALKING_NOWING)
 	{
@@ -164,7 +168,12 @@ void CParaGoomba::SetState(int state)
 		ax = 0;
 		ay = 0;
 		break;
-
+	case PARAGOOMBA_STATE_DIEBYSHELL:
+		die_start = GetTickCount64();
+		vx = 0;
+		vy = -0.3f;
+		ay = GOOMBA_GRAVITY;
+		break;
 	case PARAGOOMBA_STATE_WALKING_NOWING:
 		vx = -GOOMBA_WALKING_SPEED;
 		ay = GOOMBA_GRAVITY;
@@ -191,6 +200,9 @@ void CParaGoomba::SetState(int state)
 		stateDelay = 700; 
 		nextStateTime = GetTickCount64();
 		break;
-	}
-	
+	}	
+}
+int CParaGoomba::IsCollidable()
+{
+	return (state != PARAGOOMBA_STATE_DIE && state != PARAGOOMBA_STATE_DIEBYSHELL);
 }

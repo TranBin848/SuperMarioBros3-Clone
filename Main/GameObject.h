@@ -28,13 +28,12 @@ protected:
 
 	int state;
 
-	bool isDeleted; 
-
 	int renderLayer = 0;
 
 	bool isActivated;
 
 public: 
+	bool isDeleted;
 	void SetPosition(float x, float y) { this->x = x, this->y = y; }
 	void SetSpeed(float vx, float vy) { this->vx = vx, this->vy = vy; }
 	void GetPosition(float &x, float &y) { x = this->x; y = this->y; }
@@ -44,6 +43,7 @@ public:
 	float GetX() const { return x; }
 	float GetY() const { return y; }
 	void GetSpeed(float &vx, float &vy) { vx = this->vx; vy = this->vy; }
+	
 
 	void SetRenderLayer(int l) { renderLayer = l; }
 	int GetRenderLayer() const { return renderLayer; }
