@@ -33,10 +33,11 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 {
 	float cx, cy;
 	CGame::GetInstance()->GetCamPos(cx,cy);
-	DebugOutTitle(L"Camera: %f", cy);
+	/*if(isOnPlatform) DebugOutTitle(L"Tren dat");
+	else DebugOutTitle(L"Camera: %d", aniId);*/
 	if (isTransforming)
 	{
-		if (GetTickCount64() - transform_start >= 1000)
+		if (GetTickCount64() - transform_start >= MARIO_TIME_RUNTOFLY)
 		{
 			isTransforming = false;
 			finishTransforming = true;
@@ -44,12 +45,24 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 		}
 		return;
 	}
-
+	
 	vy += ay * dt;
 	vx += ax * dt;
 
 	if (abs(vx) > abs(maxVx)) vx = maxVx;
 
+	if (abs(vx) == MARIO_RUNNING_SPEED && isOnPlatform && level == MARIO_LEVEL_TANUKI)
+	{
+		if (running_start == 0)
+			running_start = GetTickCount64();
+		else if (GetTickCount64() - running_start >= 1000)
+			canFly = true;
+	}
+	else
+	{
+		running_start = 0;
+	}
+	
 
 	if (isHolding)
 	{
@@ -75,9 +88,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 				{
 					SetState(MARIO_STATE_KICK_LEFT);
 					heldKoopa->SetSpeed(-KOOPA_ACTIVATE_SPEED, 0); // Koopa bay trái
-
 				}
-
 				heldKoopa = nullptr;
 			}
 			else
@@ -105,6 +116,25 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 	if (isFlapping && GetTickCount64() - flap_start > 100)
 	{
 		isFlapping = false;
+	}
+	if (isFloating && GetTickCount64() - floating_start > 100)
+	{
+		isFloating = false;
+	}
+	if (flying_start != 0)
+	{
+		if (GetTickCount64() - flying_start >= MARIO_TIME_FLYTOWALK)
+		{
+			canFly = false;       // Tắt quyền bay
+			isFlying = false;
+			flying_start = 0;     // Reset thời gian bay
+		}
+	}
+	if (isOnPlatform)
+	{
+		isFlying = false;
+		isFloating = false;
+		if (level == MARIO_LEVEL_TANUKI) ay = TANUKI_GRAVITY;
 	}
 	CCollision::GetInstance()->Process(this, dt, coObjects);
 }
@@ -555,10 +585,24 @@ int CMario::GetAniIdTanuki() {
 				}
 				else
 				{
-					if (nx >= 0)
-						aniId = ID_ANI_TANUKI_JUMP_WALK_RIGHT;
+					if (isFloating)
+					{
+						if (nx >= 0)
+						{
+							aniId = isFlapping ? ID_ANI_TANUKI_JUMP_WALK_RIGHT_DOWN : ID_ANI_TANUKI_JUMP_WALK_RIGHT_UP;
+						}
+						else
+						{
+							aniId = isFlapping ? ID_ANI_TANUKI_JUMP_WALK_LEFT_DOWN : ID_ANI_TANUKI_JUMP_WALK_LEFT_UP;
+						}
+					}
 					else
-						aniId = ID_ANI_TANUKI_JUMP_WALK_LEFT;
+					{
+						if (nx >= 0)
+							aniId = ID_ANI_TANUKI_JUMP_WALK_RIGHT_UP;
+						else
+							aniId = ID_ANI_TANUKI_JUMP_WALK_LEFT_UP;
+					}
 				}
 			}
 			else
@@ -568,17 +612,31 @@ int CMario::GetAniIdTanuki() {
 				else
 					aniId = ID_ANI_TANUKI_RUNSHELLLEFT;
 			}
-
 		}
 		else
 		{
-			if (nx >= 0)
-				aniId = ID_ANI_TANUKI_JUMP_WALK_RIGHT;
-			else
-				aniId = ID_ANI_TANUKI_JUMP_WALK_LEFT;
+			if (canFly)
+			{
+				if (nx >= 0)
+					aniId = ID_ANI_TANUKI_JUMP_RUN_RIGHT_UP;
+				else
+					aniId = ID_ANI_TANUKI_JUMP_RUN_LEFT_UP;
+			}
+			else 
+			{
+				if (nx >= 0)
+				{
+					aniId = isFlapping ? ID_ANI_TANUKI_JUMP_WALK_RIGHT_DOWN : ID_ANI_TANUKI_JUMP_WALK_RIGHT_UP;
+				}
+				else
+				{
+					aniId = isFlapping ? ID_ANI_TANUKI_JUMP_WALK_LEFT_DOWN : ID_ANI_TANUKI_JUMP_WALK_LEFT_UP;
+				}
+			}
 		}
 	}
 	else
+	{
 		if (isSitting)
 		{
 			if (nx > 0)
@@ -623,6 +681,8 @@ int CMario::GetAniIdTanuki() {
 				else if (ax == -MARIO_ACCEL_WALK_X)
 					aniId = ID_ANI_TANUKI_WALKING_LEFT;
 			}
+	}
+		
 
 	if (aniId == -1) aniId = ID_ANI_TANUKI_IDLE_RIGHT;
 
@@ -683,6 +743,8 @@ void CMario::Render()
 			aniId = GetAniIdTanuki();
 	
 	animations->Get(aniId)->Render(x, y);
+	DebugOutTitle(L"Camera: %d", aniId);
+	RenderBoundingBox();
 }
 
 void CMario::SetState(int state)
@@ -748,20 +810,40 @@ void CMario::SetState(int state)
 					vy = -TANUKI_JUMP_RUN_SPEED_Y;
 				else
 					vy = -TANUKI_JUMP_SPEED_Y;
-				if (!isFlying) // Nếu chưa bay, bật cờ bay lên
-					isFlying = true;
-				isFlapping = true;
-				flap_start = GetTickCount64();
 			}
 		}
 		else
 		{
 			if (level == MARIO_LEVEL_TANUKI)
 			{
-				vy = -TANUKI_FLAP_SPEED_Y;
-				if (!isFlying) // Nếu chưa bay, bật cờ bay lên
-					isFlying = true;
+				if (canFly)
+				{
+					vy = -TANUKI_FLAP_SPEED_Y;
+					if (!isFlying) // Nếu chưa bay, bật cờ bay lên
+					{
+						isFlying = true;
+						flying_start = GetTickCount64();
+					}
+				}
+				else
+				{
+					if (vy > 0)
+					{
+						const float SLOW_FALL_GRAVITY = MARIO_GRAVITY * 0.001f;
+						const float MAX_SLOW_FALL_SPEED = 0.05f;
 
+						if (vy > MAX_SLOW_FALL_SPEED)
+							vy = MAX_SLOW_FALL_SPEED;
+						ay = SLOW_FALL_GRAVITY;
+
+						if (!isFloating)
+						{
+							isFloating = true;
+							floating_start = GetTickCount64();
+						}
+					}
+					
+				}
 				isFlapping = true;
 				flap_start = GetTickCount64();
 			}
@@ -774,8 +856,8 @@ void CMario::SetState(int state)
 			if(level != MARIO_LEVEL_TANUKI)	vy += MARIO_JUMP_SPEED_Y / 2;
 			else
 			{
-				if (isOnPlatform) vy += TANUKI_JUMP_RUN_SPEED_Y / 2;
-				else vy += TANUKI_FLAP_SPEED_Y / 4;
+				if (!isFlying) vy += TANUKI_JUMP_RUN_SPEED_Y / 2;
+				else vy += TANUKI_FLAP_SPEED_Y / 4;	
 			}
 		}
 		break;
@@ -786,7 +868,8 @@ void CMario::SetState(int state)
 			state = MARIO_STATE_IDLE;
 			isSitting = true;
 			vx = 0; vy = 0.0f;
-			y +=MARIO_SIT_HEIGHT_ADJUST;
+			if (level != MARIO_LEVEL_TANUKI) y += MARIO_SIT_HEIGHT_ADJUST;
+			else y += MARIO_SIT_HEIGHT_ADJUST_TANUKI;
 		}
 		break;
 
@@ -795,7 +878,8 @@ void CMario::SetState(int state)
 		{
 			isSitting = false;
 			state = MARIO_STATE_IDLE;
-			y -= MARIO_SIT_HEIGHT_ADJUST;
+			if (level != MARIO_LEVEL_TANUKI) y -= MARIO_SIT_HEIGHT_ADJUST;
+			else y -= MARIO_SIT_HEIGHT_ADJUST_TANUKI;
 		}
 		break;
 
@@ -844,9 +928,9 @@ void CMario::GetBoundingBox(float &left, float &top, float &right, float &bottom
 		}
 		else
 		{
-			left = x - MARIO_TANUKI_BBOX_WIDTH / 2;
+			left = x - MARIO_TANUKI_BBOX_WIDTH / 2 - 2.0f;
 			top = y - MARIO_TANUKI_BBOX_HEIGHT / 2;
-			right = left + MARIO_TANUKI_BBOX_WIDTH;
+			right = x + MARIO_BIG_BBOX_WIDTH / 2;
 			bottom = top + MARIO_TANUKI_BBOX_HEIGHT;
 		}
 	}

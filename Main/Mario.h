@@ -110,8 +110,12 @@
 #define ID_ANI_TANUKI_RUNNING_RIGHT 1900
 #define ID_ANI_TANUKI_RUNNING_LEFT 1901
 
-#define ID_ANI_TANUKI_JUMP_WALK_RIGHT 2000
-#define ID_ANI_TANUKI_JUMP_WALK_LEFT 2001
+#define ID_ANI_TANUKI_JUMP_WALK_RIGHT		2000
+#define ID_ANI_TANUKI_JUMP_WALK_RIGHT_UP	2001
+#define ID_ANI_TANUKI_JUMP_WALK_RIGHT_DOWN	2002
+#define ID_ANI_TANUKI_JUMP_WALK_LEFT		2003
+#define ID_ANI_TANUKI_JUMP_WALK_LEFT_UP		2004
+#define ID_ANI_TANUKI_JUMP_WALK_LEFT_DOWN	2005
 
 #define ID_ANI_TANUKI_JUMP_RUN_RIGHT_UP		2100
 #define ID_ANI_TANUKI_JUMP_RUN_RIGHT_DOWN	2101
@@ -148,17 +152,21 @@
 #define MARIO_BIG_BBOX_WIDTH  14
 #define MARIO_BIG_BBOX_HEIGHT 24
 #define MARIO_TANUKI_BBOX_HEIGHT 26
-#define MARIO_TANUKI_BBOX_WIDTH	21
+#define MARIO_TANUKI_BBOX_WIDTH	20
 #define MARIO_BIG_SITTING_BBOX_WIDTH  14
 #define MARIO_BIG_SITTING_BBOX_HEIGHT 16
 
 #define MARIO_SIT_HEIGHT_ADJUST ((MARIO_BIG_BBOX_HEIGHT-MARIO_BIG_SITTING_BBOX_HEIGHT)/2)
 
+#define MARIO_SIT_HEIGHT_ADJUST_TANUKI ((MARIO_TANUKI_BBOX_HEIGHT-MARIO_BIG_SITTING_BBOX_HEIGHT)/2)
+
 #define MARIO_SMALL_BBOX_WIDTH  13
 #define MARIO_SMALL_BBOX_HEIGHT 14
 
-#define MARIO_UNTOUCHABLE_TIME 2500
-#define MARIO_KICK_DURATION 100
+#define MARIO_UNTOUCHABLE_TIME	2500
+#define MARIO_KICK_DURATION		100
+#define MARIO_TIME_RUNTOFLY		1000
+#define MARIO_TIME_FLYTOWALK	3000
 
 class CMario : public CGameObject
 {
@@ -175,6 +183,9 @@ class CMario : public CGameObject
 	ULONGLONG kick_start;
 	ULONGLONG transform_start = 0;
 	ULONGLONG flap_start = 0; // Thời điểm bắt đầu vỗ cánh
+	ULONGLONG running_start = 0;
+	ULONGLONG flying_start = 0;
+	ULONGLONG floating_start = 0;
 
 	BOOLEAN isOnPlatform;
 	
@@ -183,7 +194,8 @@ class CMario : public CGameObject
 	
 	bool isFlying = false; // Mario đang trong trạng thái bay
 	bool isFlapping = false; // Mario vừa nhấn nút nhảy để vỗ cánh
-	
+	bool isFloating = false;
+	bool canFly = false;
 
 	int transform_from = -1;
 	int transform_to = -1;
