@@ -9,6 +9,7 @@
 
 #define PARAKOOPA_GRAVITY			0.0005f
 #define PARAKOOPA_JUMP_SPEED		0.2f
+#define KOOPA_JUMP_SPEED			0.3f
 
 #define PARAKOOPA_BBOX_HEIGHT		26
 #define KOOPA_BBOX_WIDTH			16
@@ -16,7 +17,8 @@
 #define KOOPA_BBOX_HEIGHT_SHELL		14
 
 #define KOOPA_SHELL_TIMEOUT			4000
-#define KOOPA_DIE_TIMEOUT			500
+#define KOOPA_SHELL_RECOVER			1000
+#define KOOPA_DIE_TIMEOUT			1000
 
 #define KOOPA_STATE_WALKING			100
 #define KOOPA_STATE_SHELL			200	
@@ -43,6 +45,9 @@
 #define	KOOPA_LEVEL_RED			1
 #define	KOOPA_LEVEL_GREEN		2
 #define KOOPA_LEVEL_PARA		3
+
+#define SHELL_OFFSET_X			12.0f
+#define SHELL_OFFSET_Y			1.0f
 
 class CKoopa : public CGameObject
 {
@@ -89,4 +94,5 @@ public:
 	int GetLevel() { return level; };
 	virtual void SetVX() { vx = -vx; };
 	void SetIsBeingHeld(bool held) { isBeingHeld = held; }
+	bool GetIsBeingHeld() { return isBeingHeld; }
 };

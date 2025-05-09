@@ -36,7 +36,7 @@ public:
 	bool isDeleted;
 	void SetPosition(float x, float y) { this->x = x, this->y = y; }
 	void SetSpeed(float vx, float vy) { this->vx = vx, this->vy = vy; }
-	void GetPosition(float &x, float &y) { x = this->x; y = this->y; }
+	
 	void Activate() {
 		isActivated = true;
 	}
@@ -44,6 +44,8 @@ public:
 	float GetY() const { return y; }
 	void GetSpeed(float &vx, float &vy) { vx = this->vx; vy = this->vy; }
 	
+	void GetPosition(float& x, float& y) { x = this->x; y = this->y; }
+	void GetDirection(float& dr) { dr = this->nx; }
 
 	void SetRenderLayer(int l) { renderLayer = l; }
 	int GetRenderLayer() const { return renderLayer; }

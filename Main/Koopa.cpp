@@ -140,10 +140,46 @@ void CKoopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	/*if (!isActivated) return;*/
 	if (isBeingHeld)
 	{
-		vx = 0;
-		vy = 0;
-		return; // Không update vật lý khi bị cầm
-	}
+		if (state == KOOPA_STATE_SHELL)
+		{
+			if (GetTickCount64() - shell_start > KOOPA_SHELL_TIMEOUT)
+			{
+				SetState(KOOPA_STATE_RETURN);
+			}
+		}
+		else if (state == KOOPA_STATE_RETURN)
+		{
+			if (GetTickCount64() - return_start > KOOPA_SHELL_RECOVER)
+			{
+				SetState(KOOPA_STATE_WALKING);
+				isBeingHeld = false;
+				vy = -KOOPA_JUMP_SPEED;
+				CMario::GetInstance()->TakeDmg();
+				return;
+			}
+		}
+		float mx, my, mnx, max, may, mvx, mvy;
+		CMario::GetInstance()->GetPosition(mx, my);
+		CMario::GetInstance()->GetDirection(mnx);
+		CMario::GetInstance()->GetAcc(max, may);
+		CMario::GetInstance()->GetSpeed(mvx, mvy);
+		if (mvy == 0) ay = 0;
+		mvy += may * dt;
+		mvx += max * dt;
+
+		mx += mvx * dt;
+		my += mvy * dt;
+
+		float targetX = (mnx >= 0) ? (mx + SHELL_OFFSET_X) : (mx - SHELL_OFFSET_X);
+		float targetY = my - SHELL_OFFSET_Y;
+
+		float dx = targetX - x;
+		float dy = targetY - y;
+		if (dt != 0)
+			SetSpeed(dx / dt, dy / dt);
+		x += vx * dt;
+		y += vy * dt;
+	}	
 	else
 	{
 		if (level == KOOPA_LEVEL_RED || level == KOOPA_LEVEL_GREEN)
@@ -176,7 +212,7 @@ void CKoopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				vx = 0;
 				vy = 0;
 
-				if (GetTickCount64() - return_start > 1000) // sau 1 giây
+				if (GetTickCount64() - return_start > KOOPA_SHELL_RECOVER)
 				{
 					SetState(KOOPA_STATE_WALKING);
 				}
@@ -317,21 +353,25 @@ void CKoopa::SetState(int state)
 		vx = 0;
 		shell_start = GetTickCount64(); // Ghi lại thời gian vào shell
 		just_activated = false;
+		ay = KOOPA_GRAVITY;
 		break;
 	case KOOPA_STATE_WALKING:
 		shell_start = 0; // Không cần đếm thời gian nữa
 		vx = (vx >= 0) ? KOOPA_WALKING_SPEED : -KOOPA_WALKING_SPEED; // hướng chạy tiếp
+		ay = KOOPA_GRAVITY;
 		just_activated = false;
 		break;
 	case KOOPA_STATE_ACTIVATE:
 		vx = (vx >= 0) ? KOOPA_ACTIVATE_SPEED : -KOOPA_ACTIVATE_SPEED; // hướng chạy tiếp
 		y -= 1.0f;
+		ay = KOOPA_GRAVITY;
 		just_activated = true;
 		break;
 	case KOOPA_STATE_RETURN:
 		vx = 0;
 		return_start = GetTickCount64(); // Ghi lại thời điểm bắt đầu return
 		just_activated = false;
+		ay = KOOPA_GRAVITY;
 		break;
 	case KOOPA_STATE_DIEBYSHELL:
 		die_start = GetTickCount64();

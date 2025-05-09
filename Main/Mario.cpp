@@ -28,13 +28,32 @@ void CMario::StartFlap()
 	if (isOnPlatform) vy = -TANUKI_JUMP_RUN_SPEED_Y;
 	else vy = -TANUKI_FLAP_SPEED_Y;
 }
+void CMario::TakeDmg()
+{
+	if (untouchable == 0)
+	{
+		if (level == MARIO_LEVEL_BIG)
+		{
+			SetLevel(MARIO_LEVEL_SMALL);
+		}
+		else if (level == MARIO_LEVEL_TANUKI)
+		{
+			SetLevel(MARIO_LEVEL_BIG);
+		}
+		else
+		{
+			DebugOut(L">>> Mario DIE >>> \n");
+			SetState(MARIO_STATE_DIE);
+		}
+	}
+}
+
 
 void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 {
 	float cx, cy;
 	CGame::GetInstance()->GetCamPos(cx,cy);
-	/*if(isOnPlatform) DebugOutTitle(L"Tren dat");
-	else DebugOutTitle(L"Camera: %d", aniId);*/
+	if(isHolding) DebugOutTitle(L"check: %d", state);
 	if (isTransforming)
 	{
 		if (GetTickCount64() - transform_start >= MARIO_TIME_RUNTOFLY)
@@ -69,38 +88,37 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 		LPGAME game = CGame::GetInstance();
 		if (heldKoopa != nullptr)
 		{
-			if (!game->IsKeyDown(DIK_A))
+			if (heldKoopa->GetIsBeingHeld())
 			{
-				// Thả Koopa ra
 				isHolding = false;
-				heldKoopa->SetIsBeingHeld(false);
-
-				// Koopa chuyển sang trạng thái ACTIVE
-				heldKoopa->SetState(KOOPA_STATE_ACTIVATE);
-
-				// Đá theo hướng Mario đang nhìn
-				if (nx > 0)
-				{
-					SetState(MARIO_STATE_KICK_RIGHT);
-					heldKoopa->SetSpeed(KOOPA_ACTIVATE_SPEED, 0); // Koopa bay phải
-				}
-				else
-				{
-					SetState(MARIO_STATE_KICK_LEFT);
-					heldKoopa->SetSpeed(-KOOPA_ACTIVATE_SPEED, 0); // Koopa bay trái
-				}
 				heldKoopa = nullptr;
 			}
 			else
 			{
-				float offsetX = (nx > 0) ? 14.0f : -14.0f;
-				float offsetY = 0.0f; // Có thể điều chỉnh để Koopa nằm thấp hơn tay một chút
+				if (!game->IsKeyDown(DIK_A))
+				{
+					// Thả Koopa ra
+					isHolding = false;
+					heldKoopa->SetIsBeingHeld(false);
 
-				heldKoopa->SetPosition(x + offsetX, y + offsetY);
-				heldKoopa->SetSpeed(0, 0);
+					// Koopa chuyển sang trạng thái ACTIVE
+					heldKoopa->SetState(KOOPA_STATE_ACTIVATE);
+
+					// Đá theo hướng Mario đang nhìn
+					if (nx > 0)
+					{
+						SetState(MARIO_STATE_KICK_RIGHT);
+						heldKoopa->SetSpeed(KOOPA_ACTIVATE_SPEED, 0); // Koopa bay phải
+					}
+					else
+					{
+						SetState(MARIO_STATE_KICK_LEFT);
+						heldKoopa->SetSpeed(-KOOPA_ACTIVATE_SPEED, 0); // Koopa bay trái
+					}
+					heldKoopa = nullptr;
+				}
 			}
 		}
-		
 	}
 
 	// reset untouchable timer if untouchable time has passed
@@ -181,6 +199,7 @@ void CMario::OnCollisionWith(LPCOLLISIONEVENT e)
 
 void CMario::OnCollisionWithKoopa(LPCOLLISIONEVENT e) {
 	CKoopa* koopa = dynamic_cast<CKoopa*>(e->obj);
+	if (koopa->GetIsBeingHeld()) return;
 	if (e->ny < 0)
 	{
 		int koopaState = koopa->GetState();
@@ -207,14 +226,16 @@ void CMario::OnCollisionWithKoopa(LPCOLLISIONEVENT e) {
 				koopa->SetLevel(KOOPA_LEVEL_GREEN);
 		}
 		float accY = GetAy();
-		vy -= MARIO_JUMP_DEFLECT_SPEED;
-		if (accY == MARIO_GRAVITY) vy /= 1;
-		else if (accY == TANUKI_GRAVITY) vy /= 2;
-		else vy = 0;
+		float jumpForce = MARIO_JUMP_DEFLECT_SPEED;
+		if (accY == MARIO_GRAVITY) jumpForce /= 1;
+		else if (accY == TANUKI_GRAVITY) jumpForce /= 2;
+		else jumpForce = 0;
+		vy = -jumpForce;
+		
 	}
 	else if (e->nx != 0) // Va chạm từ bên trái/phải
 	{
-		if (koopa->GetState() == KOOPA_STATE_SHELL)
+		if (koopa->GetState() == KOOPA_STATE_SHELL && !koopa->GetIsBeingHeld())
 		{
 			if (!isHolding && (this->state == MARIO_STATE_RUNNING_LEFT || this->state == MARIO_STATE_RUNNING_RIGHT))
 			{
@@ -272,12 +293,13 @@ void CMario::OnCollisionWithGoomba(LPCOLLISIONEVENT e)
 		if (goomba->GetState() != GOOMBA_STATE_DIE)
 		{
 			goomba->SetState(GOOMBA_STATE_DIE);
+			float accY = GetAy();
+			float jumpForce = MARIO_JUMP_DEFLECT_SPEED;
+			if (accY == MARIO_GRAVITY) jumpForce /= 1;
+			else if (accY == TANUKI_GRAVITY) jumpForce /= 2;
+			else jumpForce = 0;
+			vy = -jumpForce;
 		}
-		float accY = GetAy();
-		vy -= MARIO_JUMP_DEFLECT_SPEED;
-		if (accY == MARIO_GRAVITY) vy /= 1;
-		else if (accY == TANUKI_GRAVITY) vy /= 2;
-		else vy = 0;
 	}
 	else // hit by Goomba
 	{
@@ -319,10 +341,11 @@ void CMario::OnCollisionWithParaGoomba(LPCOLLISIONEVENT e)
 			goomba->SetState(PARAGOOMBA_STATE_NORMAL_WALKING);
 		}
 		float accY = GetAy();
-		vy -= MARIO_JUMP_DEFLECT_SPEED;
-		if (accY == MARIO_GRAVITY) vy /= 1;
-		else if (accY == TANUKI_GRAVITY) vy /= 2;
-		else vy = 0;
+		float jumpForce = MARIO_JUMP_DEFLECT_SPEED;
+		if (accY == MARIO_GRAVITY) jumpForce /= 1;
+		else if (accY == TANUKI_GRAVITY) jumpForce /= 2;
+		else jumpForce = 0;
+		vy = -jumpForce;
 	}
 	else // hit by Goomba
 	{
