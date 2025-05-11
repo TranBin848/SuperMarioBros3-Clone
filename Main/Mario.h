@@ -74,6 +74,10 @@
 
 #define ID_ANI_MARIO_RUNSHELLRIGHT	1050	
 #define ID_ANI_MARIO_RUNSHELLLEFT	1051	
+
+#define ID_ANI_MARIO_IDLESHELLRIGHT	1053	
+#define ID_ANI_MARIO_IDLESHELLLEFT	1054	
+
 #define ID_ANI_MARIO_STAND			1052
 
 #define ID_ANI_MARIO_DIE 999
@@ -99,6 +103,12 @@
 
 #define ID_ANI_MARIO_SMALL_KICK_RIGHT 1400
 #define ID_ANI_MARIO_SMALL_KICK_LEFT 1401
+
+#define ID_ANI_MARIO_SMALL_RUNSHELLRIGHT	1602	
+#define ID_ANI_MARIO_SMALL_RUNSHELLLEFT		1603	
+
+#define ID_ANI_MARIO_SMALL_IDLESHELLRIGHT	1604	
+#define ID_ANI_MARIO_SMALL_IDLESHELLLEFT	1605
 
 //TANUKI MARIO
 #define ID_ANI_TANUKI_IDLE_RIGHT 1700
@@ -134,6 +144,9 @@
 #define ID_ANI_TANUKI_RUNSHELLRIGHT	2450	
 #define ID_ANI_TANUKI_RUNSHELLLEFT	2451	
 
+#define ID_ANI_TANUKI_IDLESHELLRIGHT	2452	
+#define ID_ANI_TANUKI_IDLESHELLLEFT		2453	
+
 #define ID_ANI_TRANSFORM_TANUKI			2511
 #define ID_ANI_TRANSFORM_BIG_RIGHT		2512	
 #define ID_ANI_TRANSFORM_BIG_LEFT		2513	
@@ -167,6 +180,15 @@
 #define MARIO_KICK_DURATION		100
 #define MARIO_TIME_RUNTOFLY		1000
 #define MARIO_TIME_FLYTOWALK	3000
+
+#define MARIO_SHELL_OFFSETX		11
+#define MARIO_SHELL_OFFSETY		2
+
+#define MARIO_SMALL_SHELL_OFFSETX		12
+#define MARIO_SMALL_SHELL_OFFSETY		1
+
+#define TANUKI_SHELL_OFFSETX		14
+#define TANUKI_SHELL_OFFSETY		2
 
 class CMario : public CGameObject
 {
@@ -260,6 +282,29 @@ public:
 	void SetLevel(int l);
 	int GetLevel() { return level; };
 	void GetAcc(float& ax, float& ay) { ax = this->ax; ay = this->ay; };
+	void GetShellOffset(float& ox, float& oy) {
+		switch (level)
+		{
+			case MARIO_LEVEL_SMALL:
+			{
+				ox = MARIO_SMALL_SHELL_OFFSETX;
+				oy = MARIO_SMALL_SHELL_OFFSETY;
+				break;
+			}
+			case MARIO_LEVEL_BIG:
+			{
+				ox = MARIO_SHELL_OFFSETX;
+				oy = MARIO_SHELL_OFFSETY;
+				break;
+			}
+			case MARIO_LEVEL_TANUKI:
+			{
+				ox = TANUKI_SHELL_OFFSETX;
+				oy = TANUKI_SHELL_OFFSETY;
+				break;
+			}
+		}
+	}
 	float GetAy() { return ay; }
 	void StartUntouchable() { untouchable = 1; untouchable_start = GetTickCount64(); }
 

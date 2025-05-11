@@ -32,7 +32,7 @@ public:
     }
     virtual int IsBlocking() { return 0; } // Không chặn gì cả
     int IsCollidable() override { return 1; }
-    virtual void Render() { RenderBoundingBox(); }
+    virtual void Render() {/* RenderBoundingBox(); */}
     virtual void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
 };
 

@@ -20,7 +20,7 @@ void CKoopaSensor::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
         {
             float vx, vy;
             owner->GetSpeed(vx, vy);
-            sensor_offset_x = (vx >= 0) ? (KOOPA_BBOX_WIDTH / 2 + 5) : (-KOOPA_BBOX_WIDTH / 2 - 5);
+            sensor_offset_x = (vx >= 0) ? (KOOPA_BBOX_WIDTH / 2 + 4) : (-KOOPA_BBOX_WIDTH / 2 - 4);
             sensor_offset_y = KOOPA_BBOX_HEIGHT / 2;
         }
         else
@@ -54,7 +54,6 @@ void CKoopaSensor::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
                 }
             }
         }
-
         x = ox + sensor_offset_x;
         y = oy + sensor_offset_y;
     }
@@ -121,7 +120,6 @@ void CKoopaSensor::OnCollisionWithGoomba(LPCOLLISIONEVENT e)
     if (goomba->GetState() != GOOMBA_STATE_DIEBYSHELL)
     {
         goomba->SetState(GOOMBA_STATE_DIEBYSHELL);
-        /*owner->SetIsBeingHeld(false);*/
         owner->SetState(KOOPA_STATE_DIEBYSHELL);
     }
 }
@@ -132,7 +130,6 @@ void CKoopaSensor::OnCollisionWithKoopa(LPCOLLISIONEVENT e)
     if (kp->GetState() != KOOPA_STATE_DIEBYSHELL)
     {
         kp->SetState(KOOPA_STATE_DIEBYSHELL);
-        
         owner->SetState(KOOPA_STATE_DIEBYSHELL);
         
     }
@@ -143,8 +140,6 @@ void CKoopaSensor::OnCollisionWithParaGoomba(LPCOLLISIONEVENT e)
     if (goomba->GetState() != PARAGOOMBA_STATE_DIEBYSHELL)
     {
         goomba->SetState(PARAGOOMBA_STATE_DIEBYSHELL);
-        
         owner->SetState(KOOPA_STATE_DIEBYSHELL);
-        
     }
 }

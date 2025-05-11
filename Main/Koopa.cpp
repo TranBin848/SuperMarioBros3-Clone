@@ -140,10 +140,6 @@ void CKoopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	/*if (!isActivated) return;*/
 	if (isBeingHeld)
 	{
-		/*if (sensor)
-		{
-			sensor->Update(dt, coObjects);
-		}*/
 		if (state == KOOPA_STATE_SHELL)
 		{
 			if (GetTickCount64() - shell_start > KOOPA_SHELL_TIMEOUT)
@@ -174,8 +170,11 @@ void CKoopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		mx += mvx * dt;
 		my += mvy * dt;
 
-		float targetX = (mnx >= 0) ? (mx + SHELL_OFFSET_X) : (mx - SHELL_OFFSET_X);
-		float targetY = my - SHELL_OFFSET_Y;
+		float ox, oy;
+		CMario::GetInstance()->GetShellOffset(ox, oy);
+
+		float targetX = (mnx >= 0) ? (mx + ox) : (mx - ox);
+		float targetY = my + oy;
 
 		float dx = targetX - x;
 		float dy = targetY - y;
@@ -241,10 +240,6 @@ void CKoopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			{
 				vx += ax * dt;
 				vy += ay * dt;
-				if (sensor)
-				{
-					sensor->Update(dt, coObjects);
-				}
 			}
 		}
 		else if (level == KOOPA_LEVEL_PARA)
@@ -336,7 +331,7 @@ void CKoopa::Render()
 	else if (level == KOOPA_LEVEL_PARA)
 		aniId = GetAniIdPara();
 	CAnimations::GetInstance()->Get(aniId)->Render(x, y);
-	RenderBoundingBox();
+	/*RenderBoundingBox();*/
 }
 
 void CKoopa::SetState(int state)
