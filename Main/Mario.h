@@ -267,4 +267,5 @@ public:
 
 	void StartFlap();
 	void TakeDmg();
+	bool IsMario() { return true; }
 };

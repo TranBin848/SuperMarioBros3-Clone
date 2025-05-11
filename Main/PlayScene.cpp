@@ -307,19 +307,57 @@ void CPlayScene::Update(DWORD dt)
 	// skip the rest if scene was already unloaded (Mario::Update might trigger PlayScene::Unload)
 	if (player == NULL) return;
 
-	// Update camera to follow mario
-	float cx, cy;
-	player->GetPosition(cx, cy);
+	// Các thông số cần khai báo ở đầu
+	float followSpeed = 0.1f; // từ 0.0 đến 1.0
+	int deadZoneWidth = 64;
+	int deadZoneHeight = 64;
 
+	// Lấy vị trí Mario
+	float marioX, marioY;
+	player->GetPosition(marioX, marioY);
+
+	// Lấy vị trí camera hiện tại
+	float camX, camY;
+	CGame::GetInstance()->GetCamPos(camX, camY);
+
+	// Lấy kích thước màn hình
 	CGame* game = CGame::GetInstance();
-	cx -= game->GetBackBufferWidth() / 2;
-	cy -= game->GetBackBufferHeight() / 2;
-	if (cx < 0) cx = 0;
-	if (cy > CAM_MAX_Y) cy = CAM_MAX_Y;
-	else if (cy < CAM_MAX_Y && cy > CAM_MIN_Y) cy = CAM_MAX_Y;
-	else  cy = CAM_MAX_Y + cy - CAM_MIN_Y;
-	if (cy > 0) cy = 0;
-	CGame::GetInstance()->SetCamPos(cx, cy);
+	int screenWidth = game->GetBackBufferWidth();
+	int screenHeight = game->GetBackBufferHeight();
+
+	// Tính dead zone
+	float deadZoneLeft = camX + (screenWidth - deadZoneWidth) / 2;
+	float deadZoneRight = deadZoneLeft + deadZoneWidth;
+	float deadZoneTop = camY + (screenHeight - deadZoneHeight) / 2;
+	float deadZoneBottom = deadZoneTop + deadZoneHeight;
+
+	// Xử lý trục X
+	float targetX = camX;
+	if (marioX < deadZoneLeft)
+		targetX -= (deadZoneLeft - marioX);
+	else if (marioX > deadZoneRight)
+		targetX += (marioX - deadZoneRight);
+
+	// Xử lý trục Y
+	float targetY = camY;
+	if (marioY < deadZoneTop)
+		targetY -= (deadZoneTop - marioY);
+	else if (marioY > deadZoneBottom)
+		targetY += (marioY - deadZoneBottom);
+
+	// Interpolation
+	camX += (targetX - camX) * followSpeed;
+	camY += (targetY - camY) * followSpeed;
+
+	//// Clamp Y nếu muốn như bạn đã làm (giới hạn trục Y)
+	//if (camX < 0) camX = 0;
+	//if (camY > CAM_MAX_Y) camY = CAM_MAX_Y;
+	//else if (camY < CAM_MAX_Y && camY > CAM_MIN_Y) camY = CAM_MAX_Y;
+	//else camY = CAM_MAX_Y + camY - CAM_MIN_Y;
+	//if (camY > 0) camY = 0;
+
+	// Cập nhật lại vị trí camera
+	CGame::GetInstance()->SetCamPos(camX, camY);
 
 	PurgeDeletedObjects();
 }

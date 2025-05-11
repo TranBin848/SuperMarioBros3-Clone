@@ -83,5 +83,7 @@ public:
 
 	void Process(LPGAMEOBJECT objSrc, DWORD dt, vector<LPGAMEOBJECT>* coObjects);
 
+	bool IsColliding(CGameObject* a, CGameObject* b);
+
 	static CCollision* GetInstance();
 };

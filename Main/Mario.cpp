@@ -53,7 +53,8 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 {
 	float cx, cy;
 	CGame::GetInstance()->GetCamPos(cx,cy);
-	if(isHolding) DebugOutTitle(L"check: %d", state);
+	if(isHolding) DebugOutTitle(L"check: %d");
+	else DebugOutTitle(L"uncheck: %d");
 	if (isTransforming)
 	{
 		if (GetTickCount64() - transform_start >= MARIO_TIME_RUNTOFLY)
@@ -85,38 +86,35 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 
 	if (isHolding)
 	{
+		if (!heldKoopa->GetIsBeingHeld() || heldKoopa -> GetState() == KOOPA_STATE_DIEBYSHELL)
+		{
+			isHolding = false;
+			heldKoopa = nullptr;
+		}	
 		LPGAME game = CGame::GetInstance();
 		if (heldKoopa != nullptr)
 		{
-			if (heldKoopa->GetIsBeingHeld())
+			if (!game->IsKeyDown(DIK_A))
 			{
+				// Thả Koopa ra
 				isHolding = false;
-				heldKoopa = nullptr;
-			}
-			else
-			{
-				if (!game->IsKeyDown(DIK_A))
+				heldKoopa->SetIsBeingHeld(false);
+
+				// Koopa chuyển sang trạng thái ACTIVE
+				heldKoopa->SetState(KOOPA_STATE_ACTIVATE);
+
+				// Đá theo hướng Mario đang nhìn
+				if (nx > 0)
 				{
-					// Thả Koopa ra
-					isHolding = false;
-					heldKoopa->SetIsBeingHeld(false);
-
-					// Koopa chuyển sang trạng thái ACTIVE
-					heldKoopa->SetState(KOOPA_STATE_ACTIVATE);
-
-					// Đá theo hướng Mario đang nhìn
-					if (nx > 0)
-					{
-						SetState(MARIO_STATE_KICK_RIGHT);
-						heldKoopa->SetSpeed(KOOPA_ACTIVATE_SPEED, 0); // Koopa bay phải
-					}
-					else
-					{
-						SetState(MARIO_STATE_KICK_LEFT);
-						heldKoopa->SetSpeed(-KOOPA_ACTIVATE_SPEED, 0); // Koopa bay trái
-					}
-					heldKoopa = nullptr;
+					SetState(MARIO_STATE_KICK_RIGHT);
+					heldKoopa->SetSpeed(KOOPA_ACTIVATE_SPEED, 0); // Koopa bay phải
 				}
+				else
+				{
+					SetState(MARIO_STATE_KICK_LEFT);
+					heldKoopa->SetSpeed(-KOOPA_ACTIVATE_SPEED, 0); // Koopa bay trái
+				}
+				heldKoopa = nullptr;
 			}
 		}
 	}
@@ -209,15 +207,15 @@ void CMario::OnCollisionWithKoopa(LPCOLLISIONEVENT e) {
 		{
 			switch (koopaState)
 			{
-			case KOOPA_STATE_WALKING:
-				koopa->SetState(KOOPA_STATE_SHELL);
-				break;
-			case KOOPA_STATE_ACTIVATE:
-				koopa->SetState(KOOPA_STATE_SHELL);
-				break;
-			case KOOPA_STATE_SHELL:
-				koopa->SetState(KOOPA_STATE_ACTIVATE);
-				break;
+				case KOOPA_STATE_WALKING:
+					koopa->SetState(KOOPA_STATE_SHELL);
+					break;
+				case KOOPA_STATE_ACTIVATE:
+					koopa->SetState(KOOPA_STATE_SHELL);
+					break;
+				case KOOPA_STATE_SHELL:
+					koopa->SetState(KOOPA_STATE_ACTIVATE);
+					break;
 			}
 		}
 		else if (l == KOOPA_LEVEL_PARA)
@@ -1049,4 +1047,6 @@ void CMario::SetLevel(int l)
 
 	level = l;
 }
+
+
 

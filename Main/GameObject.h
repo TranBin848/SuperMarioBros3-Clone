@@ -85,4 +85,8 @@ public:
 	~CGameObject();
 
 	static bool IsDeleted(const LPGAMEOBJECT &o) { return o->isDeleted; }
+
+	virtual bool IsMario() { return false; }
+
+	virtual bool IsKoopa() { return false; }
 };

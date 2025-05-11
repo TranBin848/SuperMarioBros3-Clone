@@ -1,4 +1,4 @@
-#include "Collision.h"
+﻿#include "Collision.h"
 #include "GameObject.h"
 
 #include "debug.h"
@@ -357,4 +357,13 @@ void CCollision::Process(LPGAMEOBJECT objSrc, DWORD dt, vector<LPGAMEOBJECT>* co
 
 
 	for (UINT i = 0; i < coEvents.size(); i++) delete coEvents[i];
+}
+bool CCollision::IsColliding(CGameObject* a, CGameObject* b)
+{
+	float l1, t1, r1, b1;
+	float l2, t2, r2, b2;
+	a->GetBoundingBox(l1, t1, r1, b1);
+	b->GetBoundingBox(l2, t2, r2, b2);
+
+	return !(r1 < l2 || l1 > r2 || b1 < t2 || t1 > b2);
 }

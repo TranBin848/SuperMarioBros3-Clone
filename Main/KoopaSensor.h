@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "GameObject.h"
+#include "debug.h"
 #define SENSOR_WIDTH 4
 #define SENSOR_HEIGHT 4
 class CKoopa; 
@@ -9,6 +10,11 @@ class CKoopaSensor : public CGameObject
 protected:
     CKoopa *owner;
     bool hasTurned = false; 
+    float ax, ay;
+    virtual void OnCollisionWith(LPCOLLISIONEVENT e);
+    void OnCollisionWithGoomba(LPCOLLISIONEVENT e);
+    void OnCollisionWithParaGoomba(LPCOLLISIONEVENT e);
+    void OnCollisionWithKoopa(LPCOLLISIONEVENT e);
 public:
     CKoopaSensor(float x, float y) : CGameObject(x, y)
     {
@@ -25,7 +31,7 @@ public:
         b = t + SENSOR_HEIGHT;
     }
     virtual int IsBlocking() { return 0; } // Không chặn gì cả
-    int IsCollidable() override { return 0; }
+    int IsCollidable() override { return 1; }
     virtual void Render() { RenderBoundingBox(); }
     virtual void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
 };

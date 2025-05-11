@@ -140,6 +140,10 @@ void CKoopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	/*if (!isActivated) return;*/
 	if (isBeingHeld)
 	{
+		/*if (sensor)
+		{
+			sensor->Update(dt, coObjects);
+		}*/
 		if (state == KOOPA_STATE_SHELL)
 		{
 			if (GetTickCount64() - shell_start > KOOPA_SHELL_TIMEOUT)
@@ -163,7 +167,7 @@ void CKoopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		CMario::GetInstance()->GetDirection(mnx);
 		CMario::GetInstance()->GetAcc(max, may);
 		CMario::GetInstance()->GetSpeed(mvx, mvy);
-		if (mvy == 0) ay = 0;
+		if (mvy == 0) may = 0;
 		mvy += may * dt;
 		mvx += max * dt;
 
@@ -182,6 +186,16 @@ void CKoopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	}	
 	else
 	{
+		if (state == KOOPA_STATE_DIEBYSHELL)
+		{
+			vy += ay * dt;
+			if (GetTickCount64() - die_start > KOOPA_DIE_TIMEOUT)
+			{
+				sensor->isDeleted = true;
+				isDeleted = true;
+				return;
+			}
+		}
 		if (level == KOOPA_LEVEL_RED || level == KOOPA_LEVEL_GREEN)
 		{
 			if (state == KOOPA_STATE_ACTIVATE)
@@ -200,8 +214,14 @@ void CKoopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			{
 				// Mai rùa đứng yên, không rơi
 				vx = 0;
-				vy = 0;
-				// Kiểm tra timeout
+				if (just_activated)
+				{
+					just_activated = false; // Đặt lại flag sau frame đầu tiên
+				}
+				else
+				{
+					vy += ay * dt; // Chỉ cập nhật vy từ frame thứ hai trở đi
+				}
 				if (GetTickCount64() - shell_start > KOOPA_SHELL_TIMEOUT)
 				{
 					SetState(KOOPA_STATE_RETURN);
@@ -221,13 +241,8 @@ void CKoopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			{
 				vx += ax * dt;
 				vy += ay * dt;
-				if (sensor && level == KOOPA_LEVEL_RED)
+				if (sensor)
 				{
-					float sensor_offset_x = (vx > 0 ? KOOPA_BBOX_WIDTH / 2 + 1 : -KOOPA_BBOX_WIDTH / 2 - 1);
-					float sensor_x = x + sensor_offset_x;
-					float sensor_y = y + KOOPA_BBOX_HEIGHT / 2 + 1;
-
-					sensor->SetPosition(sensor_x, sensor_y);
 					sensor->Update(dt, coObjects);
 				}
 			}
@@ -245,20 +260,12 @@ void CKoopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				vy += ay * dt;
 			}
 		}
-		if (state == KOOPA_STATE_DIEBYSHELL)
-		{
-			vy += ay * dt;
-			vx += ax * dt;
-			if (GetTickCount64() - die_start > KOOPA_DIE_TIMEOUT)
-			{
-				sensor->isDeleted = true;
-				isDeleted = true;
-				return;
-			}
-		}
+		
 		CGameObject::Update(dt, coObjects);
 		CCollision::GetInstance()->Process(this, dt, coObjects);
 	}
+	/*DebugOutTitle(L"STATE: %d", state);*/
+
 }
 
 int CKoopa::GetAniIdRed()
@@ -352,13 +359,14 @@ void CKoopa::SetState(int state)
 	case KOOPA_STATE_SHELL:
 		vx = 0;
 		shell_start = GetTickCount64(); // Ghi lại thời gian vào shell
-		just_activated = false;
+		just_activated = true;
 		ay = KOOPA_GRAVITY;
 		break;
 	case KOOPA_STATE_WALKING:
 		shell_start = 0; // Không cần đếm thời gian nữa
 		vx = (vx >= 0) ? KOOPA_WALKING_SPEED : -KOOPA_WALKING_SPEED; // hướng chạy tiếp
-		ay = KOOPA_GRAVITY;
+		if (level == KOOPA_LEVEL_PARA) ay = PARAKOOPA_GRAVITY;
+		else ay = KOOPA_GRAVITY;
 		just_activated = false;
 		break;
 	case KOOPA_STATE_ACTIVATE:
@@ -374,6 +382,7 @@ void CKoopa::SetState(int state)
 		ay = KOOPA_GRAVITY;
 		break;
 	case KOOPA_STATE_DIEBYSHELL:
+		isBeingHeld = false;
 		die_start = GetTickCount64();
 		vx = 0;
 		vy = -0.6f;

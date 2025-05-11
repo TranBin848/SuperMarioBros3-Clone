@@ -4,6 +4,7 @@
 #include "PlayScene.h"
 
 #define KOOPA_GRAVITY				0.002f
+#define PARAKOOPA_GRAVITY			0.0008f
 #define KOOPA_WALKING_SPEED			0.05f
 #define KOOPA_ACTIVATE_SPEED		0.2f
 
@@ -16,7 +17,7 @@
 #define KOOPA_BBOX_HEIGHT			24
 #define KOOPA_BBOX_HEIGHT_SHELL		14
 
-#define KOOPA_SHELL_TIMEOUT			4000
+#define KOOPA_SHELL_TIMEOUT			6000
 #define KOOPA_SHELL_RECOVER			1000
 #define KOOPA_DIE_TIMEOUT			1000
 
@@ -42,12 +43,12 @@
 //PARA
 #define ID_ANI_PARAKOOPA_WALKING	5200
 
-#define	KOOPA_LEVEL_RED			1
-#define	KOOPA_LEVEL_GREEN		2
-#define KOOPA_LEVEL_PARA		3
+#define	KOOPA_LEVEL_RED				1
+#define	KOOPA_LEVEL_GREEN			2
+#define KOOPA_LEVEL_PARA			3
 
-#define SHELL_OFFSET_X			12.0f
-#define SHELL_OFFSET_Y			1.0f
+#define SHELL_OFFSET_X				12.0f
+#define SHELL_OFFSET_Y				1.0f
 
 class CKoopa : public CGameObject
 {
@@ -78,7 +79,7 @@ protected:
 	virtual int IsCollidable() {
 		if (isBeingHeld)
 			return 0;
-		return (state == KOOPA_STATE_WALKING || state == KOOPA_STATE_ACTIVATE);
+		return (state != KOOPA_STATE_DIEBYSHELL);
 	};
 	virtual int IsBlocking() { return 0; }
 	virtual void OnNoCollision(DWORD dt);
@@ -92,7 +93,9 @@ public:
 	virtual void SetState(int state);
 	void SetLevel(int l);
 	int GetLevel() { return level; };
+	void GetAcc(float& ax, float& ay) { ax = this->ax; ay = this->ay; };
 	virtual void SetVX() { vx = -vx; };
 	void SetIsBeingHeld(bool held) { isBeingHeld = held; }
 	bool GetIsBeingHeld() { return isBeingHeld; }
+	virtual bool IsKoopa() { return true; }
 };
