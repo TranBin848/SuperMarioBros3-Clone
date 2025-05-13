@@ -1,8 +1,10 @@
-#pragma once
+﻿#pragma once
 #include "Game.h"
 #include "Textures.h"
 #include "Scene.h"
 #include "GameObject.h"
+#include "HUD.h" 
+
 
 #define CAM_MAX_Y	3.0f
 #define CAM_MIN_Y	-40.0f

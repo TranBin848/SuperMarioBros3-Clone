@@ -53,6 +53,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 {
 	float cx, cy;
 	CGame::GetInstance()->GetCamPos(cx,cy);
+	/*DebugOutTitle(L"check: %f", y);*/
 	/*if(isHolding) DebugOutTitle(L"check: %d");
 	else DebugOutTitle(L"uncheck: %d");*/
 	if (isTransforming)
@@ -841,7 +842,7 @@ void CMario::Render()
 	
 	animations->Get(aniId)->Render(x, y);
 	
-	RenderBoundingBox();
+	/*RenderBoundingBox();*/
 }
 
 void CMario::SetState(int state)

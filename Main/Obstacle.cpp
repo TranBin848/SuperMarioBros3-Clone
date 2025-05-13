@@ -9,7 +9,7 @@ void CObstacle::Render()
 {
 	CSprites* s = CSprites::GetInstance();
 	s->Get(this->spriteId)->Draw(x, y);
-	RenderBoundingBox();
+	/*RenderBoundingBox();*/
 }
 
 void CObstacle::RenderBoundingBox()

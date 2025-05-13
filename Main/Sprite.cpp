@@ -52,4 +52,21 @@ void CSprite::Draw(float x, float y)
 
 	g->GetSpriteHandler()->DrawSpritesImmediate(&sprite, 1, 0, 0);
 }
+void CSprite::DrawStatic(float x, float y, float a)
+{
+	CGame* g = CGame::GetInstance();
+
+	D3DXMATRIX matTranslation;
+
+	x = (FLOAT)floor(x);
+	y = (FLOAT)floor(y);
+
+	D3DXMatrixTranslation(&matTranslation, x, g->GetBackBufferHeight() - y, 0.1f);
+
+	this->sprite.matWorld = (this->matScaling * matTranslation);
+	this->sprite.ColorModulate = D3DXCOLOR(1.0f, 1.0f, 1.0f, a);
+
+	g->GetSpriteHandler()->DrawSpritesImmediate(&sprite, 1, 0, 0);
+}
+
 

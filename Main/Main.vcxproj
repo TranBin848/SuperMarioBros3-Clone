@@ -160,6 +160,7 @@
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="Giant.cpp" />
     <ClCompile Include="Goomba.cpp" />
+    <ClCompile Include="HUD.cpp" />
     <ClCompile Include="ItemBox.cpp" />
     <ClCompile Include="Koopa.cpp" />
     <ClCompile Include="KoopaSensor.cpp" />
@@ -194,6 +195,7 @@
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="Giant.h" />
     <ClInclude Include="Goomba.h" />
+    <ClInclude Include="HUD.h" />
     <ClInclude Include="ItemBox.h" />
     <ClInclude Include="KeyEventHandler.h" />
     <ClInclude Include="Koopa.h" />

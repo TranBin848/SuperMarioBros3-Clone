@@ -10,6 +10,7 @@
 #include "Coin.h"
 #include "Platform.h"
 #include "BgObject.h"
+#include "Brick.h"
 #include "ItemBox.h"
 #include "Giant.h"
 #include "Leaf.h"
@@ -141,6 +142,12 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 		obj = new CObstacle(x, y, cell_width, cell_height, sprite_id); 
 		break;
 	}
+	case OBJECT_TYPE_SHINYBRICK:
+	{
+		obj = new CBrick(
+			x, y);
+		break;
+	}
 	
 	case OBJECT_TYPE_COIN: obj = new CCoin(x, y); break;
 	case OBJECT_TYPE_VENUSFIRE: obj = new CVenusFire(x,y); break;
@@ -204,6 +211,7 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 		int scene_id = atoi(tokens[5].c_str());
 		obj = new CPortal(x, y, r, b, scene_id);
 	}
+	
 	break;
 
 
@@ -292,7 +300,12 @@ void CPlayScene::Update(DWORD dt)
 {
 	// We know that Mario is the first object in the list hence we won't add him into the colliable object list
 	// TO-DO: This is a "dirty" way, need a more organized way 
-
+	CGame* game = CGame::GetInstance();
+		float hudx, hudy;
+		CHUD::GetInstance()->GetPosition(hudx, hudy);
+		CHUD::GetInstance()->SetPosition(game->GetBackBufferWidth() / 2, game->GetBackBufferHeight());
+		DebugOutTitle(L"HUDY: %f", hudy);
+	
 	vector<LPGAMEOBJECT> coObjects;
 	for (size_t i = 1; i < objects.size(); i++)
 	{
@@ -303,61 +316,20 @@ void CPlayScene::Update(DWORD dt)
 	{
 		objects[i]->Update(dt, &coObjects);
 	}
-
+	
 	// skip the rest if scene was already unloaded (Mario::Update might trigger PlayScene::Unload)
 	if (player == NULL) return;
 
-	// Các thông số cần khai báo ở đầu
-	float followSpeed = 0.1f; // từ 0.0 đến 1.0
-	int deadZoneWidth = 64;
-	int deadZoneHeight = 64;
+	// Update camera to follow mario
+	float cx, cy;
+	player->GetPosition(cx, cy);
 
-	// Lấy vị trí Mario
-	float marioX, marioY;
-	player->GetPosition(marioX, marioY);
+	cx -= game->GetBackBufferWidth() / 2;
+	cy -= game->GetBackBufferHeight() / 2;
 
-	// Lấy vị trí camera hiện tại
-	float camX, camY;
-	CGame::GetInstance()->GetCamPos(camX, camY);
+	if (cx < 0) cx = 0;
 
-	// Lấy kích thước màn hình
-	CGame* game = CGame::GetInstance();
-	int screenWidth = game->GetBackBufferWidth();
-	int screenHeight = game->GetBackBufferHeight();
-
-	// Tính dead zone
-	float deadZoneLeft = camX + (screenWidth - deadZoneWidth) / 2;
-	float deadZoneRight = deadZoneLeft + deadZoneWidth;
-	float deadZoneTop = camY + (screenHeight - deadZoneHeight) / 2;
-	float deadZoneBottom = deadZoneTop + deadZoneHeight;
-
-	// Xử lý trục X
-	float targetX = camX;
-	if (marioX < deadZoneLeft)
-		targetX -= (deadZoneLeft - marioX);
-	else if (marioX > deadZoneRight)
-		targetX += (marioX - deadZoneRight);
-
-	// Xử lý trục Y
-	float targetY = camY;
-	if (marioY < deadZoneTop)
-		targetY -= (deadZoneTop - marioY);
-	else if (marioY > deadZoneBottom)
-		targetY += (marioY - deadZoneBottom);
-
-	// Interpolation
-	camX += (targetX - camX) * followSpeed;
-	camY += (targetY - camY) * followSpeed;
-
-	//// Clamp Y nếu muốn như bạn đã làm (giới hạn trục Y)
-	//if (camX < 0) camX = 0;
-	//if (camY > CAM_MAX_Y) camY = CAM_MAX_Y;
-	//else if (camY < CAM_MAX_Y && camY > CAM_MIN_Y) camY = CAM_MAX_Y;
-	//else camY = CAM_MAX_Y + camY - CAM_MIN_Y;
-	//if (camY > 0) camY = 0;
-
-	// Cập nhật lại vị trí camera
-	CGame::GetInstance()->SetCamPos(camX, camY);
+	CGame::GetInstance()->SetCamPos(cx, 0.0f);
 
 	PurgeDeletedObjects();
 }
@@ -372,8 +344,11 @@ void CPlayScene::Render()
 		[](LPGAMEOBJECT a, LPGAMEOBJECT b) {
 			return a->GetRenderLayer() < b->GetRenderLayer();
 		});
+
 	for (int i = 0; i < sortedObjects.size(); i++)
 		sortedObjects[i]->Render();
+
+	CHUD::GetInstance()->Render();
 }
 
 /*
