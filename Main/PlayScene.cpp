@@ -15,6 +15,8 @@
 #include "Giant.h"
 #include "Leaf.h"
 #include "VenusFire.h"
+#include "GreenVenusFire.h"
+#include "PiranhaTrap.h"
 #include "Koopa.h"
 #include "Goomba.h"
 #include "ParaGoomba.h"
@@ -153,6 +155,8 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 	
 	case OBJECT_TYPE_COIN: obj = new CCoin(x, y); break;
 	case OBJECT_TYPE_VENUSFIRE: obj = new CVenusFire(x,y); break;
+	case OBJECT_TYPE_GREENVENUSFIRE: obj = new CGreenVenusFire(x, y); break;
+	case OBJECT_TYPE_PIRANHATRAP: obj = new CPiranhaTrap(x, y); break;
 	case OBJECT_TYPE_ITEMBOX: {
 		int flag = atoi(tokens[3].c_str());
 		obj = new CItemBox(x, y, flag); break;
@@ -344,7 +348,7 @@ void CPlayScene::Update(DWORD dt)
 		}
 	}
 
-	DebugOutTitle(L"y: %f, Mario y: %f", cy, marioY);
+	/*DebugOutTitle(L"y: %f, Mario y: %f", cy, marioY);*/
 	CGame::GetInstance()->SetCamPos(cx, cy);
 
 	PurgeDeletedObjects();

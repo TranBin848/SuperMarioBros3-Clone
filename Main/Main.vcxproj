@@ -160,6 +160,7 @@
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="Giant.cpp" />
     <ClCompile Include="Goomba.cpp" />
+    <ClCompile Include="GreenVenusFire.cpp" />
     <ClCompile Include="HUD.cpp" />
     <ClCompile Include="ItemBox.cpp" />
     <ClCompile Include="Koopa.cpp" />
@@ -169,6 +170,7 @@
     <ClCompile Include="Mario.cpp" />
     <ClCompile Include="Obstacle.cpp" />
     <ClCompile Include="ParaGoomba.cpp" />
+    <ClCompile Include="PiranhaTrap.cpp" />
     <ClCompile Include="Platform.cpp" />
     <ClCompile Include="PlayScene.cpp" />
     <ClCompile Include="Portal.cpp" />
@@ -195,6 +197,7 @@
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="Giant.h" />
     <ClInclude Include="Goomba.h" />
+    <ClInclude Include="GreenVenusFire.h" />
     <ClInclude Include="HUD.h" />
     <ClInclude Include="ItemBox.h" />
     <ClInclude Include="KeyEventHandler.h" />
@@ -204,6 +207,7 @@
     <ClInclude Include="Mario.h" />
     <ClInclude Include="Obstacle.h" />
     <ClInclude Include="ParaGoomba.h" />
+    <ClInclude Include="PiranhaTrap.h" />
     <ClInclude Include="Platform.h" />
     <ClInclude Include="PlayScene.h" />
     <ClInclude Include="Portal.h" />
