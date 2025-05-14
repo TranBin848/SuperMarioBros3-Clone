@@ -16,8 +16,5 @@ void CHUD::Render() {
 	CSprites* s = CSprites::GetInstance();
 
 	LPSPRITE sprite = s->Get(HUD_SPRITE_ID);
-	if (!sprite)
-		DebugOutTitle(L"khong co sprite: %f");
-	else
-		sprite->DrawStatic(x, y - HUD_HEIGHT / 2);
+	sprite->DrawStatic(x, y - HUD_HEIGHT / 2);
 }

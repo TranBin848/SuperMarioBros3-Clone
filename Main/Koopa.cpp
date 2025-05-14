@@ -81,6 +81,7 @@ void CKoopa::OnCollisionWith(LPCOLLISIONEVENT e)
 		if (dynamic_cast<CKoopa*>(e->obj))
 		{
 			OnCollisionWithKoopa(e);
+			return;
 		}
 	}
 	if (!e->obj->IsBlocking()) return;
@@ -356,6 +357,7 @@ void CKoopa::SetState(int state)
 		shell_start = GetTickCount64(); // Ghi lại thời gian vào shell
 		just_activated = true;
 		ay = KOOPA_GRAVITY;
+		y -= 2.0f;
 		break;
 	case KOOPA_STATE_WALKING:
 		shell_start = 0; // Không cần đếm thời gian nữa
@@ -366,7 +368,7 @@ void CKoopa::SetState(int state)
 		break;
 	case KOOPA_STATE_ACTIVATE:
 		vx = (vx >= 0) ? KOOPA_ACTIVATE_SPEED : -KOOPA_ACTIVATE_SPEED; // hướng chạy tiếp
-		y -= 1.0f;
+		y -= 2.0f;
 		ay = KOOPA_GRAVITY;
 		just_activated = true;
 		break;
