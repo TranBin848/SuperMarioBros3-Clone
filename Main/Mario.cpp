@@ -394,7 +394,7 @@ void CMario::OnCollisonWithGiant(LPCOLLISIONEVENT e)
 	CGiant* g = dynamic_cast<CGiant*>(e->obj);
 	if (g->GetState() == GIANT_STATE_ACTIVATE)
 	{
-		SetLevel(MARIO_LEVEL_BIG);
+		if(!g->GetIsGreenGiant()) SetLevel(MARIO_LEVEL_BIG);
 		e->obj->Delete();
 	}
 }

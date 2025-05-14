@@ -22,6 +22,8 @@
 #include "Mario.h"
 #include "SampleKeyEventHandler.h"
 
+#define CAM_MAX_Y	3.0f
+#define CAM_MIN_Y	-30.0f
 
 using namespace std;
 
@@ -317,16 +319,32 @@ void CPlayScene::Update(DWORD dt)
 	if (player == NULL) return;
 
 	// Update camera to follow mario
+	// Camera follow theo X
 	float cx, cy;
-	player->GetPosition(cx, cy);
+	float marioX, marioY;
+	player->GetPosition(marioX, marioY);
 
-	cx -= game->GetBackBufferWidth() / 2;
-	cy -= game->GetBackBufferHeight() / 2;
+	cx = marioX - game->GetBackBufferWidth() / 2;
+	cy = marioY - game->GetBackBufferHeight() / 2;
 
+	// Giới hạn camera theo trục x
 	if (cx < 0) cx = 0;
-	if (cy > 0) cy = 0;
-	/*if (cy < 0 || cy >-90) cy = 0;*/
-	DebugOutTitle(L"y: %f", cy);
+	// Giới hạn camera theo trục y
+	if (cy > CAM_MAX_Y) cy = CAM_MAX_Y;
+	else if ((CAM_MIN_Y < cy) && (cy < CAM_MAX_Y)) cy = CAM_MAX_Y;
+	else
+	{
+		if (CMario::GetInstance()->GetLevel() == MARIO_LEVEL_TANUKI)
+		{
+			cy = CAM_MAX_Y + cy - CAM_MIN_Y;
+		}
+		else
+		{
+			cy = CAM_MAX_Y;
+		}
+	}
+
+	DebugOutTitle(L"y: %f, Mario y: %f", cy, marioY);
 	CGame::GetInstance()->SetCamPos(cx, cy);
 
 	PurgeDeletedObjects();

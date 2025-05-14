@@ -18,14 +18,14 @@
 #define MARIO_JUMP_SPEED_Y		0.375f
 #define MARIO_JUMP_RUN_SPEED_Y	0.4f
 #define TANUKI_FLAP_SPEED_Y		0.14f
-#define TANUKI_JUMP_SPEED_Y		0.25f
-#define TANUKI_JUMP_RUN_SPEED_Y	0.3f
+#define TANUKI_JUMP_SPEED_Y		0.3f
+#define TANUKI_JUMP_RUN_SPEED_Y	0.35f
 
 #define MARIO_TIME_RUNTOFLY		1000
 #define MARIO_TIME_FLYTOWALK	5000
 
 #define MARIO_GRAVITY			0.00095f
-#define TANUKI_GRAVITY			0.0007f
+#define TANUKI_GRAVITY			0.00075f
 
 #define MARIO_JUMP_DEFLECT_SPEED  0.25f
 
@@ -320,6 +320,7 @@ public:
 			}
 		}
 	}
+	bool GetIsFlying() { return isFlying; };
 	float GetAy() { return ay; }
 	void StartUntouchable() { untouchable = 1; untouchable_start = GetTickCount64(); }
 

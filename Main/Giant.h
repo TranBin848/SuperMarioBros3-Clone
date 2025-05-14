@@ -45,4 +45,5 @@ public:
 	int IsBlocking() { return 0; }
 	void SetState(int state);
 	void SetWalkingDirection(int dir) { walkingDirection = dir; }
+	bool GetIsGreenGiant() { return isGreenGiant; };
 };

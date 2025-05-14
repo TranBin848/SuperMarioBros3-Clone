@@ -50,18 +50,18 @@ void CLeaf::OnNoCollision(DWORD dt)
 };
 void CLeaf::OnCollisionWith(LPCOLLISIONEVENT e)
 {
-	if (!e->obj->IsBlocking()) return;
-	if (dynamic_cast<CGoomba*>(e->obj)) return;
-	if (e->ny < 0) // Lá chạm sàn từ trên xuống
-	{
-		vy = 0;
-		vx = 0; // Dừng di chuyển ngang
-	}
-	else if (e->nx != 0) // Va chạm ngang (tường)
-	{
-		vx = -vx;
-		walkingDirection = (vx > 0) ? 1 : -1;
-	}
+	//if (!e->obj->IsBlocking()) return;
+	//if (dynamic_cast<CGoomba*>(e->obj)) return;
+	//if (e->ny < 0) // Lá chạm sàn từ trên xuống
+	//{
+	//	vy = 0;
+	//	vx = 0; // Dừng di chuyển ngang
+	//}
+	//else if (e->nx != 0) // Va chạm ngang (tường)
+	//{
+	//	vx = -vx;
+	//	walkingDirection = (vx > 0) ? 1 : -1;
+	//}
 }
 void CLeaf::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
