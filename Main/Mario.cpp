@@ -50,7 +50,7 @@ void CMario::TakeDmg()
 
 void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 {
-	if(maxPower) DebugOutTitle(L"vy: %f", vy);
+	
 	if (isTransforming)
 	{
 		if (GetTickCount64() - transform_start >= MARIO_TIME_RUNTOFLY)
@@ -61,7 +61,6 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 		}
 		return;
 	}
-	
 	
 	vy += ay * dt;
 	vx += ax * dt;
@@ -151,6 +150,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 		isFloating = false;
 		if (level == MARIO_LEVEL_TANUKI) ay = TANUKI_GRAVITY;
 	}
+	if (vx < 0 && x < 17) x = 17;
 	CCollision::GetInstance()->Process(this, dt, coObjects);
 }
 
@@ -993,8 +993,9 @@ void CMario::SetState(int state)
 			{
 				if (maxPower)
 				{
-					vy = -TANUKI_FLAP_SPEED_Y;
-					if (!isFlying) // Nếu chưa bay, bật cờ bay lên
+					/*vy = -TANUKI_FLAP_SPEED_Y;*/
+					ay = -TANUKI_GRAVITY / 1.25f;
+					if (!isFlying)
 					{
 						isFlying = true;
 						flying_start = GetTickCount64();
@@ -1042,7 +1043,7 @@ void CMario::SetState(int state)
 		{
 			isFloating = false;
 			isFlapping = false;
-			ay = MARIO_GRAVITY; // Đặt lại trọng lực bình thường
+			ay = TANUKI_GRAVITY; // Đặt lại trọng lực bình thường
 		}
 		break;
 

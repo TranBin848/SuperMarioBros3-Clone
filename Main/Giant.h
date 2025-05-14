@@ -4,7 +4,8 @@
 #include "Animation.h"
 #include "Animations.h"
 
-#define ID_ANI_GIANT 13000
+#define ID_ANI_GIANT		13000
+#define ID_ANI_GIANT_1UP	13001
 
 #define	GIANT_WIDTH 15
 #define GIANT_BBOX_WIDTH 16
@@ -14,7 +15,7 @@
 #define GIANT_STATE_ACTIVATE 200
 
 #define GIANT_GRAVITY 0.001f
-#define GIANT_WALKING_SPEED 0.07f
+#define GIANT_WALKING_SPEED 0.06f
 #define GIANT_BOUNCE_SPEED 0.02f
 
 class CGiant : public CGameObject {
@@ -25,12 +26,14 @@ public:
 	float originalX;
 	bool isActivating;
 	int walkingDirection = -1;
-	CGiant(float x, float y) : CGameObject(x, y) {
+	bool isGreenGiant;
+	CGiant(float x, float y, bool fl) : CGameObject(x, y) {
 		originalY = y;
 		originalX = x;
 		this->ax = 0;
 		this->ay = GIANT_GRAVITY;
 		isActivating = false;
+		isGreenGiant = fl;
 		SetState(GIANT_STATE_IDLE);
 	}
 	void Render();
@@ -42,6 +45,4 @@ public:
 	int IsBlocking() { return 0; }
 	void SetState(int state);
 	void SetWalkingDirection(int dir) { walkingDirection = dir; }
-
-
 };

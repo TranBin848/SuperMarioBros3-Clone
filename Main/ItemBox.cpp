@@ -7,6 +7,7 @@
 void CItemBox::Render()
 {
 	int aniId = ID_ANI_ITEMBOX_IDLE;
+    if (flagCoin == 2) aniId = ID_ANI_ITEMBOXBRICK_IDLE;
 	if (state == ITEMBOX_STATE_BOUNCING || state == ITEMBOX_STATE_ACTIVATE)
 	{
 		aniId = ID_ANI_ITEMBOX_BOUNCING;
@@ -51,7 +52,7 @@ void CItemBox::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
                             
                             if (level == MARIO_LEVEL_SMALL)
                             {
-                                newItem = new CGiant(x, y); // xuất hiện phía trên
+                                newItem = new CGiant(x, y, false); // xuất hiện phía trên
                                 if (newItem->GetState() == GIANT_STATE_IDLE)
                                 {
                                     newItem->SetState(GIANT_STATE_ACTIVATE);
@@ -69,12 +70,20 @@ void CItemBox::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
                         }
                     }
                 }
-                else
+                else if(flagCoin == 1)
                 {
                     newItem = new CCoin(x, y);
                     if (newItem->GetState() == COIN_STATE_IDLE)
                     {
                         newItem->SetState(COIN_STATE_BOUNCING);
+                    }
+                }
+                else if (flagCoin == 2)
+                {
+                    newItem = new CGiant(x, y, true); // xuất hiện phía trên
+                    if (newItem->GetState() == GIANT_STATE_IDLE)
+                    {
+                        newItem->SetState(GIANT_STATE_ACTIVATE);
                     }
                 }
                 if (newItem)

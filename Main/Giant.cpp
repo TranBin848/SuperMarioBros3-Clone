@@ -5,8 +5,12 @@ void CGiant::Render()
 {
 	CAnimations* animations = CAnimations::GetInstance();
 	if (state == GIANT_STATE_ACTIVATE)
-		animations->Get(ID_ANI_GIANT)->Render(x, y);
-	RenderBoundingBox();
+	{
+		if(!isGreenGiant) animations->Get(ID_ANI_GIANT)->Render(x, y);
+		else animations->Get(ID_ANI_GIANT_1UP)->Render(x, y);
+	}
+		
+	/*RenderBoundingBox();*/
 }
 
 void CGiant::GetBoundingBox(float& l, float& t, float& r, float& b)

@@ -4,7 +4,8 @@
 #include "Animation.h"
 #include "Animations.h"
 
-#define ID_ANI_ITEMBOX_IDLE 12000
+#define ID_ANI_ITEMBOX_IDLE			12000
+#define ID_ANI_ITEMBOXBRICK_IDLE	10001
 
 #define	ITEMBOX_WIDTH 15
 #define ITEMBOX_BBOX_WIDTH 15

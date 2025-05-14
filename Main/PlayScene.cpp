@@ -301,11 +301,7 @@ void CPlayScene::Update(DWORD dt)
 	// We know that Mario is the first object in the list hence we won't add him into the colliable object list
 	// TO-DO: This is a "dirty" way, need a more organized way 
 	CGame* game = CGame::GetInstance();
-		float hudx, hudy;
-		CHUD::GetInstance()->GetPosition(hudx, hudy);
-		CHUD::GetInstance()->SetPosition(game->GetBackBufferWidth() / 2, game->GetBackBufferHeight());
-		DebugOutTitle(L"HUDY: %f", hudy);
-	
+	CHUD::GetInstance()->SetPosition(game->GetBackBufferWidth() / 2, game->GetBackBufferHeight());
 	vector<LPGAMEOBJECT> coObjects;
 	for (size_t i = 1; i < objects.size(); i++)
 	{
@@ -328,8 +324,10 @@ void CPlayScene::Update(DWORD dt)
 	cy -= game->GetBackBufferHeight() / 2;
 
 	if (cx < 0) cx = 0;
-
-	CGame::GetInstance()->SetCamPos(cx, 0.0f);
+	if (cy > 0) cy = 0;
+	/*if (cy < 0 || cy >-90) cy = 0;*/
+	DebugOutTitle(L"y: %f", cy);
+	CGame::GetInstance()->SetCamPos(cx, cy);
 
 	PurgeDeletedObjects();
 }
