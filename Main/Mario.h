@@ -42,12 +42,13 @@
 #define MARIO_STATE_RUNNING_LEFT		500
 #define MARIO_STATE_SHELLRUNNING_LEFT	501
 
-
 #define MARIO_STATE_SIT				600
 #define MARIO_STATE_SIT_RELEASE		601
 
 #define MARIO_STATE_KICK_RIGHT		700
 #define MARIO_STATE_KICK_LEFT		701
+
+#define TANUKI_STATE_TAILATTACK	702
 
 #define MARIO_STATE_TRANSFORM_TANUKI	800
 
@@ -161,6 +162,9 @@
 #define ID_ANI_TANUKI_IDLESHELLRIGHT	2452	
 #define ID_ANI_TANUKI_IDLESHELLLEFT		2453	
 
+#define ID_ANI_TANUKI_TAILATTACKRIGHT	2461	
+#define ID_ANI_TANUKI_TAILATTACKLEFT	2462	
+
 #define ID_ANI_TRANSFORM_TANUKI			2511
 #define ID_ANI_TRANSFORM_BIG_RIGHT		2512	
 #define ID_ANI_TRANSFORM_BIG_LEFT		2513	
@@ -192,7 +196,7 @@
 
 #define MARIO_UNTOUCHABLE_TIME	2500
 #define MARIO_KICK_DURATION		100
-
+#define TANUKI_TAILATTACK_DURATION	350
 
 #define MARIO_SHELL_OFFSETX		11
 #define MARIO_SHELL_OFFSETY		2
@@ -216,6 +220,7 @@ class CMario : public CGameObject
 	int untouchable; 
 	ULONGLONG untouchable_start;
 	ULONGLONG kick_start;
+	ULONGLONG tailattack_start;
 	ULONGLONG transform_start = 0;
 	ULONGLONG flap_start = 0; // Thời điểm bắt đầu vỗ cánh
 	ULONGLONG running_start = 0;
@@ -232,7 +237,6 @@ class CMario : public CGameObject
 	bool isFlapping = false; // Mario vừa nhấn nút nhảy để vỗ cánh
 	bool isFloating = false;
 	bool maxPower = false;
-	bool isSkidding; // Trạng thái trượt
 	bool isTurning;  // Trạng thái quay đầu
 	int transform_from = -1;
 	int transform_to = -1;
@@ -273,7 +277,7 @@ public:
 		{
 			scene->AddObject(ea);
 		}
-		level = MARIO_LEVEL_SMALL;
+		level = MARIO_LEVEL_TANUKI;
 		untouchable = 0;
 		untouchable_start = -1;
 		kick_start = -1;

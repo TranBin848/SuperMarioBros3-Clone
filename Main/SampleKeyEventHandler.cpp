@@ -31,6 +31,10 @@ void CSampleKeyHandler::OnKeyDown(int KeyCode)
 	case DIK_0:
 		mario->SetState(MARIO_STATE_DIE);
 		break;
+	case DIK_F:
+		if (mario->GetLevel() == MARIO_LEVEL_TANUKI)
+			mario->SetState(TANUKI_STATE_TAILATTACK);
+		break;
 	case DIK_R: // reset
 		//Reload();
 		break;

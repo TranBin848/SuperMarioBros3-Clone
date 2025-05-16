@@ -129,6 +129,10 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 	{
 		kick_start = 0;
 	}
+	if (tailattack_start > 0 && GetTickCount64() - tailattack_start > TANUKI_TAILATTACK_DURATION)
+	{
+		tailattack_start = 0;
+	}
 	if (isFlapping && GetTickCount64() - flap_start > 100)
 	{
 		isFlapping = false;
@@ -882,6 +886,13 @@ int CMario::GetAniIdTanuki() {
 		else
 			aniId = ID_ANI_TANUKI_KICK_LEFT;
 	}
+	if (tailattack_start > 0)
+	{
+		if (nx > 0)
+			aniId = ID_ANI_TANUKI_TAILATTACKRIGHT;
+		else
+			aniId = ID_ANI_TANUKI_TAILATTACKLEFT;
+	}
 
 	return aniId;
 }
@@ -933,7 +944,7 @@ void CMario::Render()
 	/*DebugOutTitle(L"vx: %d", aniId);*/
 	animations->Get(aniId)->Render(x, y);
 	
-	/*RenderBoundingBox();*/
+	RenderBoundingBox();
 }
 
 void CMario::SetState(int state)
@@ -985,7 +996,12 @@ void CMario::SetState(int state)
 		nx = -1;
 		kick_start = GetTickCount64();  // Đánh dấu thời điểm đá
 		break;
-
+	case TANUKI_STATE_TAILATTACK:
+		if (isSitting) break;
+		maxVx = -MARIO_WALKING_SPEED;
+		ax = -MARIO_ACCEL_WALK_X;
+		tailattack_start = GetTickCount64(); 
+		break;
 	case MARIO_STATE_JUMP:
 		if (isSitting) break;
 		if (isOnPlatform)
@@ -1131,9 +1147,9 @@ void CMario::GetBoundingBox(float &left, float &top, float &right, float &bottom
 		}
 		else
 		{
-			left = x - MARIO_TANUKI_BBOX_WIDTH / 2 - 2.0f;
+			left = x - MARIO_TANUKI_BBOX_WIDTH / 2;
 			top = y - MARIO_TANUKI_BBOX_HEIGHT / 2;
-			right = x + MARIO_BIG_BBOX_WIDTH / 2;
+			right = left + MARIO_TANUKI_BBOX_WIDTH;
 			bottom = top + MARIO_TANUKI_BBOX_HEIGHT;
 		}
 	}

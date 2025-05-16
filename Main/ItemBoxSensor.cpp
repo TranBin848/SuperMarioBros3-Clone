@@ -56,7 +56,6 @@ void CItemBoxSensor::OnCollisionWith(LPCOLLISIONEVENT e)
         }
         else if (dynamic_cast<CGiant*>(e->obj))
         {
-            DebugOutTitle(L"CHECK");
             OnCollisionWithGiant(e);
         }
     }
