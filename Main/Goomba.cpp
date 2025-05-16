@@ -97,7 +97,7 @@ void CGoomba::SetState(int state)
 		case GOOMBA_STATE_DIEBYSHELL:
 			die_start = GetTickCount64();
 			vx = 0;
-			vy = -0.6f; 
+			vy = -0.4f; 
 			ay = GOOMBA_GRAVITY; 
 			break;
 		case GOOMBA_STATE_WALKING: 

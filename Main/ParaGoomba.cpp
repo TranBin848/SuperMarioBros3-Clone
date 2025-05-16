@@ -152,7 +152,7 @@ void CParaGoomba::Render()
 		aniId = ID_ANI_GOOMBA_NORMALWALK;
 	}
 	CAnimations::GetInstance()->Get(aniId)->Render(x, y);
-	RenderBoundingBox();
+	/*RenderBoundingBox();*/
 }
 
 void CParaGoomba::SetState(int state)
@@ -171,7 +171,7 @@ void CParaGoomba::SetState(int state)
 	case PARAGOOMBA_STATE_DIEBYSHELL:
 		die_start = GetTickCount64();
 		vx = 0;
-		vy = -0.3f;
+		vy = -0.4f;
 		ay = GOOMBA_GRAVITY;
 		break;
 	case PARAGOOMBA_STATE_WALKING_NOWING:
@@ -195,7 +195,7 @@ void CParaGoomba::SetState(int state)
 		break;
 
 	case PARAGOOMBA_STATE_FLY:
-		vy = -0.35f; // Bay vút lên
+		vy = -0.32f; // Bay vút lên
 		ay = GOOMBA_GRAVITY;
 		stateDelay = 700; 
 		nextStateTime = GetTickCount64();
@@ -204,5 +204,9 @@ void CParaGoomba::SetState(int state)
 }
 int CParaGoomba::IsCollidable()
 {
-	return (state != PARAGOOMBA_STATE_DIE && state != PARAGOOMBA_STATE_DIEBYSHELL);
+	if (state != PARAGOOMBA_STATE_DIE && state != PARAGOOMBA_STATE_DIEBYSHELL)
+	{
+		return 1;
+	}
+	return 0;
 }

@@ -101,13 +101,13 @@ void CKoopa::OnCollisionWith(LPCOLLISIONEVENT e)
 void CKoopa::OnCollisionWithItemBox(LPCOLLISIONEVENT e) {
 	CItemBox* itb = dynamic_cast<CItemBox*>(e->obj);
 	if (!itb) return;
-
 	if (itb->GetState() == ITEMBOX_STATE_IDLE && state != KOOPA_STATE_WALKING) {
-		// Truyền hướng KOOPA chạm vào (trái/phải)
+		float itbx, itby;
+		itb->GetPosition(itbx, itby);
 		float MarioX = CMario::GetInstance()->GetX();
-		float itemboxX = itb->GetX();
-
-		int direction = MarioX < itemboxX ? 1 : -1; // 1 là từ trái, -1 là từ phải
+		
+		
+		int direction = MarioX < itbx ? 1 : -1; // 1 là từ trái, -1 là từ phải
 		itb->SetBounceDirection(direction); // Thêm hàm này
 		itb->SetState(ITEMBOX_STATE_BOUNCING);
 	}
@@ -382,7 +382,7 @@ void CKoopa::SetState(int state)
 		isBeingHeld = false;
 		die_start = GetTickCount64();
 		vx = 0;
-		vy = -0.6f;
+		vy = -0.3f;
 		ay = KOOPA_GRAVITY;
 		break;
 	}

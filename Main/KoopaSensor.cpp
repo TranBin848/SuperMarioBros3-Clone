@@ -6,6 +6,7 @@
 #include "ParaGoomba.h"
 #include "Platform.h"
 #include "Mario.h"
+#include "ItemBox.h"
 void CKoopaSensor::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
     bool found_ground = false;
@@ -20,8 +21,34 @@ void CKoopaSensor::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
         {
             float vx, vy;
             owner->GetSpeed(vx, vy);
-            sensor_offset_x = (vx >= 0) ? (KOOPA_BBOX_WIDTH / 2 + 4) : (-KOOPA_BBOX_WIDTH / 2 - 4);
-            sensor_offset_y = KOOPA_BBOX_HEIGHT / 2;
+            //4
+            sensor_offset_x = (vx >= 0) ? (KOOPA_BBOX_WIDTH / 2) : (-KOOPA_BBOX_WIDTH / 2);
+            sensor_offset_y = KOOPA_BBOX_HEIGHT / 2 + 3;
+            for (LPGAMEOBJECT obj : *coObjects)
+            {
+                if (dynamic_cast<CItemBox*>(obj))
+                {
+                    float l, t, r, b;
+                    obj->GetBoundingBox(l, t, r, b);
+                    float sl, st, sr, sb;
+                    this->GetBoundingBox(sl, st, sr, sb);
+
+                    // Kiểm tra chồng bounding box đơn giản
+                    if (!(sl > r || sr < l || st > b || sb < t))
+                    {
+                        // Ước lượng hướng va chạm đơn giản
+                        float dx = obj->GetX() - this->x;
+                        float dy = obj->GetY() - this->y;
+                        float nx = (dx > 0) ? 1 : (dx < 0 ? -1 : 0);
+                        float ny = (dy > 0) ? 1 : (dy < 0 ? -1 : 0);
+
+                        LPCOLLISIONEVENT fakeEvent = new CCollisionEvent(0.0f, nx, ny, 0.0f, 0.0f, obj, this);
+                        OnCollisionWith(fakeEvent);
+                        delete fakeEvent;
+                    }
+                }
+
+            }
         }
         else
         {
@@ -52,6 +79,7 @@ void CKoopaSensor::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
                         delete fakeEvent; 
                     }
                 }
+                
             }
         }
         x = ox + sensor_offset_x;
@@ -103,8 +131,13 @@ void CKoopaSensor::OnCollisionWith(LPCOLLISIONEVENT e)
             OnCollisionWithKoopa(e);
         }
     }
-    if (!e->obj->IsBlocking()) return;
-
+    if (dynamic_cast<CItemBox*>(e->obj))
+    {
+        /*DebugOutTitle(L"CHECK");*/
+        OnCollisionWithItemBox(e);
+        return;
+    }
+    if (!e->obj->IsBlocking()) return;       
     if (e->ny != 0)
     {
         vy = 0;
@@ -140,6 +173,14 @@ void CKoopaSensor::OnCollisionWithParaGoomba(LPCOLLISIONEVENT e)
     if (goomba->GetState() != PARAGOOMBA_STATE_DIEBYSHELL)
     {
         goomba->SetState(PARAGOOMBA_STATE_DIEBYSHELL);
+        owner->SetState(KOOPA_STATE_DIEBYSHELL);
+    }
+}
+void CKoopaSensor::OnCollisionWithItemBox(LPCOLLISIONEVENT e) {
+    CItemBox* itb = dynamic_cast<CItemBox*>(e->obj);
+    if (!itb) return;
+    
+    if (itb->GetState() == ITEMBOX_STATE_BOUNCING) {
         owner->SetState(KOOPA_STATE_DIEBYSHELL);
     }
 }

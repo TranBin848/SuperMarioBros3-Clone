@@ -30,6 +30,7 @@ void CItemBox::OnCollisionWith(LPCOLLISIONEVENT e)
 
 void CItemBox::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
+    
     if (state == ITEMBOX_STATE_BOUNCING)
     {
         if (!pickable) {
@@ -99,11 +100,13 @@ void CItemBox::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
         }
         else {
             y -= ITEMBOX_BOUNCE_SPEED * dt; // Di chuyển lên trên
-            if (y < originalY - 10.0f)
+            if (y < originalY - 14.0f)
             {
                 pickable = false;
-                y = originalY - 10.0f;
+                y = originalY - 14.0f;
             }
         }
+        CGameObject::Update(dt, coObjects); 
+        CCollision::GetInstance()->Process(this, dt, coObjects);
     }
 }

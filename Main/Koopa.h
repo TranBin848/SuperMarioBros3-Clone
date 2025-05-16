@@ -12,10 +12,10 @@
 #define PARAKOOPA_JUMP_SPEED		0.2f
 #define KOOPA_JUMP_SPEED			0.3f
 
-#define PARAKOOPA_BBOX_HEIGHT		26
+#define PARAKOOPA_BBOX_HEIGHT		28
 #define KOOPA_BBOX_WIDTH			16
-#define KOOPA_BBOX_HEIGHT			24
-#define KOOPA_BBOX_HEIGHT_SHELL		14
+#define KOOPA_BBOX_HEIGHT			28
+#define KOOPA_BBOX_HEIGHT_SHELL		16
 
 #define KOOPA_SHELL_TIMEOUT			6000
 #define KOOPA_SHELL_RECOVER			1000
@@ -81,7 +81,7 @@ protected:
 			return 0;
 		return (state != KOOPA_STATE_DIEBYSHELL);
 	};
-	virtual int IsBlocking() { return 0; }
+	virtual int IsBlocking() { return 1; }
 	virtual void OnNoCollision(DWORD dt);
 	virtual void OnCollisionWith(LPCOLLISIONEVENT e);
 	void OnCollisionWithItemBox(LPCOLLISIONEVENT e);

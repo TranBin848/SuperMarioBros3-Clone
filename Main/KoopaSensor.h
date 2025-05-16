@@ -15,6 +15,7 @@ protected:
     void OnCollisionWithGoomba(LPCOLLISIONEVENT e);
     void OnCollisionWithParaGoomba(LPCOLLISIONEVENT e);
     void OnCollisionWithKoopa(LPCOLLISIONEVENT e);
+    void OnCollisionWithItemBox(LPCOLLISIONEVENT e);
 public:
     CKoopaSensor(float x, float y) : CGameObject(x, y)
     {
@@ -32,7 +33,7 @@ public:
     }
     virtual int IsBlocking() { return 0; } // Không chặn gì cả
     int IsCollidable() override { return 1; }
-    virtual void Render() {/* RenderBoundingBox(); */}
+    virtual void Render() { RenderBoundingBox(); }
     virtual void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
 };
 
