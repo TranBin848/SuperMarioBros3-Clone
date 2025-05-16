@@ -15,9 +15,38 @@
 #include "Giant.h"
 #include "Leaf.h"
 #include "Collision.h"
+#include "PlayScene.h"
 
 CMario* CMario::__instance = nullptr;
 
+CMario::CMario(float x, float y) :CGameObject(x, y)
+{
+	sensor = new CTailSensor(x, y);
+	sensor->SetOwner(this);
+	CPlayScene* scene = dynamic_cast<CPlayScene*>(CGame::GetInstance()->GetCurrentScene());
+	if (scene)
+	{
+		scene->AddObject(sensor); // hoặc push vào vector<objects> tùy bạn tổ chức
+	}
+	__instance = this; // Gán instance
+	isSitting = false;
+	maxVx = 0.0f;
+	ax = 0.0f;
+	ay = MARIO_GRAVITY;
+	LPGAMEOBJECT ea = new CEnemyActivator();
+	ea->SetPosition(x + 100.0f, y);
+	if (scene)
+	{
+		scene->AddObject(ea);
+	}
+	level = MARIO_LEVEL_TANUKI;
+	untouchable = 0;
+	untouchable_start = -1;
+	kick_start = -1;
+	isOnPlatform = false;
+	coin = 0;
+	this->renderLayer = 10;
+}
 void CMario::StartFlap()
 {
 	if (!isFlying) // Nếu chưa bay, bật cờ bay lên
@@ -944,7 +973,7 @@ void CMario::Render()
 	/*DebugOutTitle(L"vx: %d", aniId);*/
 	animations->Get(aniId)->Render(x, y);
 	
-	RenderBoundingBox();
+	/*RenderBoundingBox();*/
 }
 
 void CMario::SetState(int state)

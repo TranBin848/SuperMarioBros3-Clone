@@ -3,6 +3,7 @@
 #include "Koopa.h"
 
 #include "EnemyActivator.h"
+#include "TailSensor.h"
 #include "Animation.h"
 #include "Animations.h"
 #include "debug.h"
@@ -209,6 +210,8 @@
 
 class CMario : public CGameObject
 {
+	CTailSensor* sensor;
+
 	BOOLEAN isSitting;
 	bool isHolding = false;
 
@@ -263,28 +266,8 @@ public:
 	
 	CKoopa* heldKoopa = nullptr;
 
-	CMario(float x, float y) : CGameObject(x, y)
-	{
-		__instance = this; // Gán instance
-		isSitting = false;
-		maxVx = 0.0f;
-		ax = 0.0f;
-		ay = MARIO_GRAVITY; 
-		LPGAMEOBJECT ea = new CEnemyActivator();
-		ea->SetPosition(x + 100.0f, y);
-		CPlayScene* scene = dynamic_cast<CPlayScene*>(CGame::GetInstance()->GetCurrentScene());
-		if (scene)
-		{
-			scene->AddObject(ea);
-		}
-		level = MARIO_LEVEL_TANUKI;
-		untouchable = 0;
-		untouchable_start = -1;
-		kick_start = -1;
-		isOnPlatform = false;
-		coin = 0;
-		this->renderLayer = 10;
-	}
+	CMario(float x, float y);
+	
 	void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
 	void Render();
 	void SetState(int state);

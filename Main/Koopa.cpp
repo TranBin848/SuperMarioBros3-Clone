@@ -138,7 +138,7 @@ void CKoopa::OnCollisionWithParaGoomba(LPCOLLISIONEVENT e)
 }
 void CKoopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
-	/*if (!isActivated) return;*/
+	if (!isActivated) return;
 	if (isBeingHeld)
 	{
 		if (state == KOOPA_STATE_SHELL)
