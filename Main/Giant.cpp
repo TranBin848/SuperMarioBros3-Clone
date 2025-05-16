@@ -67,6 +67,7 @@ void CGiant::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	{
 		ay = GIANT_GRAVITY;
 	}
+		
 	vy += ay * dt;
 	vx += ax * dt;
 	CGameObject::Update(dt, coObjects);

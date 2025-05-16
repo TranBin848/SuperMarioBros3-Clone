@@ -170,7 +170,6 @@ void CParaGoomba::SetState(int state)
 		break;
 	case PARAGOOMBA_STATE_DIEBYSHELL:
 		die_start = GetTickCount64();
-		vx = 0;
 		vy = -0.4f;
 		ay = GOOMBA_GRAVITY;
 		break;

@@ -25,7 +25,7 @@ void CEnemyActivator::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
             obj->Activate();
         }
     }
-    DebugOutTitle(L"x: %f, y: %f", x, y);
+    
 }
 
 void CEnemyActivator::Render()

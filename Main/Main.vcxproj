@@ -163,6 +163,7 @@
     <ClCompile Include="GreenVenusFire.cpp" />
     <ClCompile Include="HUD.cpp" />
     <ClCompile Include="ItemBox.cpp" />
+    <ClCompile Include="ItemBoxSensor.cpp" />
     <ClCompile Include="Koopa.cpp" />
     <ClCompile Include="KoopaSensor.cpp" />
     <ClCompile Include="Leaf.cpp" />
@@ -200,6 +201,7 @@
     <ClInclude Include="GreenVenusFire.h" />
     <ClInclude Include="HUD.h" />
     <ClInclude Include="ItemBox.h" />
+    <ClInclude Include="ItemBoxSensor.h" />
     <ClInclude Include="KeyEventHandler.h" />
     <ClInclude Include="Koopa.h" />
     <ClInclude Include="KoopaSensor.h" />

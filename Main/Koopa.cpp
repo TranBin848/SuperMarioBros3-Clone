@@ -138,7 +138,7 @@ void CKoopa::OnCollisionWithParaGoomba(LPCOLLISIONEVENT e)
 }
 void CKoopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
-	if (!isActivated) return;
+	/*if (!isActivated) return;*/
 	if (isBeingHeld)
 	{
 		if (state == KOOPA_STATE_SHELL)
@@ -381,7 +381,6 @@ void CKoopa::SetState(int state)
 	case KOOPA_STATE_DIEBYSHELL:
 		isBeingHeld = false;
 		die_start = GetTickCount64();
-		vx = 0;
 		vy = -0.3f;
 		ay = KOOPA_GRAVITY;
 		break;

@@ -26,6 +26,7 @@ public:
 	float originalX;
 	bool isActivating;
 	int walkingDirection = -1;
+	bool isHitByITB = false;
 	bool isGreenGiant;
 	CGiant(float x, float y, bool fl) : CGameObject(x, y) {
 		originalY = y;
@@ -44,6 +45,7 @@ public:
 	virtual int IsCollidable() { return 1; };
 	int IsBlocking() { return 0; }
 	void SetState(int state);
+	void SetHitByITB() { isHitByITB = true; };
 	void SetWalkingDirection(int dir) { walkingDirection = dir; }
 	bool GetIsGreenGiant() { return isGreenGiant; };
 };

@@ -1,9 +1,9 @@
 ﻿#pragma once
-
 #include "GameObject.h"
 #include "Animation.h"
 #include "Animations.h"
-
+#include "ItemBoxSensor.h"
+#include "PlayScene.h"
 #define ID_ANI_ITEMBOX_IDLE			12000
 #define ID_ANI_ITEMBOXBRICK_IDLE	10001
 
@@ -22,6 +22,7 @@
 
 class CItemBox : public CGameObject {
 protected:
+	CItemBoxSensor* sensor;
 	float originalY; // Lưu vị trí ban đầu
 	bool pickable;
 	int flagCoin;
@@ -29,6 +30,13 @@ protected:
 
 public:
 	CItemBox(float x, float y, int fl) : CGameObject(x, y) {
+		sensor = new CItemBoxSensor(x, y);
+		sensor->SetOwner(this);
+		CPlayScene* scene = dynamic_cast<CPlayScene*>(CGame::GetInstance()->GetCurrentScene());
+		if (scene)
+		{
+			scene->AddObject(sensor); // hoặc push vào vector<objects> tùy bạn tổ chức
+		}
 		flagCoin = fl;
 		originalY = y;
 		pickable = true;

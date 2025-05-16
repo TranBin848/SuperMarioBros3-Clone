@@ -23,31 +23,6 @@ void CKoopaSensor::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
         //4
         sensor_offset_x = (vx >= 0) ? (KOOPA_BBOX_WIDTH / 2) : (-KOOPA_BBOX_WIDTH / 2);
         sensor_offset_y = KOOPA_BBOX_HEIGHT / 2 + 3;
-        for (LPGAMEOBJECT obj : *coObjects)
-        {
-            if (dynamic_cast<CItemBox*>(obj))
-            {
-                float l, t, r, b;
-                obj->GetBoundingBox(l, t, r, b);
-                float sl, st, sr, sb;
-                this->GetBoundingBox(sl, st, sr, sb);
-
-                // Kiểm tra chồng bounding box đơn giản
-                if (!(sl > r || sr < l || st > b || sb < t))
-                {
-                    // Ước lượng hướng va chạm đơn giản
-                    float dx = obj->GetX() - this->x;
-                    float dy = obj->GetY() - this->y;
-                    float nx = (dx > 0) ? 1 : (dx < 0 ? -1 : 0);
-                    float ny = (dy > 0) ? 1 : (dy < 0 ? -1 : 0);
-
-                    LPCOLLISIONEVENT fakeEvent = new CCollisionEvent(0.0f, nx, ny, 0.0f, 0.0f, obj, this);
-                    OnCollisionWith(fakeEvent);
-                    delete fakeEvent;
-                }
-            }
-
-        }
     }
     else
     {

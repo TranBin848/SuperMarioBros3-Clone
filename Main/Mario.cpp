@@ -860,7 +860,6 @@ int CMario::GetAniIdTanuki() {
 			}
 	}
 		
-
 	if (aniId == -1)
 	{
 		if (nx > 0)

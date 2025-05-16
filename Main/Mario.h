@@ -273,7 +273,7 @@ public:
 		{
 			scene->AddObject(ea);
 		}
-		level = MARIO_LEVEL_BIG;
+		level = MARIO_LEVEL_SMALL;
 		untouchable = 0;
 		untouchable_start = -1;
 		kick_start = -1;
