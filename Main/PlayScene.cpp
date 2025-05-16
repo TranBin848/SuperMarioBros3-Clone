@@ -340,7 +340,13 @@ void CPlayScene::Update(DWORD dt)
 	{
 		if (CMario::GetInstance()->GetLevel() == MARIO_LEVEL_TANUKI)
 		{
-			cy = CAM_MAX_Y + cy - CAM_MIN_Y;
+			if (CMario::GetInstance()->GetMaxPower())
+				cy = CAM_MAX_Y + cy - CAM_MIN_Y;
+			else
+				if(cy < CAM_MIN_Y)
+					cy = CAM_MAX_Y + cy - CAM_MIN_Y;
+				else
+					cy = CAM_MAX_Y;
 		}
 		else
 		{

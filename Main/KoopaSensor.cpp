@@ -10,105 +10,106 @@
 void CKoopaSensor::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
     bool found_ground = false;
-    if ((owner->GetLevel() == KOOPA_LEVEL_RED && owner->GetState() == GOOMBA_STATE_WALKING) || owner->GetIsBeingHeld())
-    {
-        float ox, oy;
-        owner->GetPosition(ox, oy);
-
-        float sensor_offset_x = 0, sensor_offset_y = 0;
-
-        if (!owner->GetIsBeingHeld())
-        {
-            float vx, vy;
-            owner->GetSpeed(vx, vy);
-            //4
-            sensor_offset_x = (vx >= 0) ? (KOOPA_BBOX_WIDTH / 2) : (-KOOPA_BBOX_WIDTH / 2);
-            sensor_offset_y = KOOPA_BBOX_HEIGHT / 2 + 3;
-            for (LPGAMEOBJECT obj : *coObjects)
-            {
-                if (dynamic_cast<CItemBox*>(obj))
-                {
-                    float l, t, r, b;
-                    obj->GetBoundingBox(l, t, r, b);
-                    float sl, st, sr, sb;
-                    this->GetBoundingBox(sl, st, sr, sb);
-
-                    // Kiểm tra chồng bounding box đơn giản
-                    if (!(sl > r || sr < l || st > b || sb < t))
-                    {
-                        // Ước lượng hướng va chạm đơn giản
-                        float dx = obj->GetX() - this->x;
-                        float dy = obj->GetY() - this->y;
-                        float nx = (dx > 0) ? 1 : (dx < 0 ? -1 : 0);
-                        float ny = (dy > 0) ? 1 : (dy < 0 ? -1 : 0);
-
-                        LPCOLLISIONEVENT fakeEvent = new CCollisionEvent(0.0f, nx, ny, 0.0f, 0.0f, obj, this);
-                        OnCollisionWith(fakeEvent);
-                        delete fakeEvent;
-                    }
-                }
-
-            }
-        }
-        else
-        {
-            float mnx;
-            CMario::GetInstance()->GetDirection(mnx);
-            sensor_offset_x = (mnx >= 0) ? (KOOPA_BBOX_WIDTH / 2 + 5) : (-KOOPA_BBOX_WIDTH / 2 - 5);
-            sensor_offset_y = KOOPA_BBOX_HEIGHT_SHELL / 2;
-            for (LPGAMEOBJECT obj : *coObjects)
-            {
-                if (dynamic_cast<CGoomba*>(obj) || dynamic_cast<CParaGoomba*>(obj) || dynamic_cast<CKoopa*>(obj))
-                {
-                    float l, t, r, b;
-                    obj->GetBoundingBox(l, t, r, b);
-                    float sl, st, sr, sb;
-                    this->GetBoundingBox(sl, st, sr, sb);
-
-                    // Kiểm tra chồng bounding box đơn giản
-                    if (!(sl > r || sr < l || st > b || sb < t))
-                    {
-                        // Ước lượng hướng va chạm đơn giản
-                        float dx = obj->GetX() - this->x;
-                        float dy = obj->GetY() - this->y;
-                        float nx = (dx > 0) ? 1 : (dx < 0 ? -1 : 0);
-                        float ny = (dy > 0) ? 1 : (dy < 0 ? -1 : 0);
-
-                        LPCOLLISIONEVENT fakeEvent = new CCollisionEvent(0.0f, nx, ny, 0.0f, 0.0f, obj, this);
-                        OnCollisionWith(fakeEvent);
-                        delete fakeEvent; 
-                    }
-                }
-                
-            }
-        }
-        x = ox + sensor_offset_x;
-        y = oy + sensor_offset_y;
-    }
     
-    for (LPGAMEOBJECT obj : *coObjects)
+    float ox, oy;
+    owner->GetPosition(ox, oy);
+
+    float sensor_offset_x = 0, sensor_offset_y = 0;
+
+    if (!owner->GetIsBeingHeld())
     {
-        if (!obj->IsBlocking()) continue;
-        float l, t, r, b;
-        obj->GetBoundingBox(l, t, r, b);
-        if (x >= l - 2 && x <= r + 2 && y <= b + 1 && y >= t - 8) // bạn có thể tinh chỉnh khoảng cách này
+        float vx, vy;
+        owner->GetSpeed(vx, vy);
+        //4
+        sensor_offset_x = (vx >= 0) ? (KOOPA_BBOX_WIDTH / 2) : (-KOOPA_BBOX_WIDTH / 2);
+        sensor_offset_y = KOOPA_BBOX_HEIGHT / 2 + 3;
+        for (LPGAMEOBJECT obj : *coObjects)
         {
-            found_ground = true;
-            break;
-        }
-    }
-    if (!found_ground)
-    {
-        if (!hasTurned && owner)
-        {
-            owner->SetVX();      
-            hasTurned = true;     
+            if (dynamic_cast<CItemBox*>(obj))
+            {
+                float l, t, r, b;
+                obj->GetBoundingBox(l, t, r, b);
+                float sl, st, sr, sb;
+                this->GetBoundingBox(sl, st, sr, sb);
+
+                // Kiểm tra chồng bounding box đơn giản
+                if (!(sl > r || sr < l || st > b || sb < t))
+                {
+                    // Ước lượng hướng va chạm đơn giản
+                    float dx = obj->GetX() - this->x;
+                    float dy = obj->GetY() - this->y;
+                    float nx = (dx > 0) ? 1 : (dx < 0 ? -1 : 0);
+                    float ny = (dy > 0) ? 1 : (dy < 0 ? -1 : 0);
+
+                    LPCOLLISIONEVENT fakeEvent = new CCollisionEvent(0.0f, nx, ny, 0.0f, 0.0f, obj, this);
+                    OnCollisionWith(fakeEvent);
+                    delete fakeEvent;
+                }
+            }
+
         }
     }
     else
     {
-        hasTurned = false;
+        float mnx;
+        CMario::GetInstance()->GetDirection(mnx);
+        sensor_offset_x = (mnx >= 0) ? (KOOPA_BBOX_WIDTH / 2 + 5) : (-KOOPA_BBOX_WIDTH / 2 - 5);
+        sensor_offset_y = KOOPA_BBOX_HEIGHT_SHELL / 2;
+        for (LPGAMEOBJECT obj : *coObjects)
+        {
+            if (dynamic_cast<CGoomba*>(obj) || dynamic_cast<CParaGoomba*>(obj) || dynamic_cast<CKoopa*>(obj))
+            {
+                float l, t, r, b;
+                obj->GetBoundingBox(l, t, r, b);
+                float sl, st, sr, sb;
+                this->GetBoundingBox(sl, st, sr, sb);
+
+                // Kiểm tra chồng bounding box đơn giản
+                if (!(sl > r || sr < l || st > b || sb < t))
+                {
+                    // Ước lượng hướng va chạm đơn giản
+                    float dx = obj->GetX() - this->x;
+                    float dy = obj->GetY() - this->y;
+                    float nx = (dx > 0) ? 1 : (dx < 0 ? -1 : 0);
+                    float ny = (dy > 0) ? 1 : (dy < 0 ? -1 : 0);
+
+                    LPCOLLISIONEVENT fakeEvent = new CCollisionEvent(0.0f, nx, ny, 0.0f, 0.0f, obj, this);
+                    OnCollisionWith(fakeEvent);
+                    delete fakeEvent; 
+                }
+            }
+                
+        }
     }
+    x = ox + sensor_offset_x;
+    y = oy + sensor_offset_y;
+    if ((owner->GetLevel() == KOOPA_LEVEL_RED && owner->GetState() == GOOMBA_STATE_WALKING) || owner->GetIsBeingHeld())
+    {
+        for (LPGAMEOBJECT obj : *coObjects)
+        {
+            if (!obj->IsBlocking()) continue;
+            float l, t, r, b;
+            obj->GetBoundingBox(l, t, r, b);
+            if (x >= l - 2 && x <= r + 2 && y <= b + 1 && y >= t - 8)
+            {
+                found_ground = true;
+                break;
+            }
+        }
+        if (!found_ground)
+        {
+            if (!hasTurned && owner)
+            {
+                owner->SetVX();
+                hasTurned = true;
+            }
+        }
+        else
+        {
+            hasTurned = false;
+        }
+    }
+    
     CCollision::GetInstance()->Process(this, dt, coObjects);
 }
 void CKoopaSensor::OnCollisionWith(LPCOLLISIONEVENT e)

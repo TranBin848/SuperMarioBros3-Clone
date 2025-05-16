@@ -67,7 +67,7 @@ void CParaGoomba::OnCollisionWith(LPCOLLISIONEVENT e)
 
 void CParaGoomba::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
-	/*if (!isActivated) return;*/
+	if (!isActivated) return;
 	float marioX, marioY;
 	CMario::GetInstance()->GetPosition(marioX, marioY);
 	CGameObject::Update(dt, coObjects);
@@ -195,7 +195,7 @@ void CParaGoomba::SetState(int state)
 		break;
 
 	case PARAGOOMBA_STATE_FLY:
-		vy = -0.32f; // Bay vút lên
+		vy = -0.3f; // Bay vút lên
 		ay = GOOMBA_GRAVITY;
 		stateDelay = 700; 
 		nextStateTime = GetTickCount64();

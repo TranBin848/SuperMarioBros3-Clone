@@ -50,7 +50,11 @@ void CGoomba::OnCollisionWith(LPCOLLISIONEVENT e)
 
 void CGoomba::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 {
-	/*if (!isActivated) return;*/
+	if (x >= 230.0f && x <= 245.0f)
+	{
+		if (!isActivated) isActivated = true;
+	}
+	if (!isActivated) return;
 	CGameObject::Update(dt, coObjects);
 
 	vy += ay * dt;

@@ -3,11 +3,10 @@
 
 void CEnemyActivator::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
+    
     float marioX, marioY;
     CMario::GetInstance()->GetPosition(marioX, marioY);
-
-    // Bám theo Mario, ví dụ cách 100px về phía trước
-    x = marioX + 300.0f;
+    x = marioX + 120.0f;
     y = 120.0f;
     for (auto obj : *coObjects)
     {
@@ -23,12 +22,13 @@ void CEnemyActivator::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
         if (collision)
         {
-            /*obj->Activate();*/
+            obj->Activate();
         }
     }
+    DebugOutTitle(L"x: %f, y: %f", x, y);
 }
 
 void CEnemyActivator::Render()
 {
-    RenderBoundingBox();
+    /*RenderBoundingBox();*/
 }

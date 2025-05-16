@@ -1,11 +1,11 @@
 ﻿#pragma once
 #include "GameObject.h"
 #include "KoopaSensor.h"
-#include "PlayScene.h"
+#include "PlayScene.h"	
 
 #define KOOPA_GRAVITY				0.002f
 #define PARAKOOPA_GRAVITY			0.0008f
-#define KOOPA_WALKING_SPEED			0.05f
+#define KOOPA_WALKING_SPEED			-0.03f
 #define KOOPA_ACTIVATE_SPEED		0.2f
 
 #define PARAKOOPA_GRAVITY			0.0005f

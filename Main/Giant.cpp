@@ -63,7 +63,7 @@ void CGiant::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			vx = walkingDirection * GIANT_WALKING_SPEED;
 		}
 	}
-	if (round(x) == originalX - GIANT_BBOX_HEIGHT || round(x) == originalX + GIANT_BBOX_HEIGHT)
+	if (round(x) <= originalX - GIANT_BBOX_HEIGHT || round(x) >= originalX + GIANT_BBOX_HEIGHT)
 	{
 		ay = GIANT_GRAVITY;
 	}
