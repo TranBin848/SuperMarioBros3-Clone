@@ -53,10 +53,12 @@ void CItemBoxSensor::OnCollisionWith(LPCOLLISIONEVENT e)
         if (dynamic_cast<CKoopa*>(e->obj))
         {
             OnCollisionWithKoopa(e);
+            return;
         }
         else if (dynamic_cast<CGiant*>(e->obj))
         {
             OnCollisionWithGiant(e);
+            return;
         }
     }
 
@@ -85,8 +87,6 @@ void CItemBoxSensor::OnCollisionWithKoopa(LPCOLLISIONEVENT e)
     if (kp->GetState() != KOOPA_STATE_DIEBYSHELL)
     {
         kp->SetState(KOOPA_STATE_DIEBYSHELL);
-        owner->SetState(KOOPA_STATE_DIEBYSHELL);
-
     }
 }
 void CItemBoxSensor::OnCollisionWithParaGoomba(LPCOLLISIONEVENT e)

@@ -39,7 +39,7 @@ CMario::CMario(float x, float y) :CGameObject(x, y)
 	{
 		scene->AddObject(ea);
 	}
-	level = MARIO_LEVEL_TANUKI;
+	level = MARIO_LEVEL_SMALL;
 	untouchable = 0;
 	untouchable_start = -1;
 	kick_start = -1;
@@ -435,11 +435,8 @@ void CMario::OnCollisonWithGiant(LPCOLLISIONEVENT e)
 void CMario::OnCollisionWithLeaf(LPCOLLISIONEVENT e)
 {
 	CLeaf* l = dynamic_cast<CLeaf*>(e->obj);
-	if (l->GetState() == LEAF_STATE_FALLING || l -> GetState() == LEAF_STATE_RISING)
-	{
-		e->obj->Delete();
-		SetLevel(MARIO_LEVEL_TANUKI);
-	}
+	e->obj->Delete();
+	SetLevel(MARIO_LEVEL_TANUKI);
 }
 
 void CMario::OnCollisionWithDmgObject(LPCOLLISIONEVENT e) {

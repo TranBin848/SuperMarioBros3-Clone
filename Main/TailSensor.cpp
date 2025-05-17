@@ -6,6 +6,7 @@
 #include "ParaGoomba.h"
 #include "Platform.h"
 #include "Mario.h"
+#include "ItemBox.h"
 
 void CTailSensor::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
@@ -35,7 +36,7 @@ void CTailSensor::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
     y += vy * dt;
     for (LPGAMEOBJECT obj : *coObjects)
     {
-        if (dynamic_cast<CGoomba*>(obj) || dynamic_cast<CParaGoomba*>(obj) || dynamic_cast<CKoopa*>(obj))
+        if (dynamic_cast<CGoomba*>(obj) || dynamic_cast<CParaGoomba*>(obj) || dynamic_cast<CKoopa*>(obj) || dynamic_cast<CItemBox*>(obj))
         {
             float l, t, r, b;
             obj->GetBoundingBox(l, t, r, b);
@@ -75,11 +76,17 @@ void CTailSensor::OnCollisionWith(LPCOLLISIONEVENT e)
             OnCollisionWithParaGoomba(e);
             return;
         }
-        if (dynamic_cast<CKoopa*>(e->obj))
+        else if (dynamic_cast<CKoopa*>(e->obj))
         {
             OnCollisionWithKoopa(e);
+            return;
         }
-    }
+        else if (dynamic_cast<CItemBox*>(e->obj))
+        {
+            OnCollisionWithItemBox(e);
+            return;
+        }
+    }   
     
     if (!e->obj->IsBlocking()) return;
     if (e->ny != 0)
@@ -117,5 +124,19 @@ void CTailSensor::OnCollisionWithParaGoomba(LPCOLLISIONEVENT e)
     {
         goomba->SetState(PARAGOOMBA_STATE_DIEBYSHELL);
         owner->SetState(KOOPA_STATE_DIEBYSHELL);
+    }
+}
+void CTailSensor::OnCollisionWithItemBox(LPCOLLISIONEVENT e) {
+    CItemBox* itb = dynamic_cast<CItemBox*>(e->obj);
+    if (!itb) return;
+
+    if (itb->GetState() == ITEMBOX_STATE_IDLE) {
+        // Truyền hướng Mario chạm vào (trái/phải)
+        float marioX = x;
+        float itemboxX = itb->GetX();
+
+        int direction = marioX < itemboxX ? 1 : -1; // 1 là từ trái, -1 là từ phải
+        itb->SetBounceDirection(direction); // Thêm hàm này
+        itb->SetState(ITEMBOX_STATE_BOUNCING);
     }
 }

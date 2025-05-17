@@ -47,7 +47,7 @@ public:
 	virtual void OnCollisionWith(LPCOLLISIONEVENT e);
 	void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
 	void GetBoundingBox(float& l, float& t, float& r, float& b);
-	virtual int IsCollidable() { return 0;};
+	virtual int IsCollidable() { return 1;};
 	int IsBlocking() { return 0; }
 	void SetState(int state);
 	void SetWalkingDirection(int dir) { walkingDirection = dir; }
