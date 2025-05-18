@@ -79,7 +79,7 @@ void CMario::TakeDmg()
 
 void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 {
-	
+	DebugOutTitle(L"Khoang cachx: %f", x);
 	if (isTransforming)
 	{
 		if (GetTickCount64() - transform_start >= MARIO_TIME_RUNTOFLY)
@@ -183,7 +183,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 		isFloating = false;
 		if (level == MARIO_LEVEL_TANUKI) ay = TANUKI_GRAVITY;
 	}
-	if (vx < 0 && x < 17) x = 17;
+	/*if (vx < 0 && x < 17) x = 17;*/
 	CCollision::GetInstance()->Process(this, dt, coObjects);
 }
 
