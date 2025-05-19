@@ -171,6 +171,7 @@
     <ClCompile Include="Mario.cpp" />
     <ClCompile Include="Obstacle.cpp" />
     <ClCompile Include="ParaGoomba.cpp" />
+    <ClCompile Include="Pipe.cpp" />
     <ClCompile Include="PiranhaTrap.cpp" />
     <ClCompile Include="Platform.cpp" />
     <ClCompile Include="PlayScene.cpp" />
@@ -210,6 +211,7 @@
     <ClInclude Include="Mario.h" />
     <ClInclude Include="Obstacle.h" />
     <ClInclude Include="ParaGoomba.h" />
+    <ClInclude Include="Pipe.h" />
     <ClInclude Include="PiranhaTrap.h" />
     <ClInclude Include="Platform.h" />
     <ClInclude Include="PlayScene.h" />

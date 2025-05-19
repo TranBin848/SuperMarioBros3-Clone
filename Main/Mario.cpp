@@ -14,8 +14,10 @@
 #include "ItemBox.h"
 #include "Giant.h"
 #include "Leaf.h"
+#include "Pipe.h"
 #include "Collision.h"
 #include "PlayScene.h"
+
 
 CMario* CMario::__instance = nullptr;
 
@@ -79,7 +81,24 @@ void CMario::TakeDmg()
 
 void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 {
-	DebugOutTitle(L"Khoang cachx: %f", x);
+	CGame* game = CGame::GetInstance();
+	DebugOutTitle(L"x: %f", x);
+	if (state == MARIO_STATE_ENTER_PIPE)
+	{	
+		const float ENTER_PIPE_SPEED = 0.025f; // Tốc độ chui xuống (đơn vị pixel/miligiây)
+		if (pipeEnterX != 0.0f && pipeEnterY != 0.0f)
+		{
+			y += dt * ENTER_PIPE_SPEED; // Di chuyển xuống dần theo thời gian
+			if (y > pipeEnterY + 30.0f) // Khi xuống đủ xa
+			{
+				//CGame::GetInstance()->SwitchScene(HIDDEN_ROOM_SCENE_ID); // Chuyển scene
+				pipeEnterX = 0.0f;
+				pipeEnterY = 0.0f;
+				enterPipeStart = 0;
+				SetState(MARIO_STATE_IDLE); // Reset trạng thái
+			}
+		}
+	}
 	if (isTransforming)
 	{
 		if (GetTickCount64() - transform_start >= MARIO_TIME_RUNTOFLY)
@@ -91,8 +110,11 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 		return;
 	}
 	
-	vy += ay * dt;
-	vx += ax * dt;
+	if (state != MARIO_STATE_ENTER_PIPE)
+	{
+		vy += ay * dt;
+		vx += ax * dt;
+	}
 	if (abs(vx) > abs(maxVx)) vx = maxVx;
 	if (nx == 1 && ax < 0 && vx < 0) vx = 0;
 	if (nx == -1 && ax > 0 && vx > 0) vx = 0;
@@ -120,7 +142,6 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 			isHolding = false;
 			heldKoopa = nullptr;
 		}	
-		LPGAME game = CGame::GetInstance();
 		if (heldKoopa != nullptr)
 		{
 			if (!game->IsKeyDown(DIK_A))
@@ -183,7 +204,9 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 		isFloating = false;
 		if (level == MARIO_LEVEL_TANUKI) ay = TANUKI_GRAVITY;
 	}
-	/*if (vx < 0 && x < 17) x = 17;*/
+	// Xử lý trạng thái chui xuống
+	
+	if (vx < 0 && x < 17) x = 17;
 	CCollision::GetInstance()->Process(this, dt, coObjects);
 }
 
@@ -206,7 +229,12 @@ void CMario::OnCollisionWith(LPCOLLISIONEVENT e)
 	{
 		vx = 0;
 	}
-
+	if (dynamic_cast<CPipe*>(e->obj))
+	{
+		OnCollisionWithPipe(e);
+		return;
+	}
+		
 	if (dynamic_cast<CGoomba*>(e->obj))
 		OnCollisionWithGoomba(e);
 	else if (dynamic_cast<CParaGoomba*>(e->obj))
@@ -225,6 +253,7 @@ void CMario::OnCollisionWith(LPCOLLISIONEVENT e)
 		OnCollisionWithLeaf(e);
 	else if (dynamic_cast<CVenusFire*>(e->obj) || dynamic_cast<CFire*>(e->obj))
 		OnCollisionWithDmgObject(e);
+	
 }
 
 void CMario::OnCollisionWithKoopa(LPCOLLISIONEVENT e) {
@@ -463,7 +492,22 @@ void CMario::OnCollisionWithPortal(LPCOLLISIONEVENT e)
 	CPortal* p = (CPortal*)e->obj;
 	CGame::GetInstance()->InitiateSwitchScene(p->GetSceneId());
 }
+void CMario::OnCollisionWithPipe(LPCOLLISIONEVENT e)
+{
+	CPipe* p = dynamic_cast<CPipe*>(e->obj);
+	if (!p || !p->GetIsHiddenPipe()) return;
 
+	// Kiểm tra Mario đứng trên pipe (e->ny < 0)
+	if (e->ny < 0 && isOnPlatform)
+	{
+		// Lưu vị trí pipe để xử lý sau
+		float pipeX, pipeY;
+		p->GetPosition(pipeX, pipeY);
+		this->pipeEnterX = pipeX; // Thêm biến pipeEnterX để lưu vị trí
+		this->pipeEnterY = pipeY; // Thêm biến pipeEnterY
+		SetIsOnHiddenPipe(true);
+	}
+}
 //
 // Get animation ID for small Mario
 //
@@ -598,6 +642,8 @@ int CMario::GetAniIdSmall()
 		else
 			aniId = ID_ANI_MARIO_SMALL_KICK_LEFT;
 	}
+	if (state == MARIO_STATE_ENTER_PIPE)
+		aniId = ID_ANI_MARIO_SMALL_STAND;
 	return aniId;
 }
 
@@ -733,7 +779,8 @@ int CMario::GetAniIdBig()
 		else
 			aniId = ID_ANI_MARIO_KICK_LEFT;
 	}
-
+	if (state == MARIO_STATE_ENTER_PIPE)
+		aniId = ID_ANI_MARIO_STAND;
 	return aniId;
 }
 
@@ -919,7 +966,8 @@ int CMario::GetAniIdTanuki() {
 		else
 			aniId = ID_ANI_TANUKI_TAILATTACKLEFT;
 	}
-
+	if (state == MARIO_STATE_ENTER_PIPE)
+		aniId = ID_ANI_TANUKI_STAND;
 	return aniId;
 }
 
@@ -1136,6 +1184,11 @@ void CMario::SetState(int state)
 	case MARIO_STATE_DIE:
 		vy = -MARIO_JUMP_DEFLECT_SPEED;
 		vx = 0;
+		ax = 0;
+		break;
+	case MARIO_STATE_ENTER_PIPE:
+		enterPipeStart = GetTickCount64(); 
+		vx = 0; 
 		ax = 0;
 		break;
 	}

@@ -53,6 +53,8 @@
 
 #define MARIO_STATE_TRANSFORM_TANUKI	800
 
+#define MARIO_STATE_ENTER_PIPE 900
+
 #pragma region ANIMATION_ID
 
 #define ID_ANI_MARIO_IDLE_RIGHT 400
@@ -123,6 +125,8 @@
 #define ID_ANI_MARIO_SMALL_IDLESHELLRIGHT	1604	
 #define ID_ANI_MARIO_SMALL_IDLESHELLLEFT	1605
 
+#define ID_ANI_MARIO_SMALL_STAND			1606
+
 //TANUKI MARIO
 #define ID_ANI_TANUKI_IDLE_RIGHT 1700
 #define ID_ANI_TANUKI_IDLE_LEFT 1701
@@ -171,6 +175,8 @@
 #define ID_ANI_TRANSFORM_BIG_LEFT		2513	
 #define ID_ANI_TRANSFORM_SMALL_RIGHT	2514
 #define ID_ANI_TRANSFORM_SMALL_LEFT		2515
+
+#define ID_ANI_TANUKI_STAND				2463
 
 #pragma endregion
 
@@ -230,12 +236,13 @@ class CMario : public CGameObject
 	ULONGLONG running_maxpower_start = 0;
 	ULONGLONG flying_start = 0;
 	ULONGLONG floating_start = 0;
+	ULONGLONG enterPipeStart = 0; // Thời điểm bắt đầu chui xuống
 
 	BOOLEAN isOnPlatform;
 	
 	bool isTransforming = false;
 	bool finishTransforming = false;
-	
+	bool isOnHiddenPipe = false;
 	bool isFlying = false; // Mario đang trong trạng thái bay
 	bool isFlapping = false; // Mario vừa nhấn nút nhảy để vỗ cánh
 	bool isFloating = false;
@@ -244,6 +251,8 @@ class CMario : public CGameObject
 	int transform_from = -1;
 	int transform_to = -1;
 	int coin; 
+	float pipeEnterX = 0.0f;
+	float pipeEnterY = 0.0f;
 
 	void OnCollisionWithGoomba(LPCOLLISIONEVENT e);
 	void OnCollisionWithParaGoomba(LPCOLLISIONEVENT e);
@@ -253,6 +262,7 @@ class CMario : public CGameObject
 	void OnCollisonWithGiant(LPCOLLISIONEVENT e);
 	void OnCollisionWithKoopa(LPCOLLISIONEVENT e);
 	void OnCollisionWithLeaf(LPCOLLISIONEVENT e);
+	void OnCollisionWithPipe(LPCOLLISIONEVENT e);
 	void OnCollisionWithDmgObject(LPCOLLISIONEVENT e);
 
 
@@ -273,7 +283,7 @@ public:
 	void SetState(int state);
 	int IsCollidable()
 	{ 
-		return (state != MARIO_STATE_DIE); 
+		return (state != MARIO_STATE_DIE || state != MARIO_STATE_ENTER_PIPE); 
 	}
 
 	int IsBlocking() { return (state != MARIO_STATE_DIE && untouchable==0); }
@@ -307,6 +317,8 @@ public:
 			}
 		}
 	}
+	void SetIsOnHiddenPipe(bool fl) { isOnHiddenPipe = fl; }
+	bool GetIsOnHiddenPipe() { return isOnHiddenPipe; };
 	bool GetMaxPower() { return maxPower; };
 	float GetAy() { return ay; }
 	void StartUntouchable() { untouchable = 1; untouchable_start = GetTickCount64(); }
@@ -315,5 +327,4 @@ public:
 
 	void StartFlap();
 	void TakeDmg();
-	bool IsMario() { return true; }
 };

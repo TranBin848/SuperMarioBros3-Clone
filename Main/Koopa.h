@@ -97,5 +97,4 @@ public:
 	virtual void SetVX() { vx = -vx; };
 	void SetIsBeingHeld(bool held) { isBeingHeld = held; }
 	bool GetIsBeingHeld() { return isBeingHeld; }
-	virtual bool IsKoopa() { return true; }
 };
