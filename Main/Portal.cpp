@@ -9,6 +9,7 @@ CPortal::CPortal(float l, float t, float r, float b, int scene_id )
 	y = t;
 	width = r - l;
 	height = b - t;
+	this->renderLayer = 20;
 }
 
 void CPortal::RenderBoundingBox()
@@ -34,13 +35,13 @@ void CPortal::RenderBoundingBox()
 
 void CPortal::Render()
 {
-	RenderBoundingBox();
+	/*RenderBoundingBox();*/
 }
 
 void CPortal::GetBoundingBox(float &l, float &t, float &r, float &b)
 {
-	l = x - width/2;
+	l = x;
 	t = y - height/2;
-	r = x + width/2;
+	r = l + width;
 	b = y + height/2;
 }

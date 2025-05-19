@@ -82,14 +82,15 @@ void CMario::TakeDmg()
 void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 {
 	CGame* game = CGame::GetInstance();
-	DebugOutTitle(L"x: %f", x);
+	
 	if (state == MARIO_STATE_ENTER_PIPE)
 	{	
 		const float ENTER_PIPE_SPEED = 0.025f; // Tốc độ chui xuống (đơn vị pixel/miligiây)
 		if (pipeEnterX != 0.0f && pipeEnterY != 0.0f)
 		{
+			DebugOutTitle(L"y: %f", y);
 			y += dt * ENTER_PIPE_SPEED; // Di chuyển xuống dần theo thời gian
-			if (y > pipeEnterY + 30.0f) // Khi xuống đủ xa
+			if (y > pipeEnterY + 45.0f) // Khi xuống đủ xa
 			{
 				//CGame::GetInstance()->SwitchScene(HIDDEN_ROOM_SCENE_ID); // Chuyển scene
 				pipeEnterX = 0.0f;
@@ -229,6 +230,10 @@ void CMario::OnCollisionWith(LPCOLLISIONEVENT e)
 	{
 		vx = 0;
 	}
+
+	if (dynamic_cast<CPortal*>(e->obj))
+		OnCollisionWithPortal(e);
+
 	if (dynamic_cast<CPipe*>(e->obj))
 	{
 		OnCollisionWithPipe(e);
@@ -241,8 +246,6 @@ void CMario::OnCollisionWith(LPCOLLISIONEVENT e)
 		OnCollisionWithParaGoomba(e);
 	else if (dynamic_cast<CCoin*>(e->obj))
 		OnCollisionWithCoin(e);
-	else if (dynamic_cast<CPortal*>(e->obj))
-		OnCollisionWithPortal(e);
 	else if (dynamic_cast<CItemBox*>(e->obj))
 		OnCollisionWithItemBox(e);
 	else if (dynamic_cast<CGiant*>(e->obj))
@@ -504,7 +507,8 @@ void CMario::OnCollisionWithPipe(LPCOLLISIONEVENT e)
 		float pipeX, pipeY;
 		p->GetPosition(pipeX, pipeY);
 		this->pipeEnterX = pipeX; // Thêm biến pipeEnterX để lưu vị trí
-		this->pipeEnterY = pipeY; // Thêm biến pipeEnterY
+		this->pipeEnterY = y; // Thêm biến pipeEnterY
+		/*DebugOutTitle(L"y: %f", pipeEnterY);*/
 		SetIsOnHiddenPipe(true);
 	}
 }

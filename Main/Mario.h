@@ -283,7 +283,7 @@ public:
 	void SetState(int state);
 	int IsCollidable()
 	{ 
-		return (state != MARIO_STATE_DIE || state != MARIO_STATE_ENTER_PIPE); 
+		return (state != MARIO_STATE_DIE); 
 	}
 
 	int IsBlocking() { return (state != MARIO_STATE_DIE && untouchable==0); }
