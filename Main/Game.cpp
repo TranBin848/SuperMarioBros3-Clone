@@ -541,9 +541,6 @@ void CGame::InitiateSwitchScene(int scene_id)
 }
 
 
-
-
-
 CGame::~CGame()
 {
 	pBlendStateAlpha->Release();

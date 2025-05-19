@@ -340,29 +340,38 @@ void CPlayScene::Update(DWORD dt)
 
 	cx = marioX - game->GetBackBufferWidth() / 2;
 	cy = marioY - game->GetBackBufferHeight() / 2;
-
+	
 	// Giới hạn camera theo trục x
 	if (cx < 0) cx = 0;
 	// Giới hạn camera theo trục y
-	if (cy > CAM_MAX_Y) cy = CAM_MAX_Y;
-	else if ((CAM_MIN_Y < cy) && (cy < CAM_MAX_Y)) cy = CAM_MAX_Y;
+	int currentScene = CGame::GetInstance()->GetCurrentSceneId();
+	if (currentScene == 1)
+	{
+		cy = CAM_MAX_Y; // Giữ y cố định ở 0 cho scene 1
+	}
 	else
 	{
-		if (CMario::GetInstance()->GetLevel() == MARIO_LEVEL_TANUKI)
-		{
-			if (CMario::GetInstance()->GetMaxPower())
-				cy = CAM_MAX_Y + cy - CAM_MIN_Y;
-			else
-				if(cy < CAM_MIN_Y)
-					cy = CAM_MAX_Y + cy - CAM_MIN_Y;
-				else
-					cy = CAM_MAX_Y;
-		}
+		if (cy > CAM_MAX_Y) cy = CAM_MAX_Y;
+		else if ((CAM_MIN_Y < cy) && (cy < CAM_MAX_Y)) cy = CAM_MAX_Y;
 		else
 		{
-			cy = CAM_MAX_Y;
+			if (CMario::GetInstance()->GetLevel() == MARIO_LEVEL_TANUKI)
+			{
+				if (CMario::GetInstance()->GetMaxPower())
+					cy = CAM_MAX_Y + cy - CAM_MIN_Y;
+				else
+					if (cy < CAM_MIN_Y)
+						cy = CAM_MAX_Y + cy - CAM_MIN_Y;
+					else
+						cy = CAM_MAX_Y;
+			}
+			else
+			{
+				cy = CAM_MAX_Y;
+			}
 		}
 	}
+	
 
 	/*DebugOutTitle(L"y: %f, Mario y: %f", cy, marioY);*/
 	CGame::GetInstance()->SetCamPos(cx, cy);

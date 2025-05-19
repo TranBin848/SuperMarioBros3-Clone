@@ -41,7 +41,7 @@ CMario::CMario(float x, float y) :CGameObject(x, y)
 	{
 		scene->AddObject(ea);
 	}
-	level = MARIO_LEVEL_SMALL;
+	level = MARIO_LEVEL_TANUKI;
 	untouchable = 0;
 	untouchable_start = -1;
 	kick_start = -1;
@@ -90,9 +90,8 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 		{
 			DebugOutTitle(L"y: %f", y);
 			y += dt * ENTER_PIPE_SPEED; // Di chuyển xuống dần theo thời gian
-			if (y > pipeEnterY + 45.0f) // Khi xuống đủ xa
+			if (y > pipeEnterY + 36.0f) // Khi xuống đủ xa
 			{
-				//CGame::GetInstance()->SwitchScene(HIDDEN_ROOM_SCENE_ID); // Chuyển scene
 				pipeEnterX = 0.0f;
 				pipeEnterY = 0.0f;
 				enterPipeStart = 0;
