@@ -17,7 +17,7 @@ public:
 		this->spriteId = sprite_id;
 		if (fl == 1) isHiddenPipe = true;
 		else isHiddenPipe = false;
-		this->renderLayer = 15;
+		this->renderLayer = 5;
 	}
 	void Render();
 	void Update(DWORD dt) {}

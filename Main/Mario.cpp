@@ -82,21 +82,38 @@ void CMario::TakeDmg()
 void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 {
 	CGame* game = CGame::GetInstance();
-	
+	DebugOutTitle(L"STATE: %d", state);
 	if (state == MARIO_STATE_ENTER_PIPE)
 	{	
 		const float ENTER_PIPE_SPEED = 0.025f; // Tốc độ chui xuống (đơn vị pixel/miligiây)
 		if (pipeEnterX != 0.0f && pipeEnterY != 0.0f)
 		{
-			DebugOutTitle(L"y: %f", y);
-			y += dt * ENTER_PIPE_SPEED; // Di chuyển xuống dần theo thời gian
-			if (y > pipeEnterY + 36.0f) // Khi xuống đủ xa
+			int currentScene = CGame::GetInstance()->GetCurrentSceneId();
+			if(currentScene == 3)
 			{
-				pipeEnterX = 0.0f;
-				pipeEnterY = 0.0f;
-				enterPipeStart = 0;
-				SetState(MARIO_STATE_IDLE); // Reset trạng thái
+				y += dt * ENTER_PIPE_SPEED; // Di chuyển xuống dần theo thời gian
+				if (y > pipeEnterY + 25.0f) // Khi xuống đủ xa
+				{
+					pipeEnterX = 0.0f;
+					pipeEnterY = 0.0f;
+					enterPipeStart = 0;
+					SetIsOnHiddenPipe(false);
+					SetState(MARIO_STATE_IDLE); // Reset trạng thái
+				}
 			}
+			else
+			{
+				y -= dt * ENTER_PIPE_SPEED; // Di chuyển xuống dần theo thời gian
+				if (y < pipeEnterY - 40.0f) // Khi lên đủ cao
+				{
+					pipeEnterX = 0.0f;
+					pipeEnterY = 0.0f;
+					enterPipeStart = 0;
+					SetIsOnHiddenPipe(false);
+					SetState(MARIO_STATE_IDLE); // Reset trạng thái
+				}
+			}
+			
 		}
 	}
 	if (isTransforming)
@@ -492,23 +509,42 @@ void CMario::OnCollisionWithDmgObject(LPCOLLISIONEVENT e) {
 void CMario::OnCollisionWithPortal(LPCOLLISIONEVENT e)
 {
 	CPortal* p = (CPortal*)e->obj;
-	CGame::GetInstance()->InitiateSwitchScene(p->GetSceneId());
+	if (e -> ny < 0)
+	{
+		CGame::GetInstance()->InitiateSwitchScene(p->GetSceneId());
+	}
 }
 void CMario::OnCollisionWithPipe(LPCOLLISIONEVENT e)
 {
 	CPipe* p = dynamic_cast<CPipe*>(e->obj);
 	if (!p || !p->GetIsHiddenPipe()) return;
 
-	// Kiểm tra Mario đứng trên pipe (e->ny < 0)
-	if (e->ny < 0 && isOnPlatform)
+	int currentScene = CGame::GetInstance()->GetCurrentSceneId();
+	if ((currentScene == 3 && e->ny < 0) && isOnPlatform)
 	{
-		// Lưu vị trí pipe để xử lý sau
-		float pipeX, pipeY;
-		p->GetPosition(pipeX, pipeY);
-		this->pipeEnterX = pipeX; // Thêm biến pipeEnterX để lưu vị trí
-		this->pipeEnterY = y; // Thêm biến pipeEnterY
-		/*DebugOutTitle(L"y: %f", pipeEnterY);*/
-		SetIsOnHiddenPipe(true);
+		if (x < 2312.0f && x > 2302.0f)
+		{
+			// Lưu vị trí pipe để xử lý sau
+			float pipeX, pipeY;
+			p->GetPosition(pipeX, pipeY);
+			this->pipeEnterX = pipeX; // Thêm biến pipeEnterX để lưu vị trí
+			this->pipeEnterY = y; // Thêm biến pipeEnterY
+
+			SetIsOnHiddenPipe(true);
+		}
+	}
+	else if (currentScene == 1 && e->ny > 0)
+	{
+		if (x < 358.0f && x > 350.0f)
+		{
+			// Lưu vị trí pipe để xử lý sau
+			float pipeX, pipeY;
+			p->GetPosition(pipeX, pipeY);
+			this->pipeEnterX = pipeX; // Thêm biến pipeEnterX để lưu vị trí
+			this->pipeEnterY = y; // Thêm biến pipeEnterY
+			/*DebugOutTitle(L"y: %f", pipeEnterY);*/
+			SetIsOnHiddenPipe(true);
+		}
 	}
 }
 //
@@ -1021,7 +1057,7 @@ void CMario::Render()
 	/*DebugOutTitle(L"vx: %d", aniId);*/
 	animations->Get(aniId)->Render(x, y);
 	
-	/*RenderBoundingBox();*/
+	RenderBoundingBox();
 }
 
 void CMario::SetState(int state)
