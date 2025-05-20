@@ -179,6 +179,7 @@
     <ClCompile Include="SampleKeyEventHandler.cpp" />
     <ClCompile Include="Sprite.cpp" />
     <ClCompile Include="Sprites.cpp" />
+    <ClCompile Include="SwitchBlock.cpp" />
     <ClCompile Include="TailSensor.cpp" />
     <ClCompile Include="Textures.cpp" />
     <ClCompile Include="Utils.cpp" />
@@ -220,6 +221,7 @@
     <ClInclude Include="Scene.h" />
     <ClInclude Include="Sprite.h" />
     <ClInclude Include="Sprites.h" />
+    <ClInclude Include="SwitchBlock.h" />
     <ClInclude Include="TailSensor.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="Textures.h" />

@@ -97,6 +97,7 @@
 
 #pragma endregion 
 
+#define ID_SPRITE_BRICK 20000
 
 #define ID_SPRITE_GOOMBA 30000
 #define ID_SPRITE_GOOMBA_WALK (ID_SPRITE_GOOMBA + 1000)

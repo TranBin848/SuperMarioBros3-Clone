@@ -4,10 +4,11 @@
 #include "Leaf.h"
 #include "PlayScene.h"
 #include "Coin.h"
+#include "SwitchBlock.h"
 void CItemBox::Render()
 {
 	int aniId = ID_ANI_ITEMBOX_IDLE;
-    if (flagCoin == 2) aniId = ID_ANI_ITEMBOXBRICK_IDLE;
+    if (flagCoin == 2 || flagCoin == 3) aniId = ID_ANI_ITEMBOXBRICK_IDLE;
 	if (state == ITEMBOX_STATE_BOUNCING || state == ITEMBOX_STATE_ACTIVATE)
 	{
 		aniId = ID_ANI_ITEMBOX_BOUNCING;
@@ -86,6 +87,10 @@ void CItemBox::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
                     {
                         newItem->SetState(GIANT_STATE_ACTIVATE);
                     }
+                }
+                else if (flagCoin == 3)
+                {
+                    newItem = new CSwitchBlock(x, y - 16.0f); // xuất hiện phía trên
                 }
                 if (newItem)
                 {
