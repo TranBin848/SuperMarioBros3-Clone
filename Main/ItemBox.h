@@ -9,7 +9,7 @@
 
 #define	ITEMBOX_WIDTH 15
 #define ITEMBOX_BBOX_WIDTH 15
-#define ITEMBOX_BBOX_HEIGHT 16
+#define ITEMBOX_BBOX_HEIGHT 14
 
 #define ITEMBOX_BOUNCE_HEIGHT 20  // Độ cao nảy lên
 #define ITEMBOX_BOUNCE_SPEED 0.2f // Tốc độ nảy lên

@@ -1,4 +1,5 @@
 ﻿#include "SwitchBlock.h"
+#include "Coin.h"
 #include "Brick.h"
 #include "Mario.h"
 #include "PlayScene.h"
@@ -46,7 +47,20 @@ void CSwitchBlock::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
             {
                 CBrick* br = dynamic_cast<CBrick*>(obj);
                 if (br->GetCanRemove() == true)
-                    br->isDeleted = true;
+                {
+                    LPGAMEOBJECT coin = nullptr;
+                    coin = new CCoin(br->GetX(), br->GetY(), 1);
+                    if (coin)
+                    {
+                        CPlayScene* scene = dynamic_cast<CPlayScene*>(CGame::GetInstance()->GetCurrentScene());
+                        if (scene)
+                        {
+                            scene->InsertObjectBefore(this, coin); // hoặc push vào vector<objects> tùy bạn tổ chức
+
+                        }
+                    }
+                }
+                br->isDeleted = true;
             }
         }
         finishRemoveBrick = true;

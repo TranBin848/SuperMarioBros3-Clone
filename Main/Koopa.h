@@ -3,7 +3,7 @@
 #include "KoopaSensor.h"
 #include "PlayScene.h"	
 
-#define KOOPA_GRAVITY				0.002f
+#define KOOPA_GRAVITY				0.001f
 #define PARAKOOPA_GRAVITY			0.0008f
 #define KOOPA_WALKING_SPEED			-0.03f
 #define KOOPA_ACTIVATE_SPEED		0.2f
@@ -88,6 +88,7 @@ protected:
 	void OnCollisionWithGoomba(LPCOLLISIONEVENT e);
 	void OnCollisionWithParaGoomba(LPCOLLISIONEVENT e);
 	void OnCollisionWithKoopa(LPCOLLISIONEVENT e);
+	void OnCollisionWithShinyBrick(LPCOLLISIONEVENT e);
 public:
 	CKoopa(float x, float y, int flag);
 	virtual void SetState(int state);

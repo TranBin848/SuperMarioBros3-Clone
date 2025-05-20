@@ -86,7 +86,6 @@ void CMario::TakeDmg()
 
 void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 {
-	DebugOutTitle(L"STATE: %d", state);
 	CGame* game = CGame::GetInstance();
 	
 	if (state == MARIO_STATE_EXIT_PIPE)

@@ -3,6 +3,8 @@
 #include "ParaGoomba.h"
 #include "Mario.h"
 #include "ItemBox.h"
+#include "Brick.h"
+#include "BrickBreakEffect.h"
 CKoopa::CKoopa(float x, float y, int flag) :CGameObject(x, y)
 {
 	sensor = new CKoopaSensor(x, y);
@@ -27,7 +29,7 @@ CKoopa::CKoopa(float x, float y, int flag) :CGameObject(x, y)
 	return_start = 0;
 	just_activated = false;
 	this->renderLayer = 5;
-	SetState(KOOPA_STATE_WALKING);
+	SetState(KOOPA_STATE_SHELL);
 }
 
 void CKoopa::GetBoundingBox(float& left, float& top, float& right, float& bottom)
@@ -83,6 +85,11 @@ void CKoopa::OnCollisionWith(LPCOLLISIONEVENT e)
 			OnCollisionWithKoopa(e);
 			return;
 		}
+		if (dynamic_cast<CBrick*>(e->obj))
+		{
+			OnCollisionWithShinyBrick(e);
+			return;
+		}
 	}
 	if (!e->obj->IsBlocking()) return;
 
@@ -136,9 +143,36 @@ void CKoopa::OnCollisionWithParaGoomba(LPCOLLISIONEVENT e)
 		goomba->SetState(PARAGOOMBA_STATE_DIEBYSHELL);
 	}
 }
+void CKoopa::OnCollisionWithShinyBrick(LPCOLLISIONEVENT e)
+{
+	if (this->state != KOOPA_STATE_ACTIVATE)
+		return;
+	// Chỉ xử lý nếu va chạm ngang (ko xử lý nếu va chạm từ trên hoặc dưới)
+	if (e->ny != 0)
+		return;
+	vx = -vx;
+	CBrick* brick = dynamic_cast<CBrick*>(e->obj);
+	if (brick == nullptr) return;
+
+	// Tạo hiệu ứng vỡ gạch
+	LPGAMEOBJECT effect = nullptr;
+	effect = new CBrickBreakEffect(brick->GetX(), brick->GetY());
+	if (effect)
+	{
+		CPlayScene* scene = dynamic_cast<CPlayScene*>(CGame::GetInstance()->GetCurrentScene());
+		if (scene)
+		{
+			scene->InsertObjectBefore(this, effect); // hoặc push vào vector<objects> tùy bạn tổ chức
+			
+		}
+	}
+
+	// Đánh dấu gạch bị phá
+	brick->isDeleted = true;
+}
 void CKoopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
-	if (!isActivated) return;
+	/*if (!isActivated) return;*/
 	if (isBeingHeld)
 	{
 		if (state == KOOPA_STATE_SHELL)
