@@ -12,6 +12,7 @@
 #include "Coin.h"
 #include "Portal.h"
 #include "ItemBox.h"
+#include "SwitchBlock.h"
 #include "Giant.h"
 #include "Leaf.h"
 #include "Pipe.h"
@@ -288,6 +289,8 @@ void CMario::OnCollisionWith(LPCOLLISIONEVENT e)
 		OnCollisionWithLeaf(e);
 	else if (dynamic_cast<CVenusFire*>(e->obj) || dynamic_cast<CFire*>(e->obj))
 		OnCollisionWithDmgObject(e);
+	else if (dynamic_cast<CSwitchBlock*>(e->obj))
+		OnCollisionWithSwitchBlock(e);
 	
 }
 
@@ -566,6 +569,16 @@ void CMario::OnCollisionWithPipe(LPCOLLISIONEVENT e)
 //
 // Get animation ID for small Mario
 //
+void CMario::OnCollisionWithSwitchBlock(LPCOLLISIONEVENT e)
+{
+	CSwitchBlock* sw = dynamic_cast<CSwitchBlock*>(e->obj);
+	if (e->ny < 0)
+	{
+		if (sw->GetState() == SWITCHBLOCK_STATE_IDLE)
+			sw->SetState(SWITCHBLOCK_STATE_ACTIVATED);
+	}
+}
+
 int CMario::GetAniIdSmall()
 {
 	int aniId = -1;

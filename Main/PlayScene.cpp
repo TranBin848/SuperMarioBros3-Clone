@@ -172,8 +172,9 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 	}
 	case OBJECT_TYPE_SHINYBRICK:
 	{
+		int flag = atoi(tokens[3].c_str());
 		obj = new CBrick(
-			x, y);
+			x, y, flag);
 		break;
 	}
 	
