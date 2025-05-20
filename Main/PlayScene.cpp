@@ -177,7 +177,11 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 		break;
 	}
 	
-	case OBJECT_TYPE_COIN: obj = new CCoin(x, y); break;
+	case OBJECT_TYPE_COIN:
+	{
+		int flag = atoi(tokens[3].c_str());
+		obj = new CCoin(x, y, flag); break; 
+	}
 	case OBJECT_TYPE_VENUSFIRE: obj = new CVenusFire(x,y); break;
 	case OBJECT_TYPE_GREENVENUSFIRE: obj = new CGreenVenusFire(x, y); break;
 	case OBJECT_TYPE_PIRANHATRAP: obj = new CPiranhaTrap(x, y); break;

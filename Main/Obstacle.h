@@ -14,6 +14,7 @@ public:
 		this->cellWidth = cell_width;
 		this->cellHeight = cell_height;
 		this->spriteId = sprite_id;
+		this->renderLayer = 5;
 	}
 	void Render();
 	void Update(DWORD dt) {}

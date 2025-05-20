@@ -73,7 +73,7 @@ void CItemBox::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
                 }
                 else if(flagCoin == 1)
                 {
-                    newItem = new CCoin(x, y);
+                    newItem = new CCoin(x, y, 0);
                     if (newItem->GetState() == COIN_STATE_IDLE)
                     {
                         newItem->SetState(COIN_STATE_BOUNCING);
