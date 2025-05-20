@@ -529,6 +529,14 @@ void CGame::SwitchScene()
 	CSprites::GetInstance()->Clear();
 	CAnimations::GetInstance()->Clear();
 
+	if (current_scene == 1 && next_scene == 3)
+	{
+		SetIsExitingPipe(true);
+	}
+	else if (current_scene == 3 && next_scene == 1)
+	{
+		SetIsExitingPipe(false);
+	}
 	current_scene = next_scene;
 	LPSCENE s = scenes[next_scene];
 	this->SetKeyHandler(s->GetKeyEventHandler());

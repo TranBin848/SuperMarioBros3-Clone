@@ -48,6 +48,10 @@ CMario::CMario(float x, float y) :CGameObject(x, y)
 	isOnPlatform = false;
 	coin = 0;
 	this->renderLayer = 10;
+	if (CGame::GetInstance()->GetIsExitingPipe() == true)
+	{
+		SetState(MARIO_STATE_EXIT_PIPE);
+	}
 }
 void CMario::StartFlap()
 {
@@ -81,8 +85,23 @@ void CMario::TakeDmg()
 
 void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 {
-	CGame* game = CGame::GetInstance();
 	DebugOutTitle(L"STATE: %d", state);
+	CGame* game = CGame::GetInstance();
+	
+	if (state == MARIO_STATE_EXIT_PIPE)
+	{
+		const float ENTER_PIPE_SPEED = 0.025f; // Tốc độ chui xuống (đơn vị pixel/miligiây)
+		y -= dt * ENTER_PIPE_SPEED; 
+		if (y < 132.0f) // Khi lên đủ cao
+		{
+			pipeEnterX = 0.0f;
+			pipeEnterY = 0.0f;
+			enterPipeStart = 0;
+			SetIsOnHiddenPipe(false);
+			SetState(MARIO_STATE_IDLE); // Reset trạng thái
+		}
+	}
+
 	if (state == MARIO_STATE_ENTER_PIPE)
 	{	
 		const float ENTER_PIPE_SPEED = 0.025f; // Tốc độ chui xuống (đơn vị pixel/miligiây)
@@ -127,15 +146,6 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 		return;
 	}
 	
-	if (state != MARIO_STATE_ENTER_PIPE)
-	{
-		vy += ay * dt;
-		vx += ax * dt;
-	}
-	if (abs(vx) > abs(maxVx)) vx = maxVx;
-	if (nx == 1 && ax < 0 && vx < 0) vx = 0;
-	if (nx == -1 && ax > 0 && vx > 0) vx = 0;
-
 	if (abs(vx) == MARIO_RUNNING_SPEED && isOnPlatform)
 	{
 		if (running_start == 0)
@@ -221,8 +231,14 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 		isFloating = false;
 		if (level == MARIO_LEVEL_TANUKI) ay = TANUKI_GRAVITY;
 	}
-	// Xử lý trạng thái chui xuống
-	
+	if (state != MARIO_STATE_ENTER_PIPE)
+	{
+		vy += ay * dt;
+		vx += ax * dt;
+	}
+	if (abs(vx) > abs(maxVx)) vx = maxVx;
+	if (nx == 1 && ax < 0 && vx < 0) vx = 0;
+	if (nx == -1 && ax > 0 && vx > 0) vx = 0;
 	if (vx < 0 && x < 17) x = 17;
 	CCollision::GetInstance()->Process(this, dt, coObjects);
 }
@@ -522,7 +538,7 @@ void CMario::OnCollisionWithPipe(LPCOLLISIONEVENT e)
 	int currentScene = CGame::GetInstance()->GetCurrentSceneId();
 	if ((currentScene == 3 && e->ny < 0) && isOnPlatform)
 	{
-		if (x < 2312.0f && x > 2302.0f)
+		if (x < 2312.0f && x > 2306.0f)
 		{
 			// Lưu vị trí pipe để xử lý sau
 			float pipeX, pipeY;
@@ -535,7 +551,7 @@ void CMario::OnCollisionWithPipe(LPCOLLISIONEVENT e)
 	}
 	else if (currentScene == 1 && e->ny > 0)
 	{
-		if (x < 358.0f && x > 350.0f)
+		if (x < 358.0f && x > 352.0f)
 		{
 			// Lưu vị trí pipe để xử lý sau
 			float pipeX, pipeY;
@@ -681,7 +697,7 @@ int CMario::GetAniIdSmall()
 		else
 			aniId = ID_ANI_MARIO_SMALL_KICK_LEFT;
 	}
-	if (state == MARIO_STATE_ENTER_PIPE)
+	if (state == MARIO_STATE_ENTER_PIPE || state == MARIO_STATE_EXIT_PIPE)
 		aniId = ID_ANI_MARIO_SMALL_STAND;
 	return aniId;
 }
@@ -818,7 +834,7 @@ int CMario::GetAniIdBig()
 		else
 			aniId = ID_ANI_MARIO_KICK_LEFT;
 	}
-	if (state == MARIO_STATE_ENTER_PIPE)
+	if (state == MARIO_STATE_ENTER_PIPE || state == MARIO_STATE_EXIT_PIPE)
 		aniId = ID_ANI_MARIO_STAND;
 	return aniId;
 }
@@ -1005,7 +1021,7 @@ int CMario::GetAniIdTanuki() {
 		else
 			aniId = ID_ANI_TANUKI_TAILATTACKLEFT;
 	}
-	if (state == MARIO_STATE_ENTER_PIPE)
+	if (state == MARIO_STATE_ENTER_PIPE || state == MARIO_STATE_EXIT_PIPE)
 		aniId = ID_ANI_TANUKI_STAND;
 	return aniId;
 }
@@ -1057,7 +1073,7 @@ void CMario::Render()
 	/*DebugOutTitle(L"vx: %d", aniId);*/
 	animations->Get(aniId)->Render(x, y);
 	
-	RenderBoundingBox();
+	/*RenderBoundingBox();*/
 }
 
 void CMario::SetState(int state)
@@ -1218,6 +1234,8 @@ void CMario::SetState(int state)
 	case MARIO_STATE_IDLE:
 		if (nx > 0) ax = -MARIO_DECEL_WALK_X;
 		else ax = MARIO_DECEL_WALK_X;
+		if (level == MARIO_LEVEL_TANUKI) ay = TANUKI_GRAVITY;
+		else ay = MARIO_GRAVITY;
 		break;
 
 	case MARIO_STATE_DIE:
@@ -1230,8 +1248,12 @@ void CMario::SetState(int state)
 		vx = 0; 
 		ax = 0;
 		break;
+	case MARIO_STATE_EXIT_PIPE:
+		vx = 0;
+		ax = 0;
+		ay = 0;
+		break;
 	}
-
 	CGameObject::SetState(state);
 }
 

@@ -53,7 +53,8 @@
 
 #define MARIO_STATE_TRANSFORM_TANUKI	800
 
-#define MARIO_STATE_ENTER_PIPE 900
+#define MARIO_STATE_ENTER_PIPE	900
+#define MARIO_STATE_EXIT_PIPE	901
 
 #pragma region ANIMATION_ID
 
@@ -319,6 +320,7 @@ public:
 	}
 	void SetIsOnHiddenPipe(bool fl) { isOnHiddenPipe = fl; }
 	bool GetIsOnHiddenPipe() { return isOnHiddenPipe; };
+	
 	bool GetMaxPower() { return maxPower; };
 	float GetAy() { return ay; }
 	void StartUntouchable() { untouchable = 1; untouchable_start = GetTickCount64(); }

@@ -20,6 +20,9 @@ datas\HUD.txt
 # MARIO
 0	127	15
 
+#MARIO_EXIT_PIPE
+
+
 #COIN
 4	233	131
 4	218	131

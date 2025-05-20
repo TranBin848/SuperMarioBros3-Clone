@@ -122,16 +122,30 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 	switch (object_type)
 	{
 	case OBJECT_TYPE_MARIO:
-		if (player!=NULL) 
+	{
+		if (player != NULL)
 		{
 			DebugOut(L"[ERROR] MARIO object was created before!\n");
 			return;
 		}
-		obj = new CMario(x,y); 
-		player = (CMario*)obj;  
+		if (CGame::GetInstance()->GetIsExitingPipe() == true)
+		{
+			obj = new CMario(2500, 110);
+			// General object setup
+			obj->SetPosition(2374,162);
+			objects.push_back(obj);
+			player = (CMario*)obj;
+			return;
+		}
+		else
+		{
+			obj = new CMario(x, y);
+			player = (CMario*)obj;
+		}
 
 		DebugOut(L"[INFO] Player object has been created!\n");
 		break;
+	}
 	case OBJECT_TYPE_GOOMBA: obj = new CGoomba(x,y); break;
 	case OBJECT_TYPE_PARAGOOMBA: obj = new CParaGoomba(x, y); break;
 	case OBJECT_TYPE_KOOPA:

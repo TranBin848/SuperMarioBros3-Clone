@@ -57,6 +57,8 @@ class CGame
 	int current_scene;
 	int next_scene = -1;
 
+	bool isExitingPipe = false;
+
 	void _ParseSection_SETTINGS(string line);
 	void _ParseSection_SCENES(string line);
 
@@ -114,7 +116,8 @@ public:
 	int GetCurrentSceneId() { return current_scene; }
 
 	void _ParseSection_TEXTURES(string line);
-
+	void SetIsExitingPipe(bool fl) { isExitingPipe = fl; };
+	bool GetIsExitingPipe() { return isExitingPipe; };
 
 	~CGame();
 };
