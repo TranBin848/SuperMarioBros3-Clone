@@ -337,17 +337,19 @@ void CPlayScene::Update(DWORD dt)
 	// TO-DO: This is a "dirty" way, need a more organized way 
 	CGame* game = CGame::GetInstance();
 	CHUD::GetInstance()->SetPosition(game->GetBackBufferWidth() / 2, game->GetBackBufferHeight() + 1.0f);
+	
 	vector<LPGAMEOBJECT> coObjects;
 	for (size_t i = 1; i < objects.size(); i++)
 	{
 		coObjects.push_back(objects[i]);
 	}
-
+	
 	for (size_t i = 0; i < objects.size(); i++)
 	{
 		objects[i]->Update(dt, &coObjects);
 	}
-	
+	CHUD::GetInstance()->Update(dt, &objects);
+
 	// skip the rest if scene was already unloaded (Mario::Update might trigger PlayScene::Unload)
 	if (player == NULL) return;
 
@@ -394,7 +396,7 @@ void CPlayScene::Update(DWORD dt)
 
 	/*DebugOutTitle(L"y: %f, Mario y: %f", cy, marioY);*/
 	CGame::GetInstance()->SetCamPos(cx, cy);
-
+	
 	PurgeDeletedObjects();
 }
 
