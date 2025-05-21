@@ -5,6 +5,7 @@
 #include "PlayScene.h"
 #include "Coin.h"
 #include "SwitchBlock.h"
+#include "SwitchBlockEffect.h"
 void CItemBox::Render()
 {
 	int aniId = ID_ANI_ITEMBOX_IDLE;
@@ -91,6 +92,8 @@ void CItemBox::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
                 else if (flagCoin == 3)
                 {
                     newItem = new CSwitchBlock(x, y - 16.0f); // xuất hiện phía trên
+                    // Tạo hiệu ứng khói
+                    
                 }
                 if (newItem)
                 {
@@ -98,7 +101,20 @@ void CItemBox::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
                     if (scene)
                     {
                         scene->InsertObjectBefore(this, newItem); // hoặc push vào vector<objects> tùy bạn tổ chức
+                    }
+                    if (dynamic_cast<CSwitchBlock*>(newItem))
+                    {
+                        LPGAMEOBJECT effect = nullptr;
+                        effect = new CSwitchBlockEffect(x, y - 16.0f);
+                        if (effect)
+                        {
+                            CPlayScene* scene = dynamic_cast<CPlayScene*>(CGame::GetInstance()->GetCurrentScene());
+                            if (scene)
+                            {
+                                scene->InsertObjectBefore(this, effect); // hoặc push vào vector<objects> tùy bạn tổ chức
 
+                            }
+                        }
                     }
                 }
             }

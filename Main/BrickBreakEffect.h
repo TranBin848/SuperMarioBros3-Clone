@@ -1,7 +1,7 @@
 #pragma once
 #include "ParticleSystem.h"
 
-#define ID_BRICK_PIE    10011
+#define ID_BRICK_PIE    21001
 
 class CBrickBreakEffect : public CParticleSystem
 {

@@ -1,7 +1,7 @@
 #pragma once
 #include "ParticleSystem.h"
 
-#define ID_BRICK_PIE    21001
+#define ID_SB_SMOKEEFFECT    21002
 
 class CSwitchBlockEffect : public CParticleSystem
 {
