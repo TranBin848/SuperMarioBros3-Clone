@@ -27,7 +27,6 @@ public:
 	CCoin(float x, float y, int fl) : CGameObject(x, y) {
 		originalY = y;
 		SetState(COIN_STATE_IDLE);
-		this->renderLayer = 10;
 		if (fl == 1) isIdleCoin = true;
 		else isIdleCoin = false;
 	}

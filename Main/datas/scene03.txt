@@ -17,6 +17,7 @@ datas\goomba.txt
 datas\paragoomba.txt
 datas\switchblock.txt	
 datas\HUD.txt
+datas\particle.txt
 #
 [OBJECTS]
 # type	x	y	extra_settings per object type
@@ -130,7 +131,7 @@ datas\HUD.txt
 
 #10	850	110	2
 # MARIO
-0	2200	150
+0	2200	130
 
 #GOOMBA
 2	233	172

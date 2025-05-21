@@ -1,6 +1,6 @@
-﻿#include "BrickBreakEffect.h"
+﻿#include "SwitchBlockEffect.h"
 #include "debug.h"
-CBrickBreakEffect::CBrickBreakEffect(float x, float y)
+CSwitchBlockEffect::CSwitchBlockEffect(float x, float y)
 {
     float vx = 60.0f;    // tốc độ ngang
     float vy = 200.0f;   // tốc độ bay lên
@@ -20,7 +20,7 @@ CBrickBreakEffect::CBrickBreakEffect(float x, float y)
     AddParticle(new CParticle(x, y, -vx * 0.5f, -vy * 0.5f, ay, lifetime, anim)); // Trái dưới
     AddParticle(new CParticle(x, y, vx * 0.5f, -vy * 0.5f, ay, lifetime, anim));  // Phải dưới
 }
-void CBrickBreakEffect::GetBoundingBox(float& l, float& t, float& r, float& b)
+void CSwitchBlockEffect::GetBoundingBox(float& l, float& t, float& r, float& b)
 {
     l = 0;
     t = 0;

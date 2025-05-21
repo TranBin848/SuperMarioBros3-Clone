@@ -59,8 +59,8 @@ void CSwitchBlock::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
                         }
                     }
+                    br->isDeleted = true;
                 }
-                br->isDeleted = true;
             }
         }
         finishRemoveBrick = true;

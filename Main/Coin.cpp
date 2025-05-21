@@ -9,7 +9,7 @@ void CCoin::Render()
 	}
 	if (isIdleCoin) aniId = ID_ANI_COIN_IDLE;
 	CAnimations::GetInstance()->Get(aniId)->Render(x, y);
-	RenderBoundingBox();
+	/*RenderBoundingBox();*/
 }
 
 void CCoin::GetBoundingBox(float& l, float& t, float& r, float& b)

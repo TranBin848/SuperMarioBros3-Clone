@@ -6,12 +6,12 @@
 class CParticle : public CGameObject
 {
 protected:
-    float vx, vy;
+    float vx, vy, ay;
     float lifetime;
     float age = 0;
     LPANIMATION animation; 
 public:
-    CParticle(float x, float y, float vx, float vy, float lifetime, LPANIMATION animation);
+    CParticle(float x, float y, float vx, float vy, float lifetime, float ay, LPANIMATION animation);
 
     void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects) override;
     void Render() override;
