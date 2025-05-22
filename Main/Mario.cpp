@@ -538,19 +538,35 @@ void CMario::OnCollisonWithGiant(LPCOLLISIONEVENT e)
 	CGiant* g = dynamic_cast<CGiant*>(e->obj);
 	if (g->GetState() == GIANT_STATE_ACTIVATE)
 	{
-		if(!g->GetIsGreenGiant()) SetLevel(MARIO_LEVEL_BIG);
-		e->obj->Delete();
 		CHUD::GetInstance()->SetScore(1000);
 		LPGAMEOBJECT effect = nullptr;
-		effect = new CAddScoreEffect(x, y - 20, 1000);
-		if (effect)
+		if (!g->GetIsGreenGiant()) 
 		{
-			CPlayScene* scene = dynamic_cast<CPlayScene*>(CGame::GetInstance()->GetCurrentScene());
-			if (scene)
+			SetLevel(MARIO_LEVEL_BIG);
+			effect = new CAddScoreEffect(x, y - 20, 1000);
+			if (effect)
 			{
-				scene->AddObject(effect); // hoặc push vào vector<objects> tùy bạn tổ chức
+				CPlayScene* scene = dynamic_cast<CPlayScene*>(CGame::GetInstance()->GetCurrentScene());
+				if (scene)
+				{
+					scene->AddObject(effect); // hoặc push vào vector<objects> tùy bạn tổ chức
+				}
 			}
 		}
+		else
+		{
+			CHUD::GetInstance()->SetLife(1);
+			effect = new CAddScoreEffect(x, y - 20, 9000);
+			if (effect)
+			{
+				CPlayScene* scene = dynamic_cast<CPlayScene*>(CGame::GetInstance()->GetCurrentScene());
+				if (scene)
+				{
+					scene->AddObject(effect); // hoặc push vào vector<objects> tùy bạn tổ chức
+				}
+			}
+		}
+		e->obj->Delete();
 	}
 }
 
