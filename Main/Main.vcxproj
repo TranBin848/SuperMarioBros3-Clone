@@ -147,6 +147,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AddScoreEffect.cpp" />
     <ClCompile Include="Animation.cpp" />
     <ClCompile Include="Animations.cpp" />
     <ClCompile Include="BgObject.cpp" />
@@ -190,6 +191,7 @@
     <ClCompile Include="VenusFire.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AddScoreEffect.h" />
     <ClInclude Include="Animation.h" />
     <ClInclude Include="AnimationFrame.h" />
     <ClInclude Include="Animations.h" />

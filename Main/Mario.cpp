@@ -18,6 +18,7 @@
 #include "Pipe.h"
 #include "Collision.h"
 #include "PlayScene.h"
+#include "AddScoreEffect.h"
 
 
 CMario* CMario::__instance = nullptr;
@@ -331,9 +332,21 @@ void CMario::OnCollisionWithKoopa(LPCOLLISIONEVENT e) {
 		else if (accY == TANUKI_GRAVITY) jumpForce /= 2;
 		else jumpForce = 0;
 		vy = -jumpForce;
-		if (addScoreStart > 0) scaleScore += 1;
+		if (addScoreStart > 0) scaleScore *= 2;
+		if (scaleScore >= 8) scaleScore = 8;
 		CHUD::GetInstance()->SetScore(100 * scaleScore);
+		LPGAMEOBJECT effect = nullptr;
+		effect = new CAddScoreEffect(x, y - 25, 100 * scaleScore);
+		if (effect)
+		{
+			CPlayScene* scene = dynamic_cast<CPlayScene*>(CGame::GetInstance()->GetCurrentScene());
+			if (scene)
+			{
+				scene->AddObject(effect); // hoặc push vào vector<objects> tùy bạn tổ chức
+			}
+		}
 		if(addScoreStart == 0) addScoreStart = GetTickCount64();
+		
 	}
 	else if (e->nx != 0) // Va chạm từ bên trái/phải
 	{
@@ -402,6 +415,16 @@ void CMario::OnCollisionWithGoomba(LPCOLLISIONEVENT e)
 			else jumpForce = 0;
 			vy = -jumpForce;
 			CHUD::GetInstance()->SetScore(100);
+			LPGAMEOBJECT effect = nullptr;
+			effect = new CAddScoreEffect(x, y - 25, 100);
+			if (effect)
+			{
+				CPlayScene* scene = dynamic_cast<CPlayScene*>(CGame::GetInstance()->GetCurrentScene());
+				if (scene)
+				{
+					scene->AddObject(effect); // hoặc push vào vector<objects> tùy bạn tổ chức
+				}
+			}
 		}
 	}
 	else // hit by Goomba
@@ -449,9 +472,21 @@ void CMario::OnCollisionWithParaGoomba(LPCOLLISIONEVENT e)
 		else if (accY == TANUKI_GRAVITY) jumpForce /= 2;
 		else jumpForce = 0;
 		vy = -jumpForce;
-		if (addScoreStart > 0) scaleScore += 1;
+		if (addScoreStart > 0) scaleScore *= 2;
+		if (scaleScore >= 8) scaleScore = 8;
 		CHUD::GetInstance()->SetScore(100 * scaleScore);
+		LPGAMEOBJECT effect = nullptr;
+		effect = new CAddScoreEffect(x, y - 25, 100 * scaleScore);
+		if (effect)
+		{
+			CPlayScene* scene = dynamic_cast<CPlayScene*>(CGame::GetInstance()->GetCurrentScene());
+			if (scene)
+			{
+				scene->AddObject(effect); // hoặc push vào vector<objects> tùy bạn tổ chức
+			}
+		}
 		if (addScoreStart == 0) addScoreStart = GetTickCount64();
+		
 	}
 	else // hit by Goomba
 	{
@@ -495,7 +530,6 @@ void CMario::OnCollisionWithItemBox(LPCOLLISIONEVENT e) {
 void CMario::OnCollisionWithCoin(LPCOLLISIONEVENT e)
 {
 	e->obj->Delete();
-	CHUD::GetInstance()->SetCoin(1);
 	CHUD::GetInstance()->SetScore(50);
 }
 
@@ -507,6 +541,16 @@ void CMario::OnCollisonWithGiant(LPCOLLISIONEVENT e)
 		if(!g->GetIsGreenGiant()) SetLevel(MARIO_LEVEL_BIG);
 		e->obj->Delete();
 		CHUD::GetInstance()->SetScore(1000);
+		LPGAMEOBJECT effect = nullptr;
+		effect = new CAddScoreEffect(x, y - 20, 1000);
+		if (effect)
+		{
+			CPlayScene* scene = dynamic_cast<CPlayScene*>(CGame::GetInstance()->GetCurrentScene());
+			if (scene)
+			{
+				scene->AddObject(effect); // hoặc push vào vector<objects> tùy bạn tổ chức
+			}
+		}
 	}
 }
 
@@ -516,6 +560,16 @@ void CMario::OnCollisionWithLeaf(LPCOLLISIONEVENT e)
 	e->obj->Delete();
 	SetLevel(MARIO_LEVEL_TANUKI);
 	CHUD::GetInstance()->SetScore(1000);
+	LPGAMEOBJECT effect = nullptr;
+	effect = new CAddScoreEffect(x, y - 20, 1000);
+	if (effect)
+	{
+		CPlayScene* scene = dynamic_cast<CPlayScene*>(CGame::GetInstance()->GetCurrentScene());
+		if (scene)
+		{
+			scene->AddObject(effect); // hoặc push vào vector<objects> tùy bạn tổ chức
+		}
+	}
 }
 
 void CMario::OnCollisionWithDmgObject(LPCOLLISIONEVENT e) {
@@ -726,7 +780,6 @@ int CMario::GetAniIdSmall()
 		aniId = ID_ANI_MARIO_SMALL_STAND;
 	return aniId;
 }
-
 
 int CMario::GetAniIdBig()
 {

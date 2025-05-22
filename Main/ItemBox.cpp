@@ -93,7 +93,6 @@ void CItemBox::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
                 else if (flagCoin == 3)
                 {
                     newItem = new CSwitchBlock(x, y - 16.0f); // xuất hiện phía trên
-                    // Tạo hiệu ứng khói
                     
                 }
                 if (newItem)

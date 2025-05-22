@@ -1,5 +1,7 @@
 ﻿#include "Coin.h"
 #include "HUD.h"
+#include "AddScoreEffect.h"
+#include "PlayScene.h"
 void CCoin::Render()
 {
 	int aniId = ID_ANI_COIN;
@@ -39,6 +41,16 @@ void CCoin::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		if (y > originalY - 26.0f) {
 			y = originalY - 26.0f;
 			CHUD::GetInstance()->SetScore(100);
+			LPGAMEOBJECT effect = nullptr;
+			effect = new CAddScoreEffect(x, y, 100);
+			if (effect)
+			{
+				CPlayScene* scene = dynamic_cast<CPlayScene*>(CGame::GetInstance()->GetCurrentScene());
+				if (scene)
+				{
+					scene->AddObject(effect); // hoặc push vào vector<objects> tùy bạn tổ chức
+				}
+			}
 			Delete();
 		}
 	}
