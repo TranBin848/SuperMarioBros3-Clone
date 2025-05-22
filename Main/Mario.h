@@ -23,6 +23,8 @@
 #define TANUKI_JUMP_RUN_SPEED_Y	0.35f
 
 #define MARIO_TIME_RUNTOFLY		1000
+#define MARIO_MAX_RUN_POWER 6
+#define MARIO_TIME_PER_RUN_POWER 200 
 #define MARIO_TIME_FLYTOWALK	5000
 
 #define MARIO_GRAVITY			0.00095f
@@ -249,7 +251,7 @@ class CMario : public CGameObject
 	bool isFlapping = false; // Mario vừa nhấn nút nhảy để vỗ cánh
 	bool isFloating = false;
 	bool maxPower = false;
-
+	int runPower;
 	bool isTurning;  // Trạng thái quay đầu
 	int transform_from = -1;
 	int transform_to = -1;
@@ -324,6 +326,8 @@ public:
 	bool GetIsOnHiddenPipe() { return isOnHiddenPipe; };
 	
 	bool GetMaxPower() { return maxPower; };
+	int GetRunPower() const { return runPower; }
+
 	float GetAy() { return ay; }
 	void StartUntouchable() { untouchable = 1; untouchable_start = GetTickCount64(); }
 

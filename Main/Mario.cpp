@@ -146,19 +146,78 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 		return;
 	}
 	
-	if (abs(vx) == MARIO_RUNNING_SPEED && isOnPlatform)
+	bool isRunningFast = abs(vx) == MARIO_RUNNING_SPEED;
+
+	// Nếu đang chạy nhanh và đứng trên nền
+	if (isRunningFast && isOnPlatform)
 	{
-		if (running_start == 0)
-			running_start = GetTickCount64();
-		else if (GetTickCount64() - running_start >= MARIO_TIME_RUNTOFLY)
+		if (runPower < MARIO_MAX_RUN_POWER)
 		{
-			maxPower = true;
-			if (running_maxpower_start == 0) running_maxpower_start = GetTickCount64();
+			if (running_start == 0)
+				running_start = GetTickCount64();
+
+			ULONGLONG elapsed = GetTickCount64() - running_start;
+			if (elapsed >= MARIO_TIME_PER_RUN_POWER)
+			{
+				runPower++;
+				running_start = GetTickCount64();
+			}
+		}
+
+		if (runPower == MARIO_MAX_RUN_POWER)
+		{
+			if (!maxPower)
+			{
+				maxPower = true;
+				if (level == MARIO_LEVEL_TANUKI)
+					running_maxpower_start = GetTickCount64();
+			}
 		}
 	}
 	else
 	{
-		running_start = 0;
+		if (level == MARIO_LEVEL_TANUKI && maxPower)
+		{
+			// giữ maxPower trong 5s
+			if (GetTickCount64() - running_maxpower_start >= MARIO_TIME_FLYTOWALK)
+			{
+				maxPower = false;
+				runPower = 0;
+				running_maxpower_start = 0;
+				running_start = 0;
+			}
+		}
+		else
+		{
+			// KHÔNG giảm power nếu đang trên không và vẫn chạy nhanh
+			if (!isOnPlatform && isRunningFast)
+			{
+				// giữ nguyên runPower và maxPower
+			}
+			else
+			{
+				// chỉ giảm nếu không còn chạy nhanh
+				if (runPower > 0)
+				{
+					if (running_start == 0)
+						running_start = GetTickCount64();
+
+					ULONGLONG elapsed = GetTickCount64() - running_start;
+					if (elapsed >= MARIO_TIME_PER_RUN_POWER)
+					{
+						runPower--;
+						running_start = GetTickCount64();
+					}
+				}
+				else
+				{
+					running_start = 0;
+				}
+
+				maxPower = false;
+				running_maxpower_start = 0;
+			}
+		}
 	}
 	
 
@@ -223,13 +282,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 	{
 		isFloating = false;
 	}
-	if (GetTickCount64() - running_maxpower_start >= MARIO_TIME_FLYTOWALK)
-	{
-		maxPower = false;
-		running_maxpower_start = 0;
-		isFlying = false;
-		flying_start = 0;
-	}
+	
 	if (isOnPlatform)
 	{
 		isFlying = false;
