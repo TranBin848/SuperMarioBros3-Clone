@@ -79,6 +79,7 @@ void CItemBox::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
                     if (newItem->GetState() == COIN_STATE_IDLE)
                     {
                         newItem->SetState(COIN_STATE_BOUNCING);
+                        CHUD::GetInstance()->SetCoin(1);
                     }
                     
                 }

@@ -530,6 +530,7 @@ void CMario::OnCollisionWithItemBox(LPCOLLISIONEVENT e) {
 void CMario::OnCollisionWithCoin(LPCOLLISIONEVENT e)
 {
 	e->obj->Delete();
+	CHUD::GetInstance()->SetCoin(1);
 	CHUD::GetInstance()->SetScore(50);
 }
 

@@ -5,6 +5,7 @@
 #include "ItemBox.h"
 #include "Brick.h"
 #include "BrickBreakEffect.h"
+#include "HitEnemyEffect.h"
 CKoopa::CKoopa(float x, float y, int flag) :CGameObject(x, y)
 {
 	sensor = new CKoopaSensor(x, y);
@@ -125,6 +126,16 @@ void CKoopa::OnCollisionWithGoomba(LPCOLLISIONEVENT e)
 	if (goomba->GetState() != GOOMBA_STATE_DIEBYSHELL)
 	{
 		goomba->SetState(GOOMBA_STATE_DIEBYSHELL);
+		LPGAMEOBJECT effect = nullptr;
+		effect = new CHitEnemyEffect(x, y);
+		if (effect)
+		{
+			CPlayScene* scene = dynamic_cast<CPlayScene*>(CGame::GetInstance()->GetCurrentScene());
+			if (scene)
+			{
+				scene->AddObject(effect); // hoặc push vào vector<objects> tùy bạn tổ chức
+			}
+		}
 	}
 }
 void CKoopa::OnCollisionWithKoopa(LPCOLLISIONEVENT e)
@@ -133,6 +144,16 @@ void CKoopa::OnCollisionWithKoopa(LPCOLLISIONEVENT e)
 	if (kp->GetState() != KOOPA_STATE_DIEBYSHELL)
 	{
 		kp->SetState(KOOPA_STATE_DIEBYSHELL);
+		LPGAMEOBJECT effect = nullptr;
+		effect = new CHitEnemyEffect(x, y);
+		if (effect)
+		{
+			CPlayScene* scene = dynamic_cast<CPlayScene*>(CGame::GetInstance()->GetCurrentScene());
+			if (scene)
+			{
+				scene->AddObject(effect); // hoặc push vào vector<objects> tùy bạn tổ chức
+			}
+		}
 	}
 }
 void CKoopa::OnCollisionWithParaGoomba(LPCOLLISIONEVENT e)
@@ -141,6 +162,16 @@ void CKoopa::OnCollisionWithParaGoomba(LPCOLLISIONEVENT e)
 	if (goomba->GetState() != PARAGOOMBA_STATE_DIEBYSHELL)
 	{
 		goomba->SetState(PARAGOOMBA_STATE_DIEBYSHELL);
+		LPGAMEOBJECT effect = nullptr;
+		effect = new CHitEnemyEffect(x, y);
+		if (effect)
+		{
+			CPlayScene* scene = dynamic_cast<CPlayScene*>(CGame::GetInstance()->GetCurrentScene());
+			if (scene)
+			{
+				scene->AddObject(effect); // hoặc push vào vector<objects> tùy bạn tổ chức
+			}
+		}
 	}
 }
 void CKoopa::OnCollisionWithShinyBrick(LPCOLLISIONEVENT e)

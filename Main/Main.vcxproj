@@ -163,6 +163,7 @@
     <ClCompile Include="Giant.cpp" />
     <ClCompile Include="Goomba.cpp" />
     <ClCompile Include="GreenVenusFire.cpp" />
+    <ClCompile Include="HitEnemyEffect.cpp" />
     <ClCompile Include="HUD.cpp" />
     <ClCompile Include="ItemBox.cpp" />
     <ClCompile Include="ItemBoxSensor.cpp" />
@@ -209,6 +210,7 @@
     <ClInclude Include="Giant.h" />
     <ClInclude Include="Goomba.h" />
     <ClInclude Include="GreenVenusFire.h" />
+    <ClInclude Include="HitEnemyEffect.h" />
     <ClInclude Include="HUD.h" />
     <ClInclude Include="ItemBox.h" />
     <ClInclude Include="ItemBoxSensor.h" />
