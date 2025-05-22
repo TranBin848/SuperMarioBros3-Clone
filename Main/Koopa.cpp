@@ -29,7 +29,7 @@ CKoopa::CKoopa(float x, float y, int flag) :CGameObject(x, y)
 	return_start = 0;
 	just_activated = false;
 	this->renderLayer = 5;
-	SetState(KOOPA_STATE_SHELL);
+	SetState(KOOPA_STATE_WALKING);
 }
 
 void CKoopa::GetBoundingBox(float& left, float& top, float& right, float& bottom)

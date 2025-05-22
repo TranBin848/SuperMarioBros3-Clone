@@ -205,6 +205,7 @@
 #define MARIO_UNTOUCHABLE_TIME	2500
 #define MARIO_KICK_DURATION		100
 #define TANUKI_TAILATTACK_DURATION	350
+#define MARIO_ADDSCORETIME		500
 
 #define MARIO_SHELL_OFFSETX		11
 #define MARIO_SHELL_OFFSETY		2
@@ -238,7 +239,7 @@ class CMario : public CGameObject
 	ULONGLONG flying_start = 0;
 	ULONGLONG floating_start = 0;
 	ULONGLONG enterPipeStart = 0; // Thời điểm bắt đầu chui xuống
-
+	ULONGLONG addScoreStart = 0;
 	BOOLEAN isOnPlatform;
 	
 	bool isTransforming = false;
@@ -248,10 +249,11 @@ class CMario : public CGameObject
 	bool isFlapping = false; // Mario vừa nhấn nút nhảy để vỗ cánh
 	bool isFloating = false;
 	bool maxPower = false;
+
 	bool isTurning;  // Trạng thái quay đầu
 	int transform_from = -1;
 	int transform_to = -1;
-	int coin; 
+	int scaleScore = 1;
 	float pipeEnterX = 0.0f;
 	float pipeEnterY = 0.0f;
 

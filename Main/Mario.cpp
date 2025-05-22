@@ -47,7 +47,6 @@ CMario::CMario(float x, float y) :CGameObject(x, y)
 	untouchable_start = -1;
 	kick_start = -1;
 	isOnPlatform = false;
-	coin = 0;
 	this->renderLayer = 10;
 	if (CGame::GetInstance()->GetIsExitingPipe() == true)
 	{
@@ -210,6 +209,11 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 	{
 		tailattack_start = 0;
 	}
+	if (addScoreStart > 0 && GetTickCount64() - addScoreStart > MARIO_ADDSCORETIME)
+	{
+		addScoreStart = 0;
+		scaleScore = 1;
+	}
 	if (isFlapping && GetTickCount64() - flap_start > 100)
 	{
 		isFlapping = false;
@@ -327,7 +331,9 @@ void CMario::OnCollisionWithKoopa(LPCOLLISIONEVENT e) {
 		else if (accY == TANUKI_GRAVITY) jumpForce /= 2;
 		else jumpForce = 0;
 		vy = -jumpForce;
-		
+		if (addScoreStart > 0) scaleScore += 1;
+		CHUD::GetInstance()->SetScore(100 * scaleScore);
+		if(addScoreStart == 0) addScoreStart = GetTickCount64();
 	}
 	else if (e->nx != 0) // Va chạm từ bên trái/phải
 	{
@@ -395,6 +401,7 @@ void CMario::OnCollisionWithGoomba(LPCOLLISIONEVENT e)
 			else if (accY == TANUKI_GRAVITY) jumpForce /= 2;
 			else jumpForce = 0;
 			vy = -jumpForce;
+			CHUD::GetInstance()->SetScore(100);
 		}
 	}
 	else // hit by Goomba
@@ -442,6 +449,9 @@ void CMario::OnCollisionWithParaGoomba(LPCOLLISIONEVENT e)
 		else if (accY == TANUKI_GRAVITY) jumpForce /= 2;
 		else jumpForce = 0;
 		vy = -jumpForce;
+		if (addScoreStart > 0) scaleScore += 1;
+		CHUD::GetInstance()->SetScore(100 * scaleScore);
+		if (addScoreStart == 0) addScoreStart = GetTickCount64();
 	}
 	else // hit by Goomba
 	{
@@ -485,7 +495,8 @@ void CMario::OnCollisionWithItemBox(LPCOLLISIONEVENT e) {
 void CMario::OnCollisionWithCoin(LPCOLLISIONEVENT e)
 {
 	e->obj->Delete();
-	coin++;
+	CHUD::GetInstance()->SetCoin(1);
+	CHUD::GetInstance()->SetScore(50);
 }
 
 void CMario::OnCollisonWithGiant(LPCOLLISIONEVENT e)
@@ -495,6 +506,7 @@ void CMario::OnCollisonWithGiant(LPCOLLISIONEVENT e)
 	{
 		if(!g->GetIsGreenGiant()) SetLevel(MARIO_LEVEL_BIG);
 		e->obj->Delete();
+		CHUD::GetInstance()->SetScore(1000);
 	}
 }
 
@@ -503,6 +515,7 @@ void CMario::OnCollisionWithLeaf(LPCOLLISIONEVENT e)
 	CLeaf* l = dynamic_cast<CLeaf*>(e->obj);
 	e->obj->Delete();
 	SetLevel(MARIO_LEVEL_TANUKI);
+	CHUD::GetInstance()->SetScore(1000);
 }
 
 void CMario::OnCollisionWithDmgObject(LPCOLLISIONEVENT e) {

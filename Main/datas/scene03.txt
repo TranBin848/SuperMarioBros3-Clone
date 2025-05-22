@@ -131,7 +131,7 @@ datas\particle.txt
 
 #10	850	110	2
 # MARIO
-0	2200	130
+0	50	130
 
 #GOOMBA
 2	233	172

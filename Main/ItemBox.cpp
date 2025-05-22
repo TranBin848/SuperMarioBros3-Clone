@@ -80,6 +80,7 @@ void CItemBox::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
                     {
                         newItem->SetState(COIN_STATE_BOUNCING);
                     }
+                    
                 }
                 else if (flagCoin == 2)
                 {

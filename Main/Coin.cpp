@@ -1,5 +1,5 @@
 ﻿#include "Coin.h"
-
+#include "HUD.h"
 void CCoin::Render()
 {
 	int aniId = ID_ANI_COIN;
@@ -38,6 +38,7 @@ void CCoin::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		}
 		if (y > originalY - 26.0f) {
 			y = originalY - 26.0f;
+			CHUD::GetInstance()->SetScore(100);
 			Delete();
 		}
 	}
