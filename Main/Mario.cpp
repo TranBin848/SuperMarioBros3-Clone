@@ -8,6 +8,8 @@
 #include "Koopa.h"
 #include "ParaGoomba.h"
 #include "VenusFire.h"
+#include "GreenVenusFire.h"
+#include "PiranhaTrap.h"
 #include "Fire.h"
 #include "Coin.h"
 #include "Portal.h"
@@ -347,7 +349,8 @@ void CMario::OnCollisionWith(LPCOLLISIONEVENT e)
 		OnCollisionWithKoopa(e);
 	else if (dynamic_cast<CLeaf*>(e->obj))
 		OnCollisionWithLeaf(e);
-	else if (dynamic_cast<CVenusFire*>(e->obj) || dynamic_cast<CFire*>(e->obj))
+	else if (dynamic_cast<CVenusFire*>(e->obj) || dynamic_cast<CFire*>(e->obj)
+			|| dynamic_cast<CGreenVenusFire*>(e->obj) || dynamic_cast<CPiranhaTrap*>(e->obj))
 		OnCollisionWithDmgObject(e);
 	else if (dynamic_cast<CSwitchBlock*>(e->obj))
 		OnCollisionWithSwitchBlock(e);
@@ -646,22 +649,7 @@ void CMario::OnCollisionWithLeaf(LPCOLLISIONEVENT e)
 }
 
 void CMario::OnCollisionWithDmgObject(LPCOLLISIONEVENT e) {
-	if (untouchable == 0)
-	{
-		if (level == MARIO_LEVEL_BIG)
-		{
-			SetLevel(MARIO_LEVEL_SMALL);
-		}
-		else if (level == MARIO_LEVEL_TANUKI)
-		{
-			SetLevel(MARIO_LEVEL_BIG);
-		}
-		else
-		{
-			DebugOut(L">>> Mario DIE >>> \n");
-			SetState(MARIO_STATE_DIE);
-		}
-	}
+	TakeDmg();
 }
 
 void CMario::OnCollisionWithPortal(LPCOLLISIONEVENT e)

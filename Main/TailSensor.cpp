@@ -7,6 +7,10 @@
 #include "Platform.h"
 #include "Mario.h"
 #include "ItemBox.h"
+#include "VenusFire.h"
+#include "GreenVenusFire.h"
+#include "PiranhaTrap.h"
+#include "HitEnemyEffect.h"
 
 void CTailSensor::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
@@ -36,7 +40,9 @@ void CTailSensor::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
     y += vy * dt;
     for (LPGAMEOBJECT obj : *coObjects)
     {
-        if (dynamic_cast<CGoomba*>(obj) || dynamic_cast<CParaGoomba*>(obj) || dynamic_cast<CKoopa*>(obj) || dynamic_cast<CItemBox*>(obj))
+        if (dynamic_cast<CGoomba*>(obj) || dynamic_cast<CParaGoomba*>(obj) || dynamic_cast<CKoopa*>(obj) 
+            || dynamic_cast<CItemBox*>(obj) || dynamic_cast<CVenusFire*>(obj) || dynamic_cast<CGreenVenusFire*>(obj)
+            || dynamic_cast<CPiranhaTrap*>(obj))
         {
             float l, t, r, b;
             obj->GetBoundingBox(l, t, r, b);
@@ -62,7 +68,7 @@ void CTailSensor::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 }
 void CTailSensor::OnCollisionWith(LPCOLLISIONEVENT e)
 {
-    if (owner->GetLevel() == MARIO_LEVEL_TANUKI && owner -> GetState() == TANUKI_STATE_TAILATTACK)
+    if (owner->GetLevel() == MARIO_LEVEL_TANUKI && owner -> GetState() == TANUKI_STATE_TAILATTACK && owner -> GetUntouchable() == 0)
     {
         if (dynamic_cast<CGoomba*>(e->obj))
         {
@@ -84,6 +90,13 @@ void CTailSensor::OnCollisionWith(LPCOLLISIONEVENT e)
             OnCollisionWithItemBox(e);
             return;
         }
+        else if (dynamic_cast<CVenusFire*>(e->obj) || dynamic_cast<CGreenVenusFire*>(e->obj)
+            || dynamic_cast<CPiranhaTrap*>(e->obj))
+        {
+            DebugOutTitle(L"CHECK");
+            OnCollisionWithPlant(e);
+            return;
+        }
     }   
     
     if (!e->obj->IsBlocking()) return;
@@ -102,7 +115,21 @@ void CTailSensor::OnCollisionWithGoomba(LPCOLLISIONEVENT e)
     if (goomba->GetState() != GOOMBA_STATE_DIEBYSHELL)
     {
         goomba->SetState(GOOMBA_STATE_DIEBYSHELL);
-        owner->SetState(KOOPA_STATE_DIEBYSHELL);
+        float ex;
+        if (isFront)
+            ex = x + 2;
+        else
+            ex = x - 2;
+        LPGAMEOBJECT effect = nullptr;
+        effect = new CHitEnemyEffect(ex, y);
+        if (effect)
+        {
+            CPlayScene* scene = dynamic_cast<CPlayScene*>(CGame::GetInstance()->GetCurrentScene());
+            if (scene)
+            {
+                scene->AddObject(effect); // hoặc push vào vector<objects> tùy bạn tổ chức
+            }
+        }
     }
 }
 void CTailSensor::OnCollisionWithKoopa(LPCOLLISIONEVENT e)
@@ -111,8 +138,21 @@ void CTailSensor::OnCollisionWithKoopa(LPCOLLISIONEVENT e)
     if (kp->GetState() != KOOPA_STATE_DIEBYSHELL)
     {
         kp->SetState(KOOPA_STATE_DIEBYSHELL);
-        owner->SetState(KOOPA_STATE_DIEBYSHELL);
-
+        float ex;
+        if (isFront)
+            ex = x + 2;
+        else
+            ex = x - 2;
+        LPGAMEOBJECT effect = nullptr;
+        effect = new CHitEnemyEffect(ex, y);
+        if (effect)
+        {
+            CPlayScene* scene = dynamic_cast<CPlayScene*>(CGame::GetInstance()->GetCurrentScene());
+            if (scene)
+            {
+                scene->AddObject(effect); // hoặc push vào vector<objects> tùy bạn tổ chức
+            }
+        }
     }
 }
 void CTailSensor::OnCollisionWithParaGoomba(LPCOLLISIONEVENT e)
@@ -121,7 +161,21 @@ void CTailSensor::OnCollisionWithParaGoomba(LPCOLLISIONEVENT e)
     if (goomba->GetState() != PARAGOOMBA_STATE_DIEBYSHELL)
     {
         goomba->SetState(PARAGOOMBA_STATE_DIEBYSHELL);
-        owner->SetState(KOOPA_STATE_DIEBYSHELL);
+        float ex;
+        if (isFront)
+            ex = x + 2;
+        else
+            ex = x - 2;
+        LPGAMEOBJECT effect = nullptr;
+        effect = new CHitEnemyEffect(ex, y);
+        if (effect)
+        {
+            CPlayScene* scene = dynamic_cast<CPlayScene*>(CGame::GetInstance()->GetCurrentScene());
+            if (scene)
+            {
+                scene->AddObject(effect); // hoặc push vào vector<objects> tùy bạn tổ chức
+            }
+        }
     }
 }
 void CTailSensor::OnCollisionWithItemBox(LPCOLLISIONEVENT e) {
@@ -136,5 +190,24 @@ void CTailSensor::OnCollisionWithItemBox(LPCOLLISIONEVENT e) {
         int direction = marioX < itemboxX ? 1 : -1; // 1 là từ trái, -1 là từ phải
         itb->SetBounceDirection(direction); // Thêm hàm này
         itb->SetState(ITEMBOX_STATE_BOUNCING);
+    }
+}
+void CTailSensor::OnCollisionWithPlant(LPCOLLISIONEVENT e) {
+    CGameObject* pl = dynamic_cast<CGameObject*>(e->obj);
+    pl->isDeleted = true;
+    float ex;
+    if (isFront)
+        ex = x + 2;
+    else
+        ex = x - 2;
+    LPGAMEOBJECT effect = nullptr;
+    effect = new CHitEnemyEffect(ex, y);
+    if (effect)
+    {
+        CPlayScene* scene = dynamic_cast<CPlayScene*>(CGame::GetInstance()->GetCurrentScene());
+        if (scene)
+        {
+            scene->AddObject(effect); // hoặc push vào vector<objects> tùy bạn tổ chức
+        }
     }
 }

@@ -15,6 +15,7 @@ protected:
     void OnCollisionWithParaGoomba(LPCOLLISIONEVENT e);
     void OnCollisionWithKoopa(LPCOLLISIONEVENT e);
     void OnCollisionWithItemBox(LPCOLLISIONEVENT e);
+    void OnCollisionWithPlant(LPCOLLISIONEVENT e);
 public:
     CTailSensor(float x, float y, int fl) : CGameObject(x, y)
     {

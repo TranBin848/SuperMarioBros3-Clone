@@ -338,6 +338,7 @@ public:
 		}
 			
 	}
+	int GetUntouchable() { return untouchable; };
 	void SetIsOnHiddenPipe(bool fl) { isOnHiddenPipe = fl; }
 	bool GetIsOnHiddenPipe() { return isOnHiddenPipe; };
 	
