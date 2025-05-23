@@ -220,7 +220,8 @@
 
 class CMario : public CGameObject
 {
-	CTailSensor* sensor;
+	CTailSensor* sensorFr;
+	CTailSensor* sensorB;
 
 	BOOLEAN isSitting;
 	bool isHolding = false;
@@ -321,6 +322,21 @@ public:
 				break;
 			}
 		}
+	}
+	void GetTailOffset(float& ox, float& oy, int fl) {
+		//fl: 1-Truoc
+		//fl: 2-Sau
+		if (fl == 1)
+		{
+			ox = 14;
+			oy = 2;
+		}
+		else
+		{
+			ox = -14;
+			oy = 2;
+		}
+			
 	}
 	void SetIsOnHiddenPipe(bool fl) { isOnHiddenPipe = fl; }
 	bool GetIsOnHiddenPipe() { return isOnHiddenPipe; };

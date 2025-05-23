@@ -23,7 +23,7 @@ void CTailSensor::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
     my += mvy * dt;
 
     float ox, oy;
-    CMario::GetInstance()->GetShellOffset(ox, oy);
+    CMario::GetInstance()->GetTailOffset(ox, oy, isFront);
 
     float targetX = (mnx >= 0) ? (mx + ox) : (mx - ox);
     float targetY = my + oy + 4.0f;
@@ -57,9 +57,7 @@ void CTailSensor::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
                 delete fakeEvent;
             }
         }
-
     }
-    
     CCollision::GetInstance()->Process(this, dt, coObjects);
 }
 void CTailSensor::OnCollisionWith(LPCOLLISIONEVENT e)

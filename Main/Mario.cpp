@@ -25,12 +25,15 @@ CMario* CMario::__instance = nullptr;
 
 CMario::CMario(float x, float y) :CGameObject(x, y)
 {
-	sensor = new CTailSensor(x, y);
-	sensor->SetOwner(this);
+	sensorFr = new CTailSensor(x, y, 1);
+	sensorFr ->SetOwner(this);
+	sensorB = new CTailSensor(x, y, 0);
+	sensorB->SetOwner(this);
 	CPlayScene* scene = dynamic_cast<CPlayScene*>(CGame::GetInstance()->GetCurrentScene());
 	if (scene)
 	{
-		scene->AddObject(sensor); // hoặc push vào vector<objects> tùy bạn tổ chức
+		scene->AddObject(sensorFr); // hoặc push vào vector<objects> tùy bạn tổ chức
+		scene->AddObject(sensorB); // hoặc push vào vector<objects> tùy bạn tổ chức
 	}
 	__instance = this; // Gán instance
 	isSitting = false;

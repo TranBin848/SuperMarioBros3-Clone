@@ -9,15 +9,17 @@ class CTailSensor : public CGameObject
 {
 protected:
     CMario* owner;
+    int isFront;
     virtual void OnCollisionWith(LPCOLLISIONEVENT e);
     void OnCollisionWithGoomba(LPCOLLISIONEVENT e);
     void OnCollisionWithParaGoomba(LPCOLLISIONEVENT e);
     void OnCollisionWithKoopa(LPCOLLISIONEVENT e);
     void OnCollisionWithItemBox(LPCOLLISIONEVENT e);
 public:
-    CTailSensor(float x, float y) : CGameObject(x, y)
+    CTailSensor(float x, float y, int fl) : CGameObject(x, y)
     {
         owner = nullptr;
+        isFront = fl;
     }
     void SetOwner(CMario* mro) { owner = mro; }
 
@@ -30,7 +32,7 @@ public:
     }
     virtual int IsBlocking() { return 0; } // Không chặn gì cả
     int IsCollidable() override { return 1; }
-    virtual void Render() { /*RenderBoundingBox(); */}
+    virtual void Render() { RenderBoundingBox(); }
     virtual void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
 };
 

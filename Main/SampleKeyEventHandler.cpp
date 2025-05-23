@@ -51,7 +51,7 @@ void CSampleKeyHandler::OnKeyDown(int KeyCode)
 	case DIK_0:
 		mario->SetState(MARIO_STATE_DIE);
 		break;
-	case DIK_F:
+	case DIK_A:
 		if (mario->GetLevel() == MARIO_LEVEL_TANUKI)
 			mario->SetState(TANUKI_STATE_TAILATTACK);
 		break;
@@ -89,7 +89,6 @@ void CSampleKeyHandler::KeyState(BYTE *states)
 
 	if (game->IsKeyDown(DIK_RIGHT))
 	{
-		
 		if (game->IsKeyDown(DIK_A))
 			mario->SetState(MARIO_STATE_RUNNING_RIGHT);
 		else
