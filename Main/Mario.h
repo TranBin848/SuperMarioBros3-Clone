@@ -252,6 +252,7 @@ class CMario : public CGameObject
 	bool isFlapping = false; // Mario vừa nhấn nút nhảy để vỗ cánh
 	bool isFloating = false;
 	bool maxPower = false;
+	bool atEndMap = false;
 	int runPower;
 	bool isTurning;  // Trạng thái quay đầu
 	int transform_from = -1;
@@ -271,7 +272,7 @@ class CMario : public CGameObject
 	void OnCollisionWithPipe(LPCOLLISIONEVENT e);
 	void OnCollisionWithDmgObject(LPCOLLISIONEVENT e);
 	void OnCollisionWithSwitchBlock(LPCOLLISIONEVENT e);
-
+	void OnCollisionWithCard(LPCOLLISIONEVENT e);
 	int GetAniIdBig();
 	int GetAniIdSmall();
 	int GetAniIdTanuki();

@@ -17,6 +17,7 @@
 #include "SwitchBlock.h"
 #include "Giant.h"
 #include "Leaf.h"
+#include "Card.h"
 #include "Pipe.h"
 #include "Collision.h"
 #include "PlayScene.h"
@@ -91,6 +92,13 @@ void CMario::TakeDmg()
 
 void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 {
+	if (atEndMap)
+	{
+		ax = MARIO_ACCEL_WALK_X;
+		vx += ax * dt;
+		vy += ay * dt;
+		return;
+	}
 	CGame* game = CGame::GetInstance();
 	
 	if (state == MARIO_STATE_EXIT_PIPE)
@@ -345,6 +353,8 @@ void CMario::OnCollisionWith(LPCOLLISIONEVENT e)
 		OnCollisionWithItemBox(e);
 	else if (dynamic_cast<CGiant*>(e->obj))
 		OnCollisonWithGiant(e);
+	else if (dynamic_cast<CCard*>(e->obj))
+		OnCollisionWithCard(e);
 	else if (dynamic_cast<CKoopa*>(e->obj))
 		OnCollisionWithKoopa(e);
 	else if (dynamic_cast<CLeaf*>(e->obj))
@@ -591,6 +601,23 @@ void CMario::OnCollisionWithCoin(LPCOLLISIONEVENT e)
 	e->obj->Delete();
 	CHUD::GetInstance()->SetCoin(1);
 	CHUD::GetInstance()->SetScore(50);
+}
+
+void CMario::OnCollisionWithCard(LPCOLLISIONEVENT e)
+{
+	CCard* card = dynamic_cast<CCard*>(e->obj);
+	if (!card) return;
+
+	if (!card->IsActivated())
+	{
+		card->Activate(); // Dừng đổi card và nhảy lên
+		CardType type = card->GetCardType();
+		atEndMap = true;
+		/*CHUD::GetInstance()->AddCard(type); */
+
+		// Gợi ý: play sound nhận card nếu bạn có hệ thống âm thanh
+		// CSound::GetInstance()->Play("card_collected");
+	}
 }
 
 void CMario::OnCollisonWithGiant(LPCOLLISIONEVENT e)

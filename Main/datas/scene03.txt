@@ -18,6 +18,7 @@ datas\paragoomba.txt
 datas\switchblock.txt	
 datas\HUD.txt
 datas\particle.txt
+datas\card_firework.txt
 #
 [OBJECTS]
 # type	x	y	extra_settings per object type
@@ -114,6 +115,8 @@ datas\particle.txt
 1	2317	75	15	15	60008
 15	2309	-29	31	191	60017	1
 15	2372	163	31	31	60015	0
+
+30	2733	107
 
 #1	880	133	31	47	60007
 #1	800	133	31	47	60007

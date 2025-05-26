@@ -22,6 +22,7 @@
 #include "ParaGoomba.h"
 #include "Obstacle.h"
 #include "Pipe.h"
+#include "Card.h"
 #include "Mario.h"
 #include "SampleKeyEventHandler.h"
 
@@ -182,6 +183,10 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 	{
 		int flag = atoi(tokens[3].c_str());
 		obj = new CCoin(x, y, flag); break; 
+	}
+	case OBJECT_TYPE_CARD:
+	{
+		obj = new CCard(x, y); break;
 	}
 	case OBJECT_TYPE_VENUSFIRE: obj = new CVenusFire(x,y); break;
 	case OBJECT_TYPE_GREENVENUSFIRE: obj = new CGreenVenusFire(x, y); break;
@@ -393,7 +398,7 @@ void CPlayScene::Update(DWORD dt)
 			}
 		}
 	}
-	DebugOutTitle(L"camX: %f", cx);
+	/*DebugOutTitle(L"camX: %f", cx);*/
 	/*DebugOutTitle(L"y: %f, Mario y: %f", cy, marioY);*/
 	CGame::GetInstance()->SetCamPos(cx, cy);
 	
