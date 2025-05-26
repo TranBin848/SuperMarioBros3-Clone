@@ -34,7 +34,7 @@ void CHUD::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects) {
 		blinkVisible = true;
 		blinkAccumulator = 0;
 	}
-	DebugOutTitle(L"timeLeft: %d", timeLeft);
+	/*DebugOutTitle(L"timeLeft: %d", timeLeft);*/
 }
 void CHUD::Render()
 {

@@ -364,6 +364,7 @@ void CPlayScene::Update(DWORD dt)
 	
 	// Giới hạn camera theo trục x
 	if (cx < 0) cx = 0;
+	if (cx > 2562.0f) cx = 2562.0f;
 	// Giới hạn camera theo trục y
 	int currentScene = CGame::GetInstance()->GetCurrentSceneId();
 	if (currentScene == 1)
@@ -392,8 +393,7 @@ void CPlayScene::Update(DWORD dt)
 			}
 		}
 	}
-	
-
+	DebugOutTitle(L"camX: %f", cx);
 	/*DebugOutTitle(L"y: %f, Mario y: %f", cy, marioY);*/
 	CGame::GetInstance()->SetCamPos(cx, cy);
 	
