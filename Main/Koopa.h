@@ -63,7 +63,9 @@ protected:
 	bool just_activated; // Thêm biến này
 	bool isOnGround = false;
 	bool isBeingHeld = false;
-
+	bool isUpsideDown = false;
+	bool isHitByTail = false;
+	int dir;
 	ULONGLONG die_start;
 	ULONGLONG shell_start;
 	ULONGLONG return_start;
@@ -98,4 +100,8 @@ public:
 	virtual void SetVX() { vx = -vx; };
 	void SetIsBeingHeld(bool held) { isBeingHeld = held; }
 	bool GetIsBeingHeld() { return isBeingHeld; }
+	void SetIsUpsideDown(bool fl) { isUpsideDown = fl; }
+	bool GetIsUpsideDown() { return isUpsideDown; }
+	void SetIsHitByTail(bool fl, int direction) { isHitByTail = fl; dir = direction; }
+	bool GetIsHitByTail() { return isHitByTail; }
 };

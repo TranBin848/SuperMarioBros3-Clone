@@ -135,23 +135,26 @@ void CTailSensor::OnCollisionWithGoomba(LPCOLLISIONEVENT e)
 void CTailSensor::OnCollisionWithKoopa(LPCOLLISIONEVENT e)
 {
     CKoopa* kp = dynamic_cast<CKoopa*>(e->obj);
-    if (kp->GetState() != KOOPA_STATE_DIEBYSHELL)
+    kp->SetState(KOOPA_STATE_SHELL);
+    if (isFront == 1)
+        kp->SetSpeed(0.1f, -0.3f);
+    else
+        kp->SetSpeed(-0.1f, -0.3f);
+    if (!kp->GetIsUpsideDown())
+        kp->SetIsUpsideDown(true);
+    float ex;
+    if (isFront)
+        ex = x + 2;
+    else
+        ex = x - 2;
+    LPGAMEOBJECT effect = nullptr;
+    effect = new CHitEnemyEffect(ex, y);
+    if (effect)
     {
-        kp->SetState(KOOPA_STATE_DIEBYSHELL);
-        float ex;
-        if (isFront)
-            ex = x + 2;
-        else
-            ex = x - 2;
-        LPGAMEOBJECT effect = nullptr;
-        effect = new CHitEnemyEffect(ex, y);
-        if (effect)
+        CPlayScene* scene = dynamic_cast<CPlayScene*>(CGame::GetInstance()->GetCurrentScene());
+        if (scene)
         {
-            CPlayScene* scene = dynamic_cast<CPlayScene*>(CGame::GetInstance()->GetCurrentScene());
-            if (scene)
-            {
-                scene->AddObject(effect); // hoặc push vào vector<objects> tùy bạn tổ chức
-            }
+            scene->AddObject(effect); // hoặc push vào vector<objects> tùy bạn tổ chức
         }
     }
 }

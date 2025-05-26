@@ -277,8 +277,8 @@ void CKoopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			}
 			else if (state == KOOPA_STATE_SHELL)
 			{
-				// Mai rùa đứng yên, không rơi
 				vx = 0;
+	
 				if (just_activated)
 				{
 					just_activated = false; // Đặt lại flag sau frame đầu tiên
@@ -296,7 +296,6 @@ void CKoopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			{
 				vx = 0;
 				vy = 0;
-
 				if (GetTickCount64() - return_start > KOOPA_SHELL_RECOVER)
 				{
 					SetState(KOOPA_STATE_WALKING);
@@ -321,7 +320,6 @@ void CKoopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				vy += ay * dt;
 			}
 		}
-		
 		CGameObject::Update(dt, coObjects);
 		CCollision::GetInstance()->Process(this, dt, coObjects);
 	}
@@ -335,7 +333,7 @@ int CKoopa::GetAniIdRed()
 	aniId = ID_ANI_KOOPA_WALKING;
 	if (state == KOOPA_STATE_SHELL)
 	{
-		aniId = ID_ANI_KOOPA_SHELL;		
+		aniId = ID_ANI_KOOPA_SHELL;
 	}
 	if (state == KOOPA_STATE_ACTIVATE) 
 	{
@@ -350,6 +348,9 @@ int CKoopa::GetAniIdRed()
 		aniId = ID_ANI_KOOPA_DIEBYSHELL;
 	}
 	if (vx > 0 && state == KOOPA_STATE_WALKING)	aniId += 100;
+	if(state != KOOPA_STATE_WALKING && state != KOOPA_STATE_DIEBYSHELL)
+		if(isUpsideDown)
+			aniId += 5;
 	return aniId;
 }
 int CKoopa::GetAniIdGreen()
@@ -373,6 +374,9 @@ int CKoopa::GetAniIdGreen()
 		aniId = ID_ANI_GRKOOPA_DIEBYSHELL;
 	}
 	if (vx > 0 && state == KOOPA_STATE_WALKING)	aniId += 100;
+	if (state != KOOPA_STATE_WALKING && state != KOOPA_STATE_DIEBYSHELL)
+		if (isUpsideDown)
+			aniId += 5;
 	return aniId;
 }
 int CKoopa::GetAniIdPara()
@@ -418,7 +422,6 @@ void CKoopa::SetState(int state)
 	switch (state)
 	{
 	case KOOPA_STATE_SHELL:
-		vx = 0;
 		shell_start = GetTickCount64(); // Ghi lại thời gian vào shell
 		just_activated = true;
 		ay = KOOPA_GRAVITY;
