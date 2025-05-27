@@ -54,6 +54,7 @@ CMario::CMario(float x, float y) :CGameObject(x, y)
 	untouchable_start = -1;
 	kick_start = -1;
 	isOnPlatform = false;
+	endMapTargetX = 2870.0f;
 	this->renderLayer = 10;
 	if (CGame::GetInstance()->GetIsExitingPipe() == true)
 	{
@@ -92,11 +93,19 @@ void CMario::TakeDmg()
 
 void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 {
+	DebugOutTitle(L"x: %f", x);
 	if (atEndMap)
 	{
+		vx = MARIO_WALKING_SPEED;
 		ax = MARIO_ACCEL_WALK_X;
-		vx += ax * dt;
 		vy += ay * dt;
+		if (x >= endMapTargetX)
+		{
+			vx = 0;
+			return;
+		}
+		CCollision::GetInstance()->Process(this, dt, coObjects);
+		// Không xử lý bất kỳ logic cập nhật nào khác nữa
 		return;
 	}
 	CGame* game = CGame::GetInstance();

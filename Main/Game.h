@@ -119,6 +119,8 @@ public:
 	void SetIsExitingPipe(bool fl) { isExitingPipe = fl; };
 	bool GetIsExitingPipe() { return isExitingPipe; };
 
+	void ReloadScene();
+
 	~CGame();
 };
 typedef CGame* LPGAME;

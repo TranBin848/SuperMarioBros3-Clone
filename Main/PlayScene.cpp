@@ -333,7 +333,7 @@ void CPlayScene::Load()
 
 	f.close();
 
-	DebugOut(L"[INFO] Done loading scene  %s\n", sceneFilePath);
+	DebugOutTitle(L"[INFO] Done loading scene  %s\n", sceneFilePath);
 }
 
 void CPlayScene::Update(DWORD dt)
@@ -369,7 +369,7 @@ void CPlayScene::Update(DWORD dt)
 	
 	// Giới hạn camera theo trục x
 	if (cx < 0) cx = 0;
-	if (cx > 2562.0f) cx = 2562.0f;
+	/*if (cx > 2562.0f) cx = 2562.0f;*/
 	// Giới hạn camera theo trục y
 	int currentScene = CGame::GetInstance()->GetCurrentSceneId();
 	if (currentScene == 1)
@@ -447,6 +447,8 @@ void CPlayScene::Unload()
 		delete objects[i];
 
 	objects.clear();
+	CAnimations::GetInstance()->Clear(); // POTENTIALLY DANGEROUS if global
+	CSprites::GetInstance()->Clear();    // POTENTIALLY DANGEROUS if global
 	player = NULL;
 
 	DebugOut(L"[INFO] Scene %d unloaded! \n", id);

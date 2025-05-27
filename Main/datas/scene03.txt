@@ -135,8 +135,7 @@ datas\card_firework.txt
 #10	550	47	3
 
 #10	850	110	2
-# MARIO
-0	2700	130
+
 
 #GOOMBA
 2	233	172
@@ -195,6 +194,9 @@ test goomba
 
 #Portal 
 50	2306	-75	2320	-65	1
+
+# MARIO
+0	2750	165
 
 #HUD
 60	0	0

@@ -260,6 +260,7 @@ class CMario : public CGameObject
 	int scaleScore = 1;
 	float pipeEnterX = 0.0f;
 	float pipeEnterY = 0.0f;
+	float endMapTargetX; // cho Mario đi tiếp khoảng 64px
 
 	void OnCollisionWithGoomba(LPCOLLISIONEVENT e);
 	void OnCollisionWithParaGoomba(LPCOLLISIONEVENT e);

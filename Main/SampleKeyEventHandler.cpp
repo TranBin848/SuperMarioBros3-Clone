@@ -56,7 +56,7 @@ void CSampleKeyHandler::OnKeyDown(int KeyCode)
 			mario->SetState(TANUKI_STATE_TAILATTACK);
 		break;
 	case DIK_R: // reset
-		//Reload();
+		CGame::GetInstance()->ReloadScene();
 		break;
 	}
 }

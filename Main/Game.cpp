@@ -521,7 +521,6 @@ void CGame::Load(LPCWSTR gameFile)
 void CGame::SwitchScene()
 {
 	if (next_scene < 0 || next_scene == current_scene) return; 
-
 	DebugOut(L"[INFO] Switching to scene %d\n", next_scene);
 
 	scenes[current_scene]->Unload();
@@ -548,6 +547,12 @@ void CGame::InitiateSwitchScene(int scene_id)
 	next_scene = scene_id;
 }
 
+
+void CGame::ReloadScene()
+{
+	GetCurrentScene()->Unload();
+	GetCurrentScene()->Load();
+}
 
 CGame::~CGame()
 {
