@@ -369,7 +369,7 @@ void CPlayScene::Update(DWORD dt)
 	
 	// Giới hạn camera theo trục x
 	if (cx < 0) cx = 0;
-	/*if (cx > 2562.0f) cx = 2562.0f;*/
+	if (cx > 2562.0f) cx = 2562.0f;
 	// Giới hạn camera theo trục y
 	int currentScene = CGame::GetInstance()->GetCurrentSceneId();
 	if (currentScene == 1)

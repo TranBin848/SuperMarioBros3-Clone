@@ -8,9 +8,15 @@
 #define ID_HUD_RUNBAR_FILLED 65201
 #define ID_HUD_RUNBAR_BLINK_ON 65202
 #define ID_HUD_RUNBAR_BLINK_OFF 65203
+#define ID_HUD_TEXTEND			65204
+#define ID_HUD_TEXTCARD			65205
+#define ID_HUD_STARCARD			100004
+#define ID_HUD_GIANTCARD		100005
+#define ID_HUD_FLOWERCARD		100006
 class CHUD : public CGameObject
 {
 protected:
+	ULONGLONG endMapStartTime = 0;
 	static CHUD* __instance;
 	int score = 0;
 	int coin = 0;

@@ -12,6 +12,16 @@ CHUD* CHUD::GetInstance()
 void CHUD::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects) {
 	timeAccumulator += dt / 1000.0f; 
 
+	if (CMario::GetInstance()->GetAtEndMap())
+	{
+		if (endMapStartTime == 0)
+			endMapStartTime = GetTickCount64();
+	}
+	else
+	{
+		endMapStartTime = 0; // reset nếu chưa tới cuối màn
+	}
+
 	if (timeAccumulator >= 1.0f)
 	{
 		timeAccumulator -= 1.0f;
@@ -52,7 +62,23 @@ void CHUD::Render()
 	RenderNumber(timeLeft, 3, x + 8, y - 27); // time: 3 chữ số
 	RenderNumber(life, 2, x - 87, y - 27);     // score: 6 chữ số
 	RenderRunPower(CMario::GetInstance()->GetRunPower(), x - 64, y - 35);
+	if (CMario::GetInstance()->GetAtEndMap())
+	{
+		CSprites* s = CSprites::GetInstance();
 
+		// Vẽ "COURSE CLEAR" ngay lập tức
+		LPSPRITE textEnd = s->Get(ID_HUD_TEXTEND);
+		if (textEnd)
+			textEnd->DrawStatic(x + 12, y - 200);
+
+		// Sau 1 giây mới vẽ "YOU GOT A CARD"
+		if (GetTickCount64() - endMapStartTime >= 1000)
+		{
+			LPSPRITE textCard = s->Get(ID_HUD_TEXTCARD);
+			if (textCard)
+				textCard->DrawStatic(x + 12, y - 170);
+		}
+	}
 }
 void CHUD::RenderNumber(int number, int digits, float x, float y)
 {
@@ -74,7 +100,6 @@ void CHUD::RenderNumber(int number, int digits, float x, float y)
 			
 		}
 	}
-	
 }
 void CHUD::RenderRunPower(int power, float x, float y)
 {

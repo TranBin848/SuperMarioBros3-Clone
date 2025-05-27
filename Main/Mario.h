@@ -346,6 +346,7 @@ public:
 	
 	bool GetMaxPower() { return maxPower; };
 	int GetRunPower() const { return runPower; }
+	bool GetAtEndMap() { return (atEndMap && x >= endMapTargetX); };
 
 	float GetAy() { return ay; }
 	void StartUntouchable() { untouchable = 1; untouchable_start = GetTickCount64(); }
