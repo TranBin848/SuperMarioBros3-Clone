@@ -31,7 +31,7 @@ void CCard::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects) {
 
 	if (state == CARD_STATE_IDLE) {
 		if (GetTickCount64() - switching_start > switching_interval) {
-			currentType = (CardType)((currentType + 1) % 3); // Mushroom -> Flower -> Star
+			currentType = (CardType)((currentType + 1) % 3); 
 			switching_start = GetTickCount64();
 		}
 	}

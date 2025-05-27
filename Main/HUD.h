@@ -10,9 +10,9 @@
 #define ID_HUD_RUNBAR_BLINK_OFF 65203
 #define ID_HUD_TEXTEND			65204
 #define ID_HUD_TEXTCARD			65205
-#define ID_HUD_STARCARD			100004
-#define ID_HUD_GIANTCARD		100005
-#define ID_HUD_FLOWERCARD		100006
+#define ID_HUD_STARCARD			65206
+#define ID_HUD_GIANTCARD		65207
+#define ID_HUD_FLOWERCARD		65208
 class CHUD : public CGameObject
 {
 protected:
@@ -22,9 +22,12 @@ protected:
 	int coin = 0;
 	int timeLeft = 300;
 	int life = 4;
+	int currentCard = -1; 
 	float timeAccumulator = 0.0f;
 	bool blinkVisible = true;
+	bool cardBlickInvisible = true;
 	float blinkAccumulator = 0.0f;
+	float cardBlinkAccumulator = 0.0f;
 	virtual void GetBoundingBox(float& left, float& top, float& right, float& bottom) {}
 	virtual int IsCollidable() { return 0; };
 	virtual int IsBlocking() { return 0; }
@@ -41,5 +44,6 @@ public:
 	void SetCoin(int value) { coin += value; }
 	void SetTime(int value) { timeLeft = value; }
 	void SetLife(int value) { life += value; };
+	void SetCard(int value) { currentCard = value; }
 };
 

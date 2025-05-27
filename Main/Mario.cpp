@@ -93,7 +93,7 @@ void CMario::TakeDmg()
 
 void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 {
-	DebugOutTitle(L"x: %f", x);
+	/*DebugOutTitle(L"x: %f", x);*/
 	if (atEndMap)
 	{
 		vx = MARIO_WALKING_SPEED;
@@ -621,11 +621,9 @@ void CMario::OnCollisionWithCard(LPCOLLISIONEVENT e)
 	{
 		card->Activate(); // Dừng đổi card và nhảy lên
 		CardType type = card->GetCardType();
+		DebugOutTitle(L"id: %d", (int)type);
+		CHUD::GetInstance()->SetCard((int)type);
 		atEndMap = true;
-		/*CHUD::GetInstance()->AddCard(type); */
-
-		// Gợi ý: play sound nhận card nếu bạn có hệ thống âm thanh
-		// CSound::GetInstance()->Play("card_collected");
 	}
 }
 

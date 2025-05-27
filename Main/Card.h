@@ -27,9 +27,9 @@
 #define ID_ANI_CARD_FLOWER_IDLE		30006
 
 enum CardType {
-	CARD_TYPE_MUSHROOM = 0,
-	CARD_TYPE_FLOWER = 1,
-	CARD_TYPE_STAR = 2
+	CARD_TYPE_MUSHROOM = 1,
+	CARD_TYPE_FLOWER = 2,
+	CARD_TYPE_STAR = 0
 };
 
 class CCard : public CGameObject {

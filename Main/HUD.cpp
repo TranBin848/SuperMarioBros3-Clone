@@ -29,13 +29,19 @@ void CHUD::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects) {
 			timeLeft--;
 	}
 	// Blink logic cho max power bar
-	if (CMario::GetInstance()->GetMaxPower())
+	if (CMario::GetInstance()->GetMaxPower() || currentCard != -1)
 	{
 		blinkAccumulator += dt;
+		cardBlinkAccumulator += dt;
 		if (blinkAccumulator >= 200) // nháy mỗi 200ms
 		{
 			blinkVisible = !blinkVisible;
 			blinkAccumulator = 0;
+		}
+		if (cardBlinkAccumulator >= 400)
+		{
+			cardBlickInvisible = !cardBlickInvisible;
+			cardBlinkAccumulator = 0;
 		}
 	}
 	else
@@ -77,6 +83,27 @@ void CHUD::Render()
 			LPSPRITE textCard = s->Get(ID_HUD_TEXTCARD);
 			if (textCard)
 				textCard->DrawStatic(x + 12, y - 170);
+			if (currentCard != -1)
+			{
+				int cardSpriteId = -1;
+
+				switch (currentCard)
+				{
+					/*DebugOutTitle(L"id: %d", currentCard);*/
+					case 0: cardSpriteId = ID_HUD_STARCARD; break;
+					case 1: cardSpriteId = ID_HUD_GIANTCARD; break;
+					case 2: cardSpriteId = ID_HUD_FLOWERCARD; break;
+				}
+
+				LPSPRITE cardSprite = s->Get(cardSpriteId);
+				if (cardSprite)
+				{
+					cardSprite->DrawStatic(x + 84, y - 170);
+					if(cardBlickInvisible)
+						cardSprite->DrawStatic(x + 60, y - 31);
+				}
+					
+			}
 		}
 	}
 }
