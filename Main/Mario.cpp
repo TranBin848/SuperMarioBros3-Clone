@@ -93,7 +93,7 @@ void CMario::TakeDmg()
 
 void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 {
-	/*DebugOutTitle(L"x: %f", x);*/
+	DebugOutTitle(L"x: %f", x);
 	if (atEndMap)
 	{
 		vx = MARIO_WALKING_SPEED;
