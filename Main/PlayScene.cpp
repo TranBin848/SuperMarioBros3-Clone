@@ -398,7 +398,8 @@ void CPlayScene::Update(DWORD dt)
 			}
 		}
 	}
-	/*DebugOutTitle(L"camX: %f", cx);*/
+	if (cy < -238.0f) cy = -238.0f;
+	DebugOutTitle(L"camy: %f", cy);
 	/*DebugOutTitle(L"y: %f, Mario y: %f", cy, marioY);*/
 	CGame::GetInstance()->SetCamPos(cx, cy);
 	
