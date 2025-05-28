@@ -1,5 +1,6 @@
 ﻿#include "Goomba.h"
-
+#include "Wall.h"
+#include "debug.h"
 CGoomba::CGoomba(float x, float y):CGameObject(x, y)
 {
 	this->ax = 0;
@@ -37,7 +38,7 @@ void CGoomba::OnCollisionWith(LPCOLLISIONEVENT e)
 {
 	if (!e->obj->IsBlocking()) return; 
 	if (dynamic_cast<CGoomba*>(e->obj)) return; 
-
+	if (dynamic_cast<CWall*>(e->obj)) return;
 	if (e->ny != 0 )
 	{
 		vy = 0;
@@ -50,6 +51,9 @@ void CGoomba::OnCollisionWith(LPCOLLISIONEVENT e)
 
 void CGoomba::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 {
+	//DebugOutTitle(L"x: %f", x);
+	if (x < 20.0f) ay = 0;
+	if (x < -10.0f) SetState(GOOMBA_STATE_DIE);
 	if (x >= 230.0f && x <= 245.0f)
 	{
 		if (!isActivated) isActivated = true;
@@ -111,5 +115,6 @@ void CGoomba::SetState(int state)
 }
 int CGoomba::IsCollidable()
 {
-	return (state != GOOMBA_STATE_DIE && state != GOOMBA_STATE_DIEBYSHELL);
+	if (x < 20.0f) return 0;
+	return ((state != GOOMBA_STATE_DIE && state != GOOMBA_STATE_DIEBYSHELL));
 }

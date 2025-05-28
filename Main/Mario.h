@@ -343,7 +343,7 @@ public:
 	int GetUntouchable() { return untouchable; };
 	void SetIsOnHiddenPipe(bool fl) { isOnHiddenPipe = fl; }
 	bool GetIsOnHiddenPipe() { return isOnHiddenPipe; };
-	
+	bool GetIsOnPlatform() { return isOnPlatform; };
 	bool GetMaxPower() { return maxPower; };
 	int GetRunPower() const { return runPower; }
 	bool GetAtEndMap() { return (atEndMap && x >= endMapTargetX); };

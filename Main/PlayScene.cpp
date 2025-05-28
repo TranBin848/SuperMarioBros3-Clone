@@ -24,6 +24,7 @@
 #include "Pipe.h"
 #include "Card.h"
 #include "Mario.h"
+#include "Wall.h"
 #include "SampleKeyEventHandler.h"
 
 #define CAM_MAX_Y	3.0f
@@ -251,6 +252,10 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 		int scene_id = atoi(tokens[5].c_str());
 		obj = new CPortal(x, y, r, b, scene_id);
 	}
+	case OBJECT_TYPE_WALL:
+	{
+		obj = new CWall(x, y);
+	}
 	
 	break;
 
@@ -399,7 +404,7 @@ void CPlayScene::Update(DWORD dt)
 		}
 	}
 	if (cy < -238.0f) cy = -238.0f;
-	DebugOutTitle(L"camy: %f", cy);
+	/*DebugOutTitle(L"camy: %f", cy);*/
 	/*DebugOutTitle(L"y: %f, Mario y: %f", cy, marioY);*/
 	CGame::GetInstance()->SetCamPos(cx, cy);
 	

@@ -93,7 +93,8 @@ void CMario::TakeDmg()
 
 void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 {
-	/*DebugOutTitle(L"x: %f", x);*/
+	if(isOnPlatform) DebugOutTitle(L"x: %f", x);
+	else DebugOutTitle(L"CHECK");
 	if (atEndMap)
 	{
 		vx = MARIO_WALKING_SPEED;
@@ -319,7 +320,10 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 	if (abs(vx) > abs(maxVx)) vx = maxVx;
 	if (nx == 1 && ax < 0 && vx < 0) vx = 0;
 	if (nx == -1 && ax > 0 && vx > 0) vx = 0;
-	if (vx < 0 && x < 17) x = 17;
+	/*if (vx < 0 && x < 18)
+	{
+		x = 18;
+	}*/
 	CCollision::GetInstance()->Process(this, dt, coObjects);
 }
 
@@ -340,7 +344,7 @@ void CMario::OnCollisionWith(LPCOLLISIONEVENT e)
 	else 
 	if (e->nx != 0 && e->obj->IsBlocking())
 	{
-		vx = 0;
+		/*vx = 0;*/
 	}
 
 	if (dynamic_cast<CPortal*>(e->obj))
@@ -1322,6 +1326,7 @@ void CMario::SetState(int state)
 				else
 					vy = -TANUKI_JUMP_SPEED_Y;
 			}
+			isOnPlatform = false;
 		}
 		else
 		{

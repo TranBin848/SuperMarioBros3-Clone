@@ -30,6 +30,7 @@
 #define OBJECT_TYPE_HUD		60
 #define OBJECT_TYPE_SHINYBRICK	20
 #define OBJECT_TYPE_CARD		30
+#define OBJECT_TYPE_WALL		100
 
 #pragma region MARIO 
 
