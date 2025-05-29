@@ -25,11 +25,6 @@ datas\card_firework.txt
 # type: 0 = Mario , 1 = Brick, 2 = Goomba, 3 = Koopas
 # See OBJECT_TYPE constants in AssetIDs.h
 
-#STAR-GIANT-FLOWER
-#100004	96	192	111	207	30
-#100005	112	192	127	207	30
-#100006	128	192	143	207	30
-
 #Background Objects
 6	72	147	127	63	1	60000	60000	60000
 6	162	171	18	15	3	60003	60003	60003
@@ -242,8 +237,9 @@ test goomba
 50	2306	-75	2320	-65	1
 
 # MARIO
-0	50	120
+0	2700	120
 
+#VISIBLE WALL
 100	2	-45
 
 #HUD

@@ -19,7 +19,8 @@ void CHUD::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects) {
 	}
 	else
 	{
-		endMapStartTime = 0; // reset nếu chưa tới cuối màn
+		endMapStartTime = 0;
+		isConvertingTimeToScore = false;
 	}
 
 	if (timeAccumulator >= 1.0f)
@@ -27,6 +28,16 @@ void CHUD::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects) {
 		timeAccumulator -= 1.0f;
 		if (timeLeft > 0)
 			timeLeft--;
+	}
+	if (isConvertingTimeToScore && timeLeft > 0)
+	{
+		// Trừ nhanh mỗi 30ms
+		if (GetTickCount64() - timeConversionTimer >= 0.1f)
+		{
+			timeLeft--;
+			score += 50;
+			timeConversionTimer = GetTickCount64();
+		}
 	}
 	// Blink logic cho max power bar
 	if (CMario::GetInstance()->GetMaxPower() || currentCard != -1)
@@ -104,6 +115,7 @@ void CHUD::Render()
 				}
 					
 			}
+			isConvertingTimeToScore = true;
 		}
 	}
 }

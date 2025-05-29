@@ -28,6 +28,8 @@ protected:
 	bool cardBlickInvisible = true;
 	float blinkAccumulator = 0.0f;
 	float cardBlinkAccumulator = 0.0f;
+	bool isConvertingTimeToScore = false;
+	ULONGLONG timeConversionTimer = 0;
 	virtual void GetBoundingBox(float& left, float& top, float& right, float& bottom) {}
 	virtual int IsCollidable() { return 0; };
 	virtual int IsBlocking() { return 0; }
