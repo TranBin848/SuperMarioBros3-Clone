@@ -22,7 +22,7 @@
 #include "Collision.h"
 #include "PlayScene.h"
 #include "AddScoreEffect.h"
-
+#include "Platform.h"
 
 CMario* CMario::__instance = nullptr;
 
@@ -49,7 +49,7 @@ CMario::CMario(float x, float y) :CGameObject(x, y)
 	{
 		scene->AddObject(ea);
 	}
-	level = MARIO_LEVEL_TANUKI;
+	level = MARIO_LEVEL_SMALL;
 	untouchable = 0;
 	untouchable_start = -1;
 	kick_start = -1;
@@ -93,8 +93,8 @@ void CMario::TakeDmg()
 
 void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 {
-	DebugOutTitle(L"STATE: %d", state);
-	
+	/*if(isOnFloor) DebugOutTitle(L"CHECK");
+	else DebugOutTitle(L"UNCHECK");*/
 	if (atEndMap)
 	{
 		vx = MARIO_WALKING_SPEED;
@@ -332,6 +332,7 @@ void CMario::OnNoCollision(DWORD dt)
 	x += vx * dt;
 	y += vy * dt;
 	isOnPlatform = false;
+	isOnFloor = false;
 }
 
 void CMario::OnCollisionWith(LPCOLLISIONEVENT e)
@@ -373,11 +374,12 @@ void CMario::OnCollisionWith(LPCOLLISIONEVENT e)
 	else if (dynamic_cast<CLeaf*>(e->obj))
 		OnCollisionWithLeaf(e);
 	else if (dynamic_cast<CVenusFire*>(e->obj) || dynamic_cast<CFire*>(e->obj)
-			|| dynamic_cast<CGreenVenusFire*>(e->obj) || dynamic_cast<CPiranhaTrap*>(e->obj))
+		|| dynamic_cast<CGreenVenusFire*>(e->obj) || dynamic_cast<CPiranhaTrap*>(e->obj))
 		OnCollisionWithDmgObject(e);
 	else if (dynamic_cast<CSwitchBlock*>(e->obj))
 		OnCollisionWithSwitchBlock(e);
-	
+	else if (dynamic_cast<CPlatform*>(e->obj))
+		OnCollisionWithPlatform(e);
 }
 
 void CMario::OnCollisionWithKoopa(LPCOLLISIONEVENT e) {
@@ -741,6 +743,15 @@ void CMario::OnCollisionWithSwitchBlock(LPCOLLISIONEVENT e)
 	{
 		if (sw->GetState() == SWITCHBLOCK_STATE_IDLE)
 			sw->SetState(SWITCHBLOCK_STATE_ACTIVATED);
+	}
+}
+void CMario::OnCollisionWithPlatform(LPCOLLISIONEVENT e)
+{
+	CPlatform* pl = dynamic_cast<CPlatform*>(e->obj);
+	if (e->ny < 0)
+	{
+		if (pl->GetIsFloor())
+			isOnFloor = true;
 	}
 }
 
@@ -1250,7 +1261,7 @@ void CMario::Render()
 	/*DebugOutTitle(L"vx: %d", aniId);*/
 	animations->Get(aniId)->Render(x, y);
 	
-	RenderBoundingBox();
+	/*RenderBoundingBox();*/
 }
 
 void CMario::SetState(int state)

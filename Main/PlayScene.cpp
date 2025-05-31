@@ -28,7 +28,7 @@
 #include "SampleKeyEventHandler.h"
 
 #define CAM_MAX_Y	3.0f
-#define CAM_MIN_Y	-30.0f
+#define CAM_MIN_Y	-40.0f
 
 using namespace std;
 
@@ -336,7 +336,7 @@ void CPlayScene::Load()
 
 	f.close();
 
-	DebugOutTitle(L"[INFO] Done loading scene  %s\n", sceneFilePath);
+	/*DebugOutTitle(L"[INFO] Done loading scene  %s\n", sceneFilePath);*/
 }
 
 void CPlayScene::Update(DWORD dt)

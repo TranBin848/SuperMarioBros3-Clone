@@ -254,6 +254,7 @@ class CMario : public CGameObject
 	bool isFloating = false;
 	bool maxPower = false;
 	bool atEndMap = false;
+	bool isOnFloor = false;
 	int runPower;
 	bool isTurning;  // Trạng thái quay đầu
 	int transform_from = -1;
@@ -275,6 +276,7 @@ class CMario : public CGameObject
 	void OnCollisionWithDmgObject(LPCOLLISIONEVENT e);
 	void OnCollisionWithSwitchBlock(LPCOLLISIONEVENT e);
 	void OnCollisionWithCard(LPCOLLISIONEVENT e);
+	void OnCollisionWithPlatform(LPCOLLISIONEVENT e);
 	int GetAniIdBig();
 	int GetAniIdSmall();
 	int GetAniIdTanuki();
@@ -346,6 +348,7 @@ public:
 	bool GetIsOnHiddenPipe() { return isOnHiddenPipe; };
 	bool GetIsOnPlatform() { return isOnPlatform; };
 	bool GetMaxPower() { return maxPower; };
+	bool GetIsOnFloor() { return isOnFloor; };
 	int GetRunPower() const { return runPower; }
 	bool GetAtEndMap() { return (atEndMap && x >= endMapTargetX); };
 
