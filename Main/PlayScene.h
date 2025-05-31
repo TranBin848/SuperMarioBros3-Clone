@@ -9,13 +9,15 @@
 #define CAM_MAX_Y	3.0f
 #define CAM_MIN_Y	-40.0f
 
+#define EFFECT_PLAY_TIMEOUT 1000
+#define PLAYER_DIE_TIMEOUT 2000
 
 class CPlayScene: public CScene
 {
 protected: 
 	// A play scene has to have player, right? 
 	LPGAMEOBJECT player;					
-
+	ULONGLONG player_die_start = -1;
 	vector<LPGAMEOBJECT> objects;
 
 	void _ParseSection_SPRITES(string line);

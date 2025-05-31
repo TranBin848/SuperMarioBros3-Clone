@@ -23,6 +23,7 @@ protected:
 	int timeLeft = 300;
 	int life = 4;
 	int currentCard = -1; 
+	int level;
 	float timeAccumulator = 0.0f;
 	bool blinkVisible = true;
 	bool cardBlickInvisible = true;
@@ -38,7 +39,9 @@ protected:
 	void RenderRunPower(int power, float x, float y); 
 
 public:
-	CHUD(float x, float y) :CGameObject(x, y) {}
+	CHUD(float x, float y) :CGameObject(x, y) {
+		level = 1;
+	}
 	void Render();
 	static CHUD* GetInstance();
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
@@ -47,5 +50,6 @@ public:
 	void SetTime(int value) { timeLeft = value; }
 	void SetLife(int value) { life += value; };
 	void SetCard(int value) { currentCard = value; }
+	int GetLevel() { return level; }
 };
 

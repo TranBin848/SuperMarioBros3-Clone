@@ -12,5 +12,5 @@ public:
     void Render();
     void AddParticle(CParticle* p);
 
-    bool IsEmpty() const { return particles.empty(); }
+    virtual bool IsEmpty() const { return particles.empty(); }
 };

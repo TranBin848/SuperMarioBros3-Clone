@@ -11,7 +11,7 @@ CHUD* CHUD::GetInstance()
 }
 void CHUD::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects) {
 	timeAccumulator += dt / 1000.0f; 
-
+	level = CMario::GetInstance()->GetLevel();
 	if (CMario::GetInstance()->GetAtEndMap())
 	{
 		if (endMapStartTime == 0)

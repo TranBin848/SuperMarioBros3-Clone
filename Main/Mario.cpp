@@ -49,7 +49,7 @@ CMario::CMario(float x, float y) :CGameObject(x, y)
 	{
 		scene->AddObject(ea);
 	}
-	level = MARIO_LEVEL_SMALL;
+	level = CHUD::GetInstance()->GetLevel();
 	untouchable = 0;
 	untouchable_start = -1;
 	kick_start = -1;

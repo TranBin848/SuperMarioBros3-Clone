@@ -7,6 +7,7 @@
 #include "Texture.h"
 #include "Animations.h"
 #include "PlayScene.h"
+#include "FadeEffect.h"
 
 CGame * CGame::__instance = NULL;
 
@@ -538,6 +539,16 @@ void CGame::SwitchScene()
 	}
 	current_scene = next_scene;
 	LPSCENE s = scenes[next_scene];
+	//LPGAMEOBJECT effect = nullptr;
+	//effect = new CFadeEffect(1);
+	//if (effect)
+	//{
+	//	CPlayScene* scene = dynamic_cast<CPlayScene*>(CGame::GetInstance()->GetCurrentScene());
+	//	if (scene)
+	//	{
+	//		scene->AddObject(effect); // hoặc push vào vector<objects> tùy bạn tổ chức
+	//	}
+	//}
 	this->SetKeyHandler(s->GetKeyEventHandler());
 	s->Load();
 }

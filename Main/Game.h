@@ -58,6 +58,8 @@ class CGame
 	int next_scene = -1;
 
 	bool isExitingPipe = false;
+	bool marioPause = false;
+	ULONGLONG marioPause_start = -1;
 
 	void _ParseSection_SETTINGS(string line);
 	void _ParseSection_SCENES(string line);
@@ -118,7 +120,9 @@ public:
 	void _ParseSection_TEXTURES(string line);
 	void SetIsExitingPipe(bool fl) { isExitingPipe = fl; };
 	bool GetIsExitingPipe() { return isExitingPipe; };
-
+	void StartMarioPause() { marioPause = true; };
+	void StopMarioPause() { marioPause = false; };
+	bool IsMarioStateChangedPause() { return marioPause; }
 	void ReloadScene();
 
 	~CGame();

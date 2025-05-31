@@ -26,6 +26,7 @@
 #include "Mario.h"
 #include "Wall.h"
 #include "SampleKeyEventHandler.h"
+#include "FadeEffect.h"
 
 #define CAM_MAX_Y	-14.0f
 #define CAM_MIN_Y	-50.0f
@@ -333,7 +334,7 @@ void CPlayScene::Load()
 			case SCENE_SECTION_OBJECTS: _ParseSection_OBJECTS(line); break;
 		}
 	}
-
+	
 	f.close();
 
 	/*DebugOutTitle(L"[INFO] Done loading scene  %s\n", sceneFilePath);*/
@@ -351,7 +352,36 @@ void CPlayScene::Update(DWORD dt)
 	{
 		coObjects.push_back(objects[i]);
 	}
-	
+	if (player == NULL) return;
+	if (player->GetState() == MARIO_STATE_DIE)
+	{
+		game->StartMarioPause();
+		player->Update(dt, &coObjects);
+
+		if (player_die_start == -1) {
+			player_die_start = GetTickCount64();
+		}
+		if (GetTickCount64() - player_die_start > PLAYER_DIE_TIMEOUT) {
+			LPGAMEOBJECT effect = nullptr;
+			effect = new CFadeEffect(1);
+			if (effect)
+			{
+				CPlayScene* scene = dynamic_cast<CPlayScene*>(CGame::GetInstance()->GetCurrentScene());
+				if (scene)
+				{
+					scene->AddObject(effect); // hoặc push vào vector<objects> tùy bạn tổ chức
+				}
+			}
+			if (GetTickCount64() - player_die_start > PLAYER_DIE_TIMEOUT + EFFECT_PLAY_TIMEOUT)
+			{
+				/*effect_play = -1;*/
+				player_die_start = -1;
+				game->StopMarioPause();
+				game->ReloadScene();
+			}
+		}
+		return;
+	}
 	for (size_t i = 0; i < objects.size(); i++)
 	{
 		objects[i]->Update(dt, &coObjects);
@@ -359,7 +389,7 @@ void CPlayScene::Update(DWORD dt)
 	CHUD::GetInstance()->Update(dt, &objects);
 
 	// skip the rest if scene was already unloaded (Mario::Update might trigger PlayScene::Unload)
-	if (player == NULL) return;
+	
 
 	// Update camera to follow mario
 	// Camera follow theo X
@@ -377,7 +407,7 @@ void CPlayScene::Update(DWORD dt)
 	int currentScene = CGame::GetInstance()->GetCurrentSceneId();
 	if (currentScene == 1)
 	{
-		cy = CAM_MAX_Y; // Giữ y cố định ở 0 cho scene 1
+		cy = CAM_MAX_Y + 15.0f; // Giữ y cố định ở 0 cho scene 1
 	}
 	else
 	{
@@ -413,7 +443,6 @@ void CPlayScene::Render()
 {
 	// Tạo bản sao vector object để không làm thay đổi thứ tự update
 	std::vector<LPGAMEOBJECT> sortedObjects = objects;
-
 	// Sắp xếp theo renderLayer tăng dần (vẽ sau thì đè lên trước)
 	std::sort(sortedObjects.begin(), sortedObjects.end(),
 		[](LPGAMEOBJECT a, LPGAMEOBJECT b) {
@@ -422,8 +451,8 @@ void CPlayScene::Render()
 
 	for (int i = 0; i < sortedObjects.size(); i++)
 		sortedObjects[i]->Render();
-
 	CHUD::GetInstance()->Render();
+	
 }
 
 /*
