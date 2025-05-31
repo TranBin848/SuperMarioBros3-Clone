@@ -93,8 +93,8 @@ void CMario::TakeDmg()
 
 void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 {
-	if(isOnPlatform) DebugOutTitle(L"x: %f", x);
-	else DebugOutTitle(L"CHECK");
+	DebugOutTitle(L"STATE: %d", state);
+	
 	if (atEndMap)
 	{
 		vx = MARIO_WALKING_SPEED;
@@ -706,7 +706,7 @@ void CMario::OnCollisionWithPipe(LPCOLLISIONEVENT e)
 	int currentScene = CGame::GetInstance()->GetCurrentSceneId();
 	if ((currentScene == 3 && e->ny < 0) && isOnPlatform)
 	{
-		if (x < 2312.0f && x > 2306.0f)
+		if (x < 2314.0f && x > 2310.0f)
 		{
 			// Lưu vị trí pipe để xử lý sau
 			float pipeX, pipeY;
@@ -1250,7 +1250,7 @@ void CMario::Render()
 	/*DebugOutTitle(L"vx: %d", aniId);*/
 	animations->Get(aniId)->Render(x, y);
 	
-	/*RenderBoundingBox();*/
+	RenderBoundingBox();
 }
 
 void CMario::SetState(int state)
@@ -1458,9 +1458,9 @@ void CMario::GetBoundingBox(float &left, float &top, float &right, float &bottom
 	{
 		if (isSitting)
 		{
-			left = x - MARIO_BIG_SITTING_BBOX_WIDTH / 2;
+			left = x - MARIO_TANUKI_SITTING_BBOX_WIDTH / 2;
 			top = y - MARIO_BIG_SITTING_BBOX_HEIGHT / 2;
-			right = left + MARIO_BIG_SITTING_BBOX_WIDTH;
+			right = left + MARIO_TANUKI_SITTING_BBOX_WIDTH;
 			bottom = top + MARIO_BIG_SITTING_BBOX_HEIGHT;
 		}
 		else
