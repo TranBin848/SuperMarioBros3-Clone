@@ -32,7 +32,6 @@ void CItemBox::OnCollisionWith(LPCOLLISIONEVENT e)
 
 void CItemBox::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
-    
     if (state == ITEMBOX_STATE_BOUNCING)
     {
         if (!pickable) {
@@ -93,8 +92,8 @@ void CItemBox::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
                 }
                 else if (flagCoin == 3)
                 {
-                    newItem = new CSwitchBlock(x, y - 16.0f); // xuất hiện phía trên
-                    
+                    newItem = new CSwitchBlock(x + 1, y - 16.0f); // xuất hiện phía trên
+                    x += 1;
                 }
                 if (newItem)
                 {

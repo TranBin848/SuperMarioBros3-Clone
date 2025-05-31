@@ -11,6 +11,8 @@
 #include "GreenVenusFire.h"
 #include "PiranhaTrap.h"
 #include "HitEnemyEffect.h"
+#include "Brick.h"
+#include "BrickBreakEffect.h"
 
 void CTailSensor::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
@@ -42,7 +44,7 @@ void CTailSensor::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
     {
         if (dynamic_cast<CGoomba*>(obj) || dynamic_cast<CParaGoomba*>(obj) || dynamic_cast<CKoopa*>(obj) 
             || dynamic_cast<CItemBox*>(obj) || dynamic_cast<CVenusFire*>(obj) || dynamic_cast<CGreenVenusFire*>(obj)
-            || dynamic_cast<CPiranhaTrap*>(obj))
+            || dynamic_cast<CPiranhaTrap*>(obj) || dynamic_cast<CBrick*>(obj))
         {
             float l, t, r, b;
             obj->GetBoundingBox(l, t, r, b);
@@ -70,7 +72,13 @@ void CTailSensor::OnCollisionWith(LPCOLLISIONEVENT e)
 {
     if (owner->GetLevel() == MARIO_LEVEL_TANUKI && owner -> GetState() == TANUKI_STATE_TAILATTACK && owner -> GetUntouchable() == 0)
     {
-        if (dynamic_cast<CGoomba*>(e->obj))
+        if (dynamic_cast<CBrick*>(e->obj))
+        {
+            
+            OnCollisionWithShinyBrick(e);
+            return;
+        }
+        else if (dynamic_cast<CGoomba*>(e->obj))
         {
             OnCollisionWithGoomba(e);
             return;
@@ -93,10 +101,10 @@ void CTailSensor::OnCollisionWith(LPCOLLISIONEVENT e)
         else if (dynamic_cast<CVenusFire*>(e->obj) || dynamic_cast<CGreenVenusFire*>(e->obj)
             || dynamic_cast<CPiranhaTrap*>(e->obj))
         {
-            DebugOutTitle(L"CHECK");
             OnCollisionWithPlant(e);
             return;
         }
+        
     }   
     
     if (!e->obj->IsBlocking()) return;
@@ -213,4 +221,26 @@ void CTailSensor::OnCollisionWithPlant(LPCOLLISIONEVENT e) {
             scene->AddObject(effect); // hoặc push vào vector<objects> tùy bạn tổ chức
         }
     }
+}
+void CTailSensor::OnCollisionWithShinyBrick(LPCOLLISIONEVENT e)
+{
+    // Chỉ xử lý nếu va chạm ngang (ko xử lý nếu va chạm từ trên hoặc dưới)
+    /*if (e->ny != 0)
+        return;*/
+    CBrick* brick = dynamic_cast<CBrick*>(e->obj);
+    if (brick == nullptr) return;
+    
+    // Tạo hiệu ứng vỡ gạch
+    LPGAMEOBJECT effect = nullptr;
+    effect = new CBrickBreakEffect(brick->GetX(), brick->GetY());
+    if (effect)
+    {
+        CPlayScene* scene = dynamic_cast<CPlayScene*>(CGame::GetInstance()->GetCurrentScene());
+        if (scene)
+        {
+            scene->AddObject(effect); // hoặc push vào vector<objects> tùy bạn tổ chức
+        }
+    }
+    // Đánh dấu gạch bị phá
+    brick->isDeleted = true;
 }

@@ -16,6 +16,7 @@ protected:
     void OnCollisionWithKoopa(LPCOLLISIONEVENT e);
     void OnCollisionWithItemBox(LPCOLLISIONEVENT e);
     void OnCollisionWithPlant(LPCOLLISIONEVENT e);
+    void OnCollisionWithShinyBrick(LPCOLLISIONEVENT e);
 public:
     CTailSensor(float x, float y, int fl) : CGameObject(x, y)
     {

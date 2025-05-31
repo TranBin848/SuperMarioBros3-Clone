@@ -39,6 +39,12 @@ void CSampleKeyHandler::OnKeyDown(int KeyCode)
 		}
 		break;
 	}
+	case DIK_X:
+	{
+		if (mario->GetLevel() == MARIO_LEVEL_TANUKI)
+			mario->SetState(TANUKI_STATE_TAILATTACK);
+		break;
+	}
 	case DIK_1:
 		mario->SetLevel(MARIO_LEVEL_SMALL);
 		break;
@@ -54,6 +60,9 @@ void CSampleKeyHandler::OnKeyDown(int KeyCode)
 	case DIK_A:
 		if (mario->GetLevel() == MARIO_LEVEL_TANUKI)
 			mario->SetState(TANUKI_STATE_TAILATTACK);
+		break;
+	case DIK_F1:
+		mario->SetPosition(2200, 120);
 		break;
 	case DIK_R: // reset
 		CGame::GetInstance()->ReloadScene();
