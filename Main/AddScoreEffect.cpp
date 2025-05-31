@@ -3,9 +3,9 @@
 CAddScoreEffect::CAddScoreEffect(float x, float y, int score)
 {
     float vx = 0.0f;    // tốc độ ngang
-    float vy = 30.0f;   // tốc độ bay lên
+    float vy = 45.0f;   // tốc độ bay lên
     float ay = 0.0f;
-    float lifetime = 0.5f;
+    float lifetime = 1.0f;
 
     LPANIMATION anim = CAnimations::GetInstance()->Get(ID_ADDSCORE_EFFECT + score);
     if (!anim)

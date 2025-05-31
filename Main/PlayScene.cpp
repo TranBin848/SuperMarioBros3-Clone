@@ -27,8 +27,8 @@
 #include "Wall.h"
 #include "SampleKeyEventHandler.h"
 
-#define CAM_MAX_Y	3.0f
-#define CAM_MIN_Y	-40.0f
+#define CAM_MAX_Y	-14.0f
+#define CAM_MIN_Y	-50.0f
 
 using namespace std;
 

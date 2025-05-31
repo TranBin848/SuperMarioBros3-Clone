@@ -295,7 +295,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 	if (addScoreStart > 0 && GetTickCount64() - addScoreStart > MARIO_ADDSCORETIME)
 	{
 		addScoreStart = 0;
-		scaleScore = 1;
+		scaleScore = 1;	
 	}
 	if (isFlapping && GetTickCount64() - flap_start > 100)
 	{
@@ -417,10 +417,34 @@ void CMario::OnCollisionWithKoopa(LPCOLLISIONEVENT e) {
 		else jumpForce = 0;
 		vy = -jumpForce;
 		if (addScoreStart > 0) scaleScore *= 2;
-		if (scaleScore >= 8) scaleScore = 8;
-		CHUD::GetInstance()->SetScore(100 * scaleScore);
+		int score = -1;
+		if (scaleScore < 10)
+		{
+			score = 100 * scaleScore;
+		}
+		else
+		{
+			switch (scaleScore)
+			{
+			case 16:
+				score = 1000;
+				break;
+			case 32:
+				score = 2000;
+				break;
+			case 64:
+				score = 4000;
+				break;
+			case 128:
+				score = 8000;
+				break;
+			}
+		}
+		if (score == -1) score = 9000;
+		addScoreStart = GetTickCount64();
+		CHUD::GetInstance()->SetScore(score);
 		LPGAMEOBJECT effect = nullptr;
-		effect = new CAddScoreEffect(x, y - 25, 100 * scaleScore);
+		effect = new CAddScoreEffect(x, y - 25, score);
 		if (effect)
 		{
 			CPlayScene* scene = dynamic_cast<CPlayScene*>(CGame::GetInstance()->GetCurrentScene());
