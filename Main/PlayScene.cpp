@@ -27,6 +27,7 @@
 #include "Wall.h"
 #include "SampleKeyEventHandler.h"
 #include "FadeEffect.h"
+#include "DeadZone.h"
 
 #define CAM_MAX_Y	-14.0f
 #define CAM_MIN_Y	-50.0f
@@ -259,6 +260,11 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 		obj = new CWall(x, y);
 		break;
 	}
+	case OBJECT_TYPE_DEADZONE:
+	{
+		obj = new CDeadZone(x, y);
+		break;
+	}
 	default:
 		DebugOut(L"[ERROR] Invalid object type: %d\n", object_type);
 		return;
@@ -376,6 +382,7 @@ void CPlayScene::Update(DWORD dt)
 			{
 				/*effect_play = -1;*/
 				player_die_start = -1;
+				CHUD::GetInstance()->SetLevel(1);
 				game->StopMarioPause();
 				game->ReloadScene();
 			}
@@ -407,7 +414,7 @@ void CPlayScene::Update(DWORD dt)
 	int currentScene = CGame::GetInstance()->GetCurrentSceneId();
 	if (currentScene == 1)
 	{
-		cy = CAM_MAX_Y + 15.0f; // Giữ y cố định ở 0 cho scene 1
+		cy = CAM_MAX_Y + 16.0f; // Giữ y cố định ở 0 cho scene 1
 	}
 	else
 	{

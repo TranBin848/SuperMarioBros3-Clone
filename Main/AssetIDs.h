@@ -31,6 +31,7 @@
 #define OBJECT_TYPE_SHINYBRICK	20
 #define OBJECT_TYPE_CARD		30
 #define OBJECT_TYPE_WALL		100
+#define OBJECT_TYPE_DEADZONE	150
 
 #pragma region MARIO 
 

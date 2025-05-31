@@ -23,6 +23,7 @@
 #include "PlayScene.h"
 #include "AddScoreEffect.h"
 #include "Platform.h"
+#include "DeadZone.h"
 
 CMario* CMario::__instance = nullptr;
 
@@ -93,8 +94,7 @@ void CMario::TakeDmg()
 
 void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 {
-	/*if(isOnFloor) DebugOutTitle(L"CHECK");
-	else DebugOutTitle(L"UNCHECK");*/
+	DebugOutTitle(L"x: %f", x);
 	if (atEndMap)
 	{
 		vx = MARIO_WALKING_SPEED;
@@ -380,6 +380,8 @@ void CMario::OnCollisionWith(LPCOLLISIONEVENT e)
 		OnCollisionWithSwitchBlock(e);
 	else if (dynamic_cast<CPlatform*>(e->obj))
 		OnCollisionWithPlatform(e);
+	else if (dynamic_cast<CDeadZone*>(e->obj))
+		OnCollisionWithDeadZone(e);
 }
 
 void CMario::OnCollisionWithKoopa(LPCOLLISIONEVENT e) {
@@ -776,6 +778,13 @@ void CMario::OnCollisionWithPlatform(LPCOLLISIONEVENT e)
 	{
 		if (pl->GetIsFloor())
 			isOnFloor = true;
+	}
+}
+void CMario::OnCollisionWithDeadZone(LPCOLLISIONEVENT e)
+{
+	if (this->GetState() != MARIO_STATE_DIE)
+	{
+		this->SetState(MARIO_STATE_DIE);
 	}
 }
 
@@ -1370,7 +1379,7 @@ void CMario::SetState(int state)
 				if (maxPower)
 				{
 					/*vy = -TANUKI_FLAP_SPEED_Y;*/
-					ay = -TANUKI_GRAVITY / 1.25f;
+					ay = -TANUKI_GRAVITY / 1.5f;
 					if (!isFlying)
 					{
 						isFlying = true;

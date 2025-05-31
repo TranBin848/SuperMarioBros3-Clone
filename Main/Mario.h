@@ -277,6 +277,7 @@ class CMario : public CGameObject
 	void OnCollisionWithSwitchBlock(LPCOLLISIONEVENT e);
 	void OnCollisionWithCard(LPCOLLISIONEVENT e);
 	void OnCollisionWithPlatform(LPCOLLISIONEVENT e);
+	void OnCollisionWithDeadZone(LPCOLLISIONEVENT e);
 	int GetAniIdBig();
 	int GetAniIdSmall();
 	int GetAniIdTanuki();

@@ -51,5 +51,6 @@ public:
 	void SetLife(int value) { life += value; };
 	void SetCard(int value) { currentCard = value; }
 	int GetLevel() { return level; }
+	void SetLevel(int l) { level = l; };
 };
 
