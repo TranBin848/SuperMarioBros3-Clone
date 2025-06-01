@@ -255,6 +255,7 @@ class CMario : public CGameObject
 	bool maxPower = false;
 	bool atEndMap = false;
 	bool isOnFloor = false;
+	bool isEnteringPipe = false;
 	int runPower;
 	bool isTurning;  // Trạng thái quay đầu
 	int transform_from = -1;

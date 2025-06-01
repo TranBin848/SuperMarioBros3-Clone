@@ -56,7 +56,7 @@ CMario::CMario(float x, float y) :CGameObject(x, y)
 	kick_start = -1;
 	isOnPlatform = false;
 	endMapTargetX = 2870.0f;
-	this->renderLayer = 10;
+	this->renderLayer = 5;
 	if (CGame::GetInstance()->GetIsExitingPipe() == true)
 	{
 		SetState(MARIO_STATE_EXIT_PIPE);
@@ -94,7 +94,8 @@ void CMario::TakeDmg()
 
 void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 {
-	DebugOutTitle(L"x: %f", x);
+	if (isEnteringPipe) DebugOutTitle(L"CHECK");
+	else DebugOutTitle(L"UNCHECK");
 	if (atEndMap)
 	{
 		vx = MARIO_WALKING_SPEED;
@@ -126,7 +127,8 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 	}
 
 	if (state == MARIO_STATE_ENTER_PIPE)
-	{	
+	{
+		isEnteringPipe = true;
 		const float ENTER_PIPE_SPEED = 0.025f; // Tốc độ chui xuống (đơn vị pixel/miligiây)
 		if (pipeEnterX != 0.0f && pipeEnterY != 0.0f)
 		{
@@ -723,6 +725,7 @@ void CMario::OnCollisionWithPortal(LPCOLLISIONEVENT e)
 	CPortal* p = (CPortal*)e->obj;
 	if (e -> ny < 0)
 	{
+		isEnteringPipe = false;
 		CGame::GetInstance()->InitiateSwitchScene(p->GetSceneId());
 	}
 }
@@ -734,7 +737,7 @@ void CMario::OnCollisionWithPipe(LPCOLLISIONEVENT e)
 	int currentScene = CGame::GetInstance()->GetCurrentSceneId();
 	if ((currentScene == 3 && e->ny < 0) && isOnPlatform)
 	{
-		if (x < 2314.0f && x > 2310.0f)
+		if (x < 2314.0f && x > 2306.0f)
 		{
 			// Lưu vị trí pipe để xử lý sau
 			float pipeX, pipeY;
@@ -747,7 +750,7 @@ void CMario::OnCollisionWithPipe(LPCOLLISIONEVENT e)
 	}
 	else if (currentScene == 1 && e->ny > 0)
 	{
-		if (x < 358.0f && x > 352.0f)
+		if (x < 358.0f && x > 350.0f)
 		{
 			// Lưu vị trí pipe để xử lý sau
 			float pipeX, pipeY;
@@ -921,6 +924,7 @@ int CMario::GetAniIdSmall()
 	}
 	if (state == MARIO_STATE_ENTER_PIPE || state == MARIO_STATE_EXIT_PIPE)
 		aniId = ID_ANI_MARIO_SMALL_STAND;
+	if (isEnteringPipe) aniId = ID_ANI_MARIO_SMALL_STAND;
 	return aniId;
 }
 
@@ -1057,6 +1061,7 @@ int CMario::GetAniIdBig()
 	}
 	if (state == MARIO_STATE_ENTER_PIPE || state == MARIO_STATE_EXIT_PIPE)
 		aniId = ID_ANI_MARIO_STAND;
+	if (isEnteringPipe) aniId = ID_ANI_MARIO_STAND;
 	return aniId;
 }
 
@@ -1244,6 +1249,7 @@ int CMario::GetAniIdTanuki() {
 	}
 	if (state == MARIO_STATE_ENTER_PIPE || state == MARIO_STATE_EXIT_PIPE)
 		aniId = ID_ANI_TANUKI_STAND;
+	if (isEnteringPipe) aniId = ID_ANI_TANUKI_STAND;
 	return aniId;
 }
 
