@@ -444,9 +444,16 @@ void CMario::OnCollisionWithKoopa(LPCOLLISIONEVENT e) {
 				break;
 			}
 		}
-		if (score == -1) score = 9000;
 		addScoreStart = GetTickCount64();
-		CHUD::GetInstance()->SetScore(score);
+		if (score != -1)
+		{
+			CHUD::GetInstance()->SetScore(score);
+		}
+		if (score == -1)
+		{
+			score = 9000;
+			CHUD::GetInstance()->SetLife(1);
+		}
 		LPGAMEOBJECT effect = nullptr;
 		effect = new CAddScoreEffect(x, y - 25, score);
 		if (effect)
