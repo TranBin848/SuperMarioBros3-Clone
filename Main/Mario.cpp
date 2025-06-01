@@ -533,9 +533,42 @@ void CMario::OnCollisionWithGoomba(LPCOLLISIONEVENT e)
 			else if (accY == TANUKI_GRAVITY) jumpForce /= 2;
 			else jumpForce = 0;
 			vy = -jumpForce;
-			CHUD::GetInstance()->SetScore(100);
+			if (addScoreStart > 0) scaleScore *= 2;
+			int score = -1;
+			if (scaleScore < 10)
+			{
+				score = 100 * scaleScore;
+			}
+			else
+			{
+				switch (scaleScore)
+				{
+				case 16:
+					score = 1000;
+					break;
+				case 32:
+					score = 2000;
+					break;
+				case 64:
+					score = 4000;
+					break;
+				case 128:
+					score = 8000;
+					break;
+				}
+			}
+			addScoreStart = GetTickCount64();
+			if (score != -1)
+			{
+				CHUD::GetInstance()->SetScore(score);
+			}
+			if (score == -1)
+			{
+				score = 9000;
+				CHUD::GetInstance()->SetLife(1);
+			}
 			LPGAMEOBJECT effect = nullptr;
-			effect = new CAddScoreEffect(x, y - 25, 100);
+			effect = new CAddScoreEffect(x, y - 25, score);
 			if (effect)
 			{
 				CPlayScene* scene = dynamic_cast<CPlayScene*>(CGame::GetInstance()->GetCurrentScene());
@@ -544,6 +577,7 @@ void CMario::OnCollisionWithGoomba(LPCOLLISIONEVENT e)
 					scene->AddObject(effect); // hoặc push vào vector<objects> tùy bạn tổ chức
 				}
 			}
+			if (addScoreStart == 0) addScoreStart = GetTickCount64();
 		}
 	}
 	else // hit by Goomba
@@ -592,10 +626,41 @@ void CMario::OnCollisionWithParaGoomba(LPCOLLISIONEVENT e)
 		else jumpForce = 0;
 		vy = -jumpForce;
 		if (addScoreStart > 0) scaleScore *= 2;
-		if (scaleScore >= 8) scaleScore = 8;
-		CHUD::GetInstance()->SetScore(100 * scaleScore);
+		int score = -1;
+		if (scaleScore < 10)
+		{
+			score = 100 * scaleScore;
+		}
+		else
+		{
+			switch (scaleScore)
+			{
+			case 16:
+				score = 1000;
+				break;
+			case 32:
+				score = 2000;
+				break;
+			case 64:
+				score = 4000;
+				break;
+			case 128:
+				score = 8000;
+				break;
+			}
+		}
+		addScoreStart = GetTickCount64();
+		if (score != -1)
+		{
+			CHUD::GetInstance()->SetScore(score);
+		}
+		if (score == -1)
+		{
+			score = 9000;
+			CHUD::GetInstance()->SetLife(1);
+		}
 		LPGAMEOBJECT effect = nullptr;
-		effect = new CAddScoreEffect(x, y - 25, 100 * scaleScore);
+		effect = new CAddScoreEffect(x, y - 25, score);
 		if (effect)
 		{
 			CPlayScene* scene = dynamic_cast<CPlayScene*>(CGame::GetInstance()->GetCurrentScene());
@@ -1392,7 +1457,7 @@ void CMario::SetState(int state)
 				if (maxPower)
 				{
 					/*vy = -TANUKI_FLAP_SPEED_Y;*/
-					ay = -TANUKI_GRAVITY / 1.5f;
+					ay = -TANUKI_GRAVITY / 1.3f;
 					if (!isFlying)
 					{
 						isFlying = true;

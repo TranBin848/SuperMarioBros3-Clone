@@ -563,6 +563,7 @@ void CGame::ReloadScene()
 {
 	GetCurrentScene()->Unload();
 	GetCurrentScene()->Load();
+	CHUD::GetInstance()->Reset();
 }
 
 CGame::~CGame()

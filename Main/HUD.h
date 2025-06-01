@@ -50,6 +50,13 @@ public:
 	void SetTime(int value) { timeLeft = value; }
 	void SetLife(int value) { life += value; };
 	void SetCard(int value) { currentCard = value; }
+	void Reset() {
+		score = 0;
+		coin = 0;
+		timeLeft = 300;
+		life = 4;
+		currentCard = -1;
+	}
 	int GetLevel() { return level; }
 	void SetLevel(int l) { level = l; };
 };

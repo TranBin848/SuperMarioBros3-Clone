@@ -120,6 +120,7 @@ void CTailSensor::OnCollisionWith(LPCOLLISIONEVENT e)
 void CTailSensor::OnCollisionWithGoomba(LPCOLLISIONEVENT e)
 {
     CGoomba* goomba = dynamic_cast<CGoomba*>(e->obj);
+    if (goomba->GetState() == GOOMBA_STATE_DIE) return;
     if (goomba->GetState() != GOOMBA_STATE_DIEBYSHELL)
     {
         goomba->SetState(GOOMBA_STATE_DIEBYSHELL);
@@ -169,6 +170,7 @@ void CTailSensor::OnCollisionWithKoopa(LPCOLLISIONEVENT e)
 void CTailSensor::OnCollisionWithParaGoomba(LPCOLLISIONEVENT e)
 {
     CParaGoomba* goomba = dynamic_cast<CParaGoomba*>(e->obj);
+    if (goomba->GetState() == PARAGOOMBA_STATE_DIE) return;
     if (goomba->GetState() != PARAGOOMBA_STATE_DIEBYSHELL)
     {
         goomba->SetState(PARAGOOMBA_STATE_DIEBYSHELL);

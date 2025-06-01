@@ -16,6 +16,7 @@ void CHUD::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects) {
 	{
 		if (endMapStartTime == 0)
 			endMapStartTime = GetTickCount64();
+		level = 1;
 	}
 	else
 	{

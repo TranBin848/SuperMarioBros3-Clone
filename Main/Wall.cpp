@@ -2,7 +2,7 @@
 
 void CWall::Render()
 {
-	/*RenderBoundingBox();*/
+	RenderBoundingBox();
 }
 
 void CWall::GetBoundingBox(float& l, float& t, float& r, float& b)

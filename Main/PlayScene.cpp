@@ -138,6 +138,7 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 			// General object setup
 			obj->SetPosition(2374,162);
 			objects.push_back(obj);
+			CGame::GetInstance()->SetIsExitingPipe(false);
 			player = (CMario*)obj;
 			return;
 		}

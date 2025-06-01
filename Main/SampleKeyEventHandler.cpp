@@ -63,7 +63,7 @@ void CSampleKeyHandler::OnKeyDown(int KeyCode)
 			mario->SetState(TANUKI_STATE_TAILATTACK);
 		break;
 	case DIK_F1:
-		mario->SetPosition(2200, 120);
+		mario->SetPosition(2700, 120);
 		break;
 	case DIK_F2:
 		mario->SetPosition(1634, 120);
