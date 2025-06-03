@@ -30,5 +30,5 @@ void CEnemyActivator::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 void CEnemyActivator::Render()
 {
-   /* RenderBoundingBox();*/
+    RenderBoundingBox();
 }

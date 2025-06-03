@@ -110,6 +110,6 @@ void CPiranhaTrap::Render()
 	CMario::GetInstance()->GetPosition(marioX, marioY);
 	int aniId = ID_ANI_PIRANHA;
 	CAnimations::GetInstance()->Get(aniId)->Render(x, y);
-	RenderBoundingBox();
+	/*RenderBoundingBox();*/
 }
 

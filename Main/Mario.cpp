@@ -50,13 +50,19 @@ CMario::CMario(float x, float y) :CGameObject(x, y)
 	{
 		scene->AddObject(ea);
 	}
+	LPGAMEOBJECT fea = new CEnemyActivator();
+	fea->SetPosition(x - 10.0f, y);
+	if (scene)
+	{
+		scene->AddObject(fea);
+	}
 	level = CHUD::GetInstance()->GetLevel();
 	untouchable = 0;
 	untouchable_start = -1;
 	kick_start = -1;
 	isOnPlatform = false;
 	endMapTargetX = 2870.0f;
-	this->renderLayer = 5;
+	this->renderLayer = 10;
 	if (CGame::GetInstance()->GetIsExitingPipe() == true)
 	{
 		SetState(MARIO_STATE_EXIT_PIPE);

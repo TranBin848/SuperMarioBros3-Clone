@@ -141,6 +141,15 @@ void CHUD::RenderNumber(int number, int digits, float x, float y)
 		}
 	}
 }
+void CHUD::Reset()
+{
+	score = 0;
+	coin = 0;
+	timeLeft = 300;
+	life = 4;
+	currentCard = -1;
+	CMario::GetInstance()->SetLevel(1);
+}
 void CHUD::RenderRunPower(int power, float x, float y)
 {
 	CSprites* s = CSprites::GetInstance();
