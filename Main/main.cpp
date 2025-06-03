@@ -216,7 +216,19 @@ int WINAPI WinMain(
 	//IMPORTANT: this is the only place where a hardcoded file name is allowed ! 
 	game->Load(L"mario-sample.txt");  
 
-	SetWindowPos(hWnd, 0, 0, 0, SCREEN_WIDTH*3, SCREEN_HEIGHT*3, SWP_NOMOVE | SWP_NOOWNERZORDER | SWP_NOZORDER);
+	// Lấy kích thước màn hình
+	int screenWidth = GetSystemMetrics(SM_CXSCREEN);
+	int screenHeight = GetSystemMetrics(SM_CYSCREEN);
+
+	// Tính kích thước cửa sổ bạn muốn
+	int windowWidth = SCREEN_WIDTH * 3;
+	int windowHeight = SCREEN_HEIGHT * 3;
+
+	// Tính vị trí để căn giữa
+	int x = (screenWidth - windowWidth) / 2;
+	int y = (screenHeight - windowHeight) / 2;
+
+	SetWindowPos(hWnd, 0, x, y, windowWidth, windowHeight, SWP_NOZORDER | SWP_NOOWNERZORDER);
 
 	Run();
 
