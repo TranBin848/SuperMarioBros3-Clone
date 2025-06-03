@@ -6,7 +6,10 @@ void CEnemyActivator::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
     
     float marioX, marioY;
     CMario::GetInstance()->GetPosition(marioX, marioY);
-    x = marioX + 120.0f;
+    if (isFront)
+        x = marioX + 120.0f;
+    else
+        x = marioX - 150.0f;
     y = 120.0f;
     for (auto obj : *coObjects)
     {
@@ -30,5 +33,5 @@ void CEnemyActivator::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 void CEnemyActivator::Render()
 {
-    RenderBoundingBox();
+    /*RenderBoundingBox();*/
 }

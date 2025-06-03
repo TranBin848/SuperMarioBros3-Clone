@@ -44,16 +44,11 @@ CMario::CMario(float x, float y) :CGameObject(x, y)
 	maxVx = 0.0f;
 	ax = 0.0f;
 	ay = MARIO_GRAVITY;
-	LPGAMEOBJECT ea = new CEnemyActivator();
-	ea->SetPosition(x + 100.0f, y);
+	LPGAMEOBJECT ea = new CEnemyActivator(false);
+	LPGAMEOBJECT fea = new CEnemyActivator(true);
 	if (scene)
 	{
 		scene->AddObject(ea);
-	}
-	LPGAMEOBJECT fea = new CEnemyActivator();
-	fea->SetPosition(x - 10.0f, y);
-	if (scene)
-	{
 		scene->AddObject(fea);
 	}
 	level = CHUD::GetInstance()->GetLevel();
