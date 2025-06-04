@@ -8,7 +8,7 @@ void CLeaf::Render()
 	if (state == LEAF_STATE_IDLE)
 		return; // Không render khi chưa kích hoạt
 	animations->Get(aniId)->Render(x, y);
-	RenderBoundingBox();
+	/*RenderBoundingBox();*/
 }
 
 void CLeaf::GetBoundingBox(float& l, float& t, float& r, float& b)

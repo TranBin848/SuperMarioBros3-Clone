@@ -20,6 +20,12 @@ void CFire::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	CGameObject::Update(dt, coObjects);
 	x += vx * dt;
 	y += vy * dt;
+	// Kiểm tra thời gian sống
+	if (GetTickCount64() - fire_start >= FIRE_LIFETIME)
+	{
+		this->isDeleted = true;
+		return;
+	}
 
 	CCollision::GetInstance()->Process(this, dt, coObjects);
 }

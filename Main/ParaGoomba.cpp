@@ -6,6 +6,7 @@ CParaGoomba::CParaGoomba(float x, float y) :CGameObject(x, y)
 	this->ax = 0;
 	this->ay = GOOMBA_GRAVITY;
 	die_start = -1;
+	isOnPlatform = false;
 	vx = GOOMBA_WALKING_SPEED; // Mặc định đi sang trái
 	nextStateTime = GetTickCount64(); // Thời gian để chuyển trạng thái tiếp theo
 	lastJumpTime = GetTickCount64();
@@ -58,6 +59,7 @@ void CParaGoomba::OnCollisionWith(LPCOLLISIONEVENT e)
 	if (e->ny != 0)
 	{
 		vy = 0;
+		isOnPlatform = true;
 	}
 	else if (e->nx != 0)
 	{
@@ -78,6 +80,7 @@ void CParaGoomba::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		{
 		case PARAGOOMBA_STATE_WALKING_FLAPWING:
 			SetState(PARAGOOMBA_STATE_FLY);
+			isOnPlatform = false;
 			break;
 
 		case PARAGOOMBA_STATE_FLY:

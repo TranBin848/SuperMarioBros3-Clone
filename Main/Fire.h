@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "GameObject.h"
 #include "Animation.h"
@@ -12,11 +12,18 @@
 
 #define FIRE_SPEED 0.08f
 
+#define FIRE_LIFETIME 4000 // 4 giây
+
+
 class CFire : public CGameObject {
+protected:
+	ULONGLONG fire_start = 0;
 public:
 	float originalY;
 
-	CFire(float x, float y) : CGameObject(x, y) {};
+	CFire(float x, float y) : CGameObject(x, y) {
+		fire_start = GetTickCount64(); 
+	};
 	void Render();
 	void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
 	void GetBoundingBox(float& l, float& t, float& r, float& b);

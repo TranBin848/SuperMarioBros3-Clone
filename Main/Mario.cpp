@@ -614,7 +614,8 @@ void CMario::OnCollisionWithParaGoomba(LPCOLLISIONEVENT e)
 		if (goomba->GetState() == PARAGOOMBA_STATE_DIE) return;
 		if (goomba->GetState() == PARAGOOMBA_STATE_NORMAL_WALKING)
 		{
-			goomba->SetState(PARAGOOMBA_STATE_DIE);
+			if(goomba->GetIsOnPlatform())
+				goomba->SetState(PARAGOOMBA_STATE_DIE);
 		}
 		else
 		{

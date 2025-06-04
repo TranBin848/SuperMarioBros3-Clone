@@ -35,7 +35,7 @@ class CParaGoomba : public CGameObject
 protected:
 	float ax;
 	float ay;
-
+	bool isOnPlatform;
 	ULONGLONG die_start;
 	ULONGLONG nextStateTime; // thời điểm để đổi state tiếp theo
 	ULONGLONG lastJumpTime;
@@ -54,4 +54,5 @@ protected:
 public:
 	CParaGoomba(float x, float y);
 	virtual void SetState(int state);
+	bool GetIsOnPlatform() { return isOnPlatform; };
 };
