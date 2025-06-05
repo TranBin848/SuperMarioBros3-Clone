@@ -277,7 +277,8 @@ void CKoopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			}
 			else if (state == KOOPA_STATE_SHELL)
 			{
-				vx = 0;
+				/*if (isOnGround)
+					vx = 0;*/
 	
 				if (just_activated)
 				{

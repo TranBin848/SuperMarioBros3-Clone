@@ -6,6 +6,7 @@
 #define KOOPA_GRAVITY				0.001f
 #define PARAKOOPA_GRAVITY			0.0008f
 #define KOOPA_WALKING_SPEED			-0.03f
+#define KOOPA_HITBYTAIL_SPEED		0.01f
 #define KOOPA_ACTIVATE_SPEED		0.2f
 
 #define PARAKOOPA_GRAVITY			0.0005f
@@ -102,6 +103,7 @@ public:
 	bool GetIsBeingHeld() { return isBeingHeld; }
 	void SetIsUpsideDown(bool fl) { isUpsideDown = fl; }
 	bool GetIsUpsideDown() { return isUpsideDown; }
+	/*void SetIsOnGround(bool fl) { isOnGround = fl; };*/
 	void SetIsHitByTail(bool fl, int direction) { isHitByTail = fl; dir = direction; }
 	bool GetIsHitByTail() { return isHitByTail; }
 };

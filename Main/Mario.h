@@ -18,7 +18,7 @@
 
 #define MARIO_JUMP_SPEED_Y		0.375f
 #define MARIO_JUMP_RUN_SPEED_Y	0.4f
-#define TANUKI_FLAP_SPEED_Y		0.14f
+#define TANUKI_FLAP_SPEED_Y		0.08f
 #define TANUKI_JUMP_SPEED_Y		0.3f
 #define TANUKI_JUMP_RUN_SPEED_Y	0.35f
 
@@ -359,6 +359,5 @@ public:
 
 	virtual void GetBoundingBox(float& left, float& top, float& right, float& bottom);
 
-	void StartFlap();
 	void TakeDmg();
 };

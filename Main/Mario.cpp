@@ -63,16 +63,7 @@ CMario::CMario(float x, float y) :CGameObject(x, y)
 		SetState(MARIO_STATE_EXIT_PIPE);
 	}
 }
-void CMario::StartFlap()
-{
-	if (!isFlying) // Nếu chưa bay, bật cờ bay lên
-		isFlying = true;
 
-	isFlapping = true;
-	flap_start = GetTickCount64();
-	if (isOnPlatform) vy = -TANUKI_JUMP_RUN_SPEED_Y;
-	else vy = -TANUKI_FLAP_SPEED_Y;
-}
 void CMario::TakeDmg()
 {
 	if (untouchable == 0)
@@ -95,7 +86,7 @@ void CMario::TakeDmg()
 
 void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 {
-	if (isEnteringPipe) DebugOutTitle(L"CHECK");
+	if (maxPower) DebugOutTitle(L"CHECK");
 	else DebugOutTitle(L"UNCHECK");
 	if (atEndMap)
 	{
@@ -1205,9 +1196,9 @@ int CMario::GetAniIdTanuki() {
 			if (maxPower)
 			{
 				if (nx >= 0)
-					aniId = ID_ANI_TANUKI_JUMP_RUN_RIGHT_UP;
+					aniId = isFlapping ? ID_ANI_TANUKI_JUMP_RUN_RIGHT_DOWN : ID_ANI_TANUKI_JUMP_RUN_RIGHT_UP;
 				else
-					aniId = ID_ANI_TANUKI_JUMP_RUN_LEFT_UP;
+					aniId = isFlapping ? ID_ANI_TANUKI_JUMP_RUN_LEFT_DOWN : ID_ANI_TANUKI_JUMP_RUN_LEFT_UP;
 			}
 			else 
 			{
@@ -1458,7 +1449,7 @@ void CMario::SetState(int state)
 			{
 				if (maxPower)
 				{
-					/*vy = -TANUKI_FLAP_SPEED_Y;*/
+					vy = -TANUKI_FLAP_SPEED_Y;
 					ay = -TANUKI_GRAVITY / 1.3f;
 					if (!isFlying)
 					{

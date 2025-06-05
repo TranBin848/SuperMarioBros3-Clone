@@ -66,7 +66,7 @@ void CSampleKeyHandler::OnKeyDown(int KeyCode)
 		mario->SetPosition(2700, 120);
 		break;
 	case DIK_F2:
-		mario->SetPosition(1634, 120);
+		mario->SetPosition(555, 120);
 		break;
 	case DIK_R: // reset
 		CGame::GetInstance()->ReloadScene();

@@ -146,9 +146,16 @@ void CTailSensor::OnCollisionWithKoopa(LPCOLLISIONEVENT e)
     CKoopa* kp = dynamic_cast<CKoopa*>(e->obj);
     kp->SetState(KOOPA_STATE_SHELL);
     if (isFront == 1)
+    {
         kp->SetSpeed(0.1f, -0.3f);
+        //kp->SetIsOnGround(false);
+    }
     else
+    {
         kp->SetSpeed(-0.1f, -0.3f);
+        //kp->SetIsOnGround(false);
+    }
+        
     if (!kp->GetIsUpsideDown())
         kp->SetIsUpsideDown(true);
     float ex;
