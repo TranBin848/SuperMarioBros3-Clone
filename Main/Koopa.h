@@ -103,7 +103,7 @@ public:
 	bool GetIsBeingHeld() { return isBeingHeld; }
 	void SetIsUpsideDown(bool fl) { isUpsideDown = fl; }
 	bool GetIsUpsideDown() { return isUpsideDown; }
-	/*void SetIsOnGround(bool fl) { isOnGround = fl; };*/
+	void SetIsOnGround(bool fl) { isOnGround = fl; };
 	void SetIsHitByTail(bool fl, int direction) { isHitByTail = fl; dir = direction; }
 	bool GetIsHitByTail() { return isHitByTail; }
 };

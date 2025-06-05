@@ -86,8 +86,8 @@ void CMario::TakeDmg()
 
 void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 {
-	if (maxPower) DebugOutTitle(L"CHECK");
-	else DebugOutTitle(L"UNCHECK");
+	/*if (maxPower) DebugOutTitle(L"CHECK");
+	else DebugOutTitle(L"UNCHECK");*/
 	if (atEndMap)
 	{
 		vx = MARIO_WALKING_SPEED;
