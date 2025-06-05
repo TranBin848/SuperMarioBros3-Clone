@@ -86,8 +86,9 @@ void CMario::TakeDmg()
 
 void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 {
-	/*if (maxPower) DebugOutTitle(L"CHECK");
+	/*if (vy < 0) DebugOutTitle(L"CHECK");
 	else DebugOutTitle(L"UNCHECK");*/
+	/*DebugOutTitle(L"AY: %f, VY: %f", ay, vy);*/
 	if (atEndMap)
 	{
 		vx = MARIO_WALKING_SPEED;
@@ -294,6 +295,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 	if (isFlapping && GetTickCount64() - flap_start > 100)
 	{
 		isFlapping = false;
+		ay = TANUKI_GRAVITY;
 	}
 	if (isFloating && GetTickCount64() - floating_start > 100)
 	{
@@ -1142,13 +1144,27 @@ int CMario::GetAniIdTanuki() {
 			{
 				if (isFlying)
 				{
-					if (nx >= 0)
+					if (maxPower)
 					{
-						aniId = isFlapping ? ID_ANI_TANUKI_JUMP_RUN_RIGHT_DOWN : ID_ANI_TANUKI_JUMP_RUN_RIGHT_UP;
+						if (nx >= 0)
+						{
+							aniId = isFlapping ? ID_ANI_TANUKI_JUMP_RUN_RIGHT_DOWN : ID_ANI_TANUKI_JUMP_RUN_RIGHT_UP;
+						}
+						else
+						{
+							aniId = isFlapping ? ID_ANI_TANUKI_JUMP_RUN_LEFT_DOWN : ID_ANI_TANUKI_JUMP_RUN_LEFT_UP;
+						}
 					}
 					else
 					{
-						aniId = isFlapping ? ID_ANI_TANUKI_JUMP_RUN_LEFT_DOWN : ID_ANI_TANUKI_JUMP_RUN_LEFT_UP;
+						if (nx >= 0)
+						{
+							aniId = isFlapping ? ID_ANI_TANUKI_JUMP_WALK_RIGHT_DOWN : ID_ANI_TANUKI_JUMP_WALK_RIGHT_UP;
+						}
+						else
+						{
+							aniId = isFlapping ? ID_ANI_TANUKI_JUMP_WALK_LEFT_DOWN : ID_ANI_TANUKI_JUMP_WALK_LEFT_UP;
+						}
 					}
 				}
 				else
@@ -1477,7 +1493,7 @@ void CMario::SetState(int state)
 							floating_start = GetTickCount64();
 						}
 					}
-					
+
 				}
 				isFlapping = true;
 				flap_start = GetTickCount64();
@@ -1488,11 +1504,11 @@ void CMario::SetState(int state)
 	case MARIO_STATE_RELEASE_JUMP:
 		if (vy < 0)
 		{
-			if(level != MARIO_LEVEL_TANUKI)	vy += MARIO_JUMP_SPEED_Y / 2;
+			if (level != MARIO_LEVEL_TANUKI)	vy += MARIO_JUMP_SPEED_Y / 2;
 			else
 			{
 				if (!isFlying) vy += TANUKI_JUMP_RUN_SPEED_Y / 2;
-				else vy += TANUKI_FLAP_SPEED_Y / 4;	
+				else vy += TANUKI_FLAP_SPEED_Y / 4;
 			}
 		}
 		if (level == MARIO_LEVEL_TANUKI)
@@ -1527,7 +1543,13 @@ void CMario::SetState(int state)
 	case MARIO_STATE_IDLE:
 		if (nx > 0) ax = -MARIO_DECEL_WALK_X;
 		else ax = MARIO_DECEL_WALK_X;
-		if (level == MARIO_LEVEL_TANUKI) ay = TANUKI_GRAVITY;
+		if (level == MARIO_LEVEL_TANUKI)
+		{
+			if (!isFlying)
+				ay = TANUKI_GRAVITY;
+			else
+				ay = TANUKI_GRAVITY / 3;
+		}
 		else ay = MARIO_GRAVITY;
 		break;
 

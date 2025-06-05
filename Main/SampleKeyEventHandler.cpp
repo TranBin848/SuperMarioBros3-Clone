@@ -30,13 +30,23 @@ void CSampleKeyHandler::OnKeyDown(int KeyCode)
 		bool fl = mario->GetIsOnHiddenPipe();
 		int currentScene = CGame::GetInstance()->GetCurrentSceneId();
 		if (!fl)
-			mario->SetState(MARIO_STATE_JUMP);
+		{
+			if (!isJumpPressed)
+			{
+				mario->SetState(MARIO_STATE_JUMP);
+				isJumpPressed = true;
+			}
+		}	
 		else
 		{
 			if(currentScene == 1)
 				mario->SetState(MARIO_STATE_ENTER_PIPE);
 			else 
-				mario->SetState(MARIO_STATE_JUMP);
+				if (!isJumpPressed)
+				{
+					mario->SetState(MARIO_STATE_JUMP);
+					isJumpPressed = true;
+				}
 		}
 		break;
 	}
@@ -84,8 +94,11 @@ void CSampleKeyHandler::OnKeyUp(int KeyCode)
 	switch (KeyCode)
 	{
 	case DIK_S:
-		if(mario->GetState() != MARIO_STATE_ENTER_PIPE)
+		if (mario->GetState() != MARIO_STATE_ENTER_PIPE)
+		{
 			mario->SetState(MARIO_STATE_RELEASE_JUMP);
+			isJumpPressed = false;
+		}
 		break;
 	case DIK_DOWN:
 		if(mario->GetState() != MARIO_STATE_ENTER_PIPE)
