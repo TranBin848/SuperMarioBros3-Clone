@@ -86,6 +86,7 @@ void CMario::TakeDmg()
 
 void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 {
+	DebugOutTitle(L"x: %f", x);
 	/*if (vy < 0) DebugOutTitle(L"CHECK");
 	else DebugOutTitle(L"UNCHECK");*/
 	/*DebugOutTitle(L"AY: %f, VY: %f", ay, vy);*/
@@ -804,7 +805,7 @@ void CMario::OnCollisionWithPipe(LPCOLLISIONEVENT e)
 	int currentScene = CGame::GetInstance()->GetCurrentSceneId();
 	if ((currentScene == 3 && e->ny < 0) && isOnPlatform)
 	{
-		if (x < 2314.0f && x > 2306.0f)
+		if (x < 2315.0f && x > 2310.0f)
 		{
 			// Lưu vị trí pipe để xử lý sau
 			float pipeX, pipeY;
@@ -817,7 +818,7 @@ void CMario::OnCollisionWithPipe(LPCOLLISIONEVENT e)
 	}
 	else if (currentScene == 1 && e->ny > 0)
 	{
-		if (x < 358.0f && x > 350.0f)
+		if (x < 358.0f && x > 352.0f)
 		{
 			// Lưu vị trí pipe để xử lý sau
 			float pipeX, pipeY;
