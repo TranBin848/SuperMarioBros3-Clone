@@ -237,7 +237,7 @@ test goomba
 50	2305	-75	2321	-65	1
 
 # MARIO
-0	50	120
+0	50	145
 
 #VISIBLE WALL
 100	2	-45
