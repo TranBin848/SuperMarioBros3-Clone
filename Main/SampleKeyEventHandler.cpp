@@ -18,7 +18,11 @@ void CSampleKeyHandler::OnKeyDown(int KeyCode)
 	{
 		bool fl = mario->GetIsOnHiddenPipe();
 		if (!fl)
-			mario->SetState(MARIO_STATE_SIT);
+		{
+			if(mario->GetState() == MARIO_STATE_IDLE)
+				mario->SetState(MARIO_STATE_SIT);
+		}
+			
 		else
 		{
 			mario->SetState(MARIO_STATE_ENTER_PIPE);
@@ -114,7 +118,6 @@ void CSampleKeyHandler::KeyState(BYTE *states)
 
 	if (mario->GetState() == MARIO_STATE_ENTER_PIPE || mario -> GetState() == MARIO_STATE_EXIT_PIPE)
 		return;
-
 	if (game->IsKeyDown(DIK_RIGHT))
 	{
 		if (game->IsKeyDown(DIK_A))

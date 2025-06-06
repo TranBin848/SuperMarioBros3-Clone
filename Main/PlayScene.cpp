@@ -435,12 +435,15 @@ void CPlayScene::Update(DWORD dt)
 			}
 			else
 			{
-				cy = CAM_MAX_Y;
+				if(cy < -150.0f)
+					cy = CAM_MAX_Y + cy - CAM_MIN_Y;
+				else
+					cy = CAM_MAX_Y;
 			}
 		}
 	}
 	if (cy < -238.0f) cy = -238.0f;
-	/*DebugOutTitle(L"camy: %f", cy);*/
+	DebugOutTitle(L"camy: %f", cy);
 	/*DebugOutTitle(L"y: %f, Mario y: %f", cy, marioY);*/
 	CGame::GetInstance()->SetCamPos(cx, cy);
 	

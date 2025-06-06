@@ -71,10 +71,14 @@ void CMario::TakeDmg()
 		if (level == MARIO_LEVEL_BIG)
 		{
 			SetLevel(MARIO_LEVEL_SMALL);
+			if (state == MARIO_STATE_SIT)
+				SetState(MARIO_STATE_SIT);
 		}
 		else if (level == MARIO_LEVEL_TANUKI)
 		{
 			SetLevel(MARIO_LEVEL_BIG);
+			if (state == MARIO_STATE_SIT)
+				SetState(MARIO_STATE_SIT);
 		}
 		else
 		{
@@ -86,7 +90,7 @@ void CMario::TakeDmg()
 
 void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 {
-	DebugOutTitle(L"x: %f", x);
+	/*DebugOutTitle(L"Y: %f", y);*/
 	/*if (vy < 0) DebugOutTitle(L"CHECK");
 	else DebugOutTitle(L"UNCHECK");*/
 	/*DebugOutTitle(L"AY: %f, VY: %f", ay, vy);*/
@@ -1523,7 +1527,7 @@ void CMario::SetState(int state)
 	case MARIO_STATE_SIT:
 		if (isOnPlatform && level != MARIO_LEVEL_SMALL)
 		{
-			state = MARIO_STATE_IDLE;
+			/*state = MARIO_STATE_IDLE;*/
 			isSitting = true;
 			vx = 0; vy = 0.0f;
 			if (level != MARIO_LEVEL_TANUKI) y += MARIO_SIT_HEIGHT_ADJUST;
