@@ -12,7 +12,9 @@
 #include "PiranhaTrap.h"
 #include "HitEnemyEffect.h"
 #include "Brick.h"
+#include "Leaf.h"
 #include "BrickBreakEffect.h"
+#include "AddScoreEffect.h"
 
 void CTailSensor::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
@@ -44,7 +46,7 @@ void CTailSensor::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
     {
         if (dynamic_cast<CGoomba*>(obj) || dynamic_cast<CParaGoomba*>(obj) || dynamic_cast<CKoopa*>(obj) 
             || dynamic_cast<CItemBox*>(obj) || dynamic_cast<CVenusFire*>(obj) || dynamic_cast<CGreenVenusFire*>(obj)
-            || dynamic_cast<CPiranhaTrap*>(obj) || dynamic_cast<CBrick*>(obj))
+            || dynamic_cast<CPiranhaTrap*>(obj) || dynamic_cast<CBrick*>(obj) || dynamic_cast<CLeaf*>(obj))
         {
             float l, t, r, b;
             obj->GetBoundingBox(l, t, r, b);
@@ -104,9 +106,9 @@ void CTailSensor::OnCollisionWith(LPCOLLISIONEVENT e)
             OnCollisionWithPlant(e);
             return;
         }
-        
     }   
-    
+    if (dynamic_cast<CLeaf*>(e->obj))
+        OnCollisionWithLeaf(e);
     if (!e->obj->IsBlocking()) return;
     if (e->ny != 0)
     {
@@ -268,4 +270,26 @@ void CTailSensor::OnCollisionWithShinyBrick(LPCOLLISIONEVENT e)
     }
     // Đánh dấu gạch bị phá
     brick->isDeleted = true;
+}
+void CTailSensor::OnCollisionWithLeaf(LPCOLLISIONEVENT e)
+{
+    CLeaf* l = dynamic_cast<CLeaf*>(e->obj);
+    e->obj->Delete();
+    if (owner->GetLevel() == MARIO_LEVEL_BIG)
+        owner->SetLevel(MARIO_LEVEL_TANUKI);
+    else if (owner->GetLevel() == MARIO_LEVEL_SMALL)
+        owner->SetLevel(MARIO_LEVEL_BIG);
+    CHUD::GetInstance()->SetScore(1000);
+    LPGAMEOBJECT effect = nullptr;
+    float mx, my;
+    owner->GetPosition(mx, my);
+    effect = new CAddScoreEffect(mx, my - 20, 1000);
+    if (effect)
+    {
+        CPlayScene* scene = dynamic_cast<CPlayScene*>(CGame::GetInstance()->GetCurrentScene());
+        if (scene)
+        {
+            scene->AddObject(effect); // hoặc push vào vector<objects> tùy bạn tổ chức
+        }
+    }
 }

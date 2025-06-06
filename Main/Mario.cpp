@@ -774,7 +774,10 @@ void CMario::OnCollisionWithLeaf(LPCOLLISIONEVENT e)
 {
 	CLeaf* l = dynamic_cast<CLeaf*>(e->obj);
 	e->obj->Delete();
-	SetLevel(MARIO_LEVEL_TANUKI);
+	if (level == MARIO_LEVEL_BIG)
+		SetLevel(MARIO_LEVEL_TANUKI);
+	else if (level == MARIO_LEVEL_SMALL)
+		SetLevel(MARIO_LEVEL_BIG);
 	CHUD::GetInstance()->SetScore(1000);
 	LPGAMEOBJECT effect = nullptr;
 	effect = new CAddScoreEffect(x, y - 20, 1000);
