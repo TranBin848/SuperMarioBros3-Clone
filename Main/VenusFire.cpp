@@ -172,6 +172,6 @@ void CVenusFire::Render()
 		if (marioX > x) aniId += 4;
 	}
 	CAnimations::GetInstance()->Get(aniId)->Render(x, y);
-	RenderBoundingBox();
+	/*RenderBoundingBox();*/
 }
 

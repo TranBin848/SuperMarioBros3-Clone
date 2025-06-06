@@ -216,8 +216,21 @@ void CTailSensor::OnCollisionWithItemBox(LPCOLLISIONEVENT e) {
     }
 }
 void CTailSensor::OnCollisionWithPlant(LPCOLLISIONEVENT e) {
-    CGameObject* pl = dynamic_cast<CGameObject*>(e->obj);
-    pl->isDeleted = true;
+    if (dynamic_cast<CVenusFire*>(e->obj))
+    {
+        CVenusFire* vf = dynamic_cast<CVenusFire*>(e->obj);
+        if (!vf->GetIsWaiting()) vf->isDeleted = true;
+    }
+    else if (dynamic_cast<CGreenVenusFire*>(e->obj))
+    {
+        CGreenVenusFire* vf = dynamic_cast<CGreenVenusFire*>(e->obj);
+        if (!vf->GetIsWaiting()) vf->isDeleted = true;
+    }
+    else if(dynamic_cast<CPiranhaTrap*>(e->obj))
+    {
+        CPiranhaTrap* vf = dynamic_cast<CPiranhaTrap*>(e->obj);
+        if (!vf->GetIsWaiting()) vf->isDeleted = true;
+    }
     float ex;
     if (isFront)
         ex = x + 2;

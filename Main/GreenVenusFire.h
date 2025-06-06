@@ -7,7 +7,7 @@
 
 #define VENUSFIRE_BBOX_WIDTH 15
 #define VENUSFIRE_BBOX_HEIGHT	19
-#define VENUSFIRE_HEIGHT 23
+#define VENUSFIRE_HEIGHT 27
 
 #define VENUSFIRE_STATE_ARISE 100
 #define VENUSFIRE_STATE_SHOOT 200
@@ -46,4 +46,5 @@ public:
 		originalY = y;
 		state = VENUSFIRE_STATE_ARISE;
 	};
+	bool GetIsWaiting() { return y == originalY; };
 };

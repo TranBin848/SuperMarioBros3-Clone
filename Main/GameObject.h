@@ -89,4 +89,5 @@ public:
 	virtual bool IsMario() { return false; }
 
 	virtual bool IsKoopa() { return false; }
+
 };

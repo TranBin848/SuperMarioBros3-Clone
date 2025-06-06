@@ -7,8 +7,8 @@
 
 
 #define VENUSFIRE_BBOX_WIDTH 15
-#define VENUSFIRE_BBOX_HEIGHT 28
-#define VENUSFIRE_HEIGHT 32
+#define VENUSFIRE_BBOX_HEIGHT 24
+#define VENUSFIRE_HEIGHT 36
 
 #define VENUSFIRE_STATE_ARISE 100
 #define VENUSFIRE_STATE_SHOOT 200
@@ -44,8 +44,9 @@ protected:
 
 public:
 	CVenusFire(float x, float y) : CGameObject(x, y) {
-		this->renderLayer = 20;
 		originalY = y;
 		state = VENUSFIRE_STATE_ARISE;
+		/*this->renderLayer = 20;*/
 	};
+	bool GetIsWaiting() { return y == originalY; };
 };

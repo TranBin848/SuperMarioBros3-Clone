@@ -8,7 +8,7 @@
 
 #define VENUSFIRE_BBOX_WIDTH 15
 #define VENUSFIRE_BBOX_HEIGHT 19
-#define VENUSFIRE_HEIGHT 23
+#define VENUSFIRE_HEIGHT 27
 
 #define ID_ANI_PIRANHA 14016
 
@@ -36,4 +36,5 @@ public:
 	CPiranhaTrap(float x, float y) : CGameObject(x, y) {
 		originalY = y;
 	};
+	bool GetIsWaiting() { return y == originalY; };
 };
