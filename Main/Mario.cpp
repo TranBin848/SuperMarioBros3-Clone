@@ -57,7 +57,7 @@ CMario::CMario(float x, float y) :CGameObject(x, y)
 	kick_start = -1;
 	isOnPlatform = false;
 	endMapTargetX = 2870.0f;
-	this->renderLayer = 10;
+	this->renderLayer = 15;
 	if (CGame::GetInstance()->GetIsExitingPipe() == true)
 	{
 		SetState(MARIO_STATE_EXIT_PIPE);
@@ -1606,6 +1606,20 @@ void CMario::GetBoundingBox(float &left, float &top, float &right, float &bottom
 			top = y - MARIO_TANUKI_BBOX_HEIGHT / 2;
 			right = left + MARIO_TANUKI_BBOX_WIDTH;
 			bottom = top + MARIO_TANUKI_BBOX_HEIGHT;
+			/*if (nx > 0)
+			{
+				left = x - 4;
+				top = y - MARIO_TANUKI_BBOX_HEIGHT / 2;
+				right = left + MARIO_BIG_BBOX_WIDTH;
+				bottom = top + MARIO_TANUKI_BBOX_HEIGHT;
+			}
+			else
+			{
+				left = x - MARIO_TANUKI_BBOX_WIDTH / 2;
+				top = y - MARIO_TANUKI_BBOX_HEIGHT / 2;
+				right = left + MARIO_BIG_BBOX_WIDTH;
+				bottom = top + MARIO_TANUKI_BBOX_HEIGHT;
+			}*/
 		}
 	}
 	else if(level == MARIO_LEVEL_SMALL)

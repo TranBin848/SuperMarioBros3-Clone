@@ -29,7 +29,7 @@ CKoopa::CKoopa(float x, float y, int flag) :CGameObject(x, y)
 	shell_start = 0;
 	return_start = 0;
 	just_activated = false;
-	this->renderLayer = 5;
+	this->renderLayer = 11;
 	SetState(KOOPA_STATE_WALKING);
 }
 
