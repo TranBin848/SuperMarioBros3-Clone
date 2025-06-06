@@ -16,6 +16,7 @@ protected:
     void OnCollisionWithParaGoomba(LPCOLLISIONEVENT e);
     void OnCollisionWithKoopa(LPCOLLISIONEVENT e);
     void OnCollisionWithItemBox(LPCOLLISIONEVENT e);
+    void OnCollisionWithDmgObject(LPCOLLISIONEVENT e);
 public:
     CKoopaSensor(float x, float y) : CGameObject(x, y)
     {

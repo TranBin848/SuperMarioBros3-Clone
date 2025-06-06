@@ -7,6 +7,10 @@
 #include "Platform.h"
 #include "Mario.h"
 #include "ItemBox.h"
+#include "HitEnemyEffect.h"
+#include "VenusFire.h"
+#include "GreenVenusFire.h"
+#include "PiranhaTrap.h"
 void CKoopaSensor::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
     bool found_ground = false;
@@ -32,7 +36,8 @@ void CKoopaSensor::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
         sensor_offset_y = KOOPA_BBOX_HEIGHT_SHELL / 2;
         for (LPGAMEOBJECT obj : *coObjects)
         {
-            if (dynamic_cast<CGoomba*>(obj) || dynamic_cast<CParaGoomba*>(obj) || dynamic_cast<CKoopa*>(obj))
+            if (dynamic_cast<CGoomba*>(obj) || dynamic_cast<CParaGoomba*>(obj) || dynamic_cast<CKoopa*>(obj)
+                || dynamic_cast<CVenusFire*>(obj) || dynamic_cast<CGreenVenusFire*>(obj) || dynamic_cast<CPiranhaTrap*>(obj))
             {
                 float l, t, r, b;
                 obj->GetBoundingBox(l, t, r, b);
@@ -113,6 +118,12 @@ void CKoopaSensor::OnCollisionWith(LPCOLLISIONEVENT e)
         OnCollisionWithItemBox(e);
         return;
     }
+    else if (dynamic_cast<CVenusFire*>(e->obj) || dynamic_cast<CGreenVenusFire*>(e->obj)
+        || dynamic_cast<CPiranhaTrap*>(e->obj))
+    {
+        OnCollisionWithDmgObject(e);
+        return;
+    }
     if (!e->obj->IsBlocking()) return;       
     if (e->ny != 0)
     {
@@ -126,10 +137,20 @@ void CKoopaSensor::OnCollisionWith(LPCOLLISIONEVENT e)
 void CKoopaSensor::OnCollisionWithGoomba(LPCOLLISIONEVENT e)
 {
     CGoomba* goomba = dynamic_cast<CGoomba*>(e->obj);
-    if (goomba->GetState() != GOOMBA_STATE_DIEBYSHELL)
+    if (goomba->GetState() != GOOMBA_STATE_DIEBYSHELL && goomba ->GetState() != GOOMBA_STATE_DIE)
     {
         goomba->SetState(GOOMBA_STATE_DIEBYSHELL);
         owner->SetState(KOOPA_STATE_DIEBYSHELL);
+    }
+    LPGAMEOBJECT effect = nullptr;
+    effect = new CHitEnemyEffect(x, y);
+    if (effect)
+    {
+        CPlayScene* scene = dynamic_cast<CPlayScene*>(CGame::GetInstance()->GetCurrentScene());
+        if (scene)
+        {
+            scene->AddObject(effect); // hoặc push vào vector<objects> tùy bạn tổ chức
+        }
     }
 }
 void CKoopaSensor::OnCollisionWithKoopa(LPCOLLISIONEVENT e)
@@ -142,14 +163,50 @@ void CKoopaSensor::OnCollisionWithKoopa(LPCOLLISIONEVENT e)
         owner->SetState(KOOPA_STATE_DIEBYSHELL);
         
     }
+    LPGAMEOBJECT effect = nullptr;
+    effect = new CHitEnemyEffect(x, y);
+    if (effect)
+    {
+        CPlayScene* scene = dynamic_cast<CPlayScene*>(CGame::GetInstance()->GetCurrentScene());
+        if (scene)
+        {
+            scene->AddObject(effect); // hoặc push vào vector<objects> tùy bạn tổ chức
+        }
+    }
+}
+void CKoopaSensor::OnCollisionWithDmgObject(LPCOLLISIONEVENT e)
+{
+    CGameObject* pl = dynamic_cast<CGameObject*>(e->obj);
+    pl->isDeleted = true;
+    LPGAMEOBJECT effect = nullptr;
+    effect = new CHitEnemyEffect(x, y);
+    owner->SetState(KOOPA_STATE_DIEBYSHELL);
+    if (effect)
+    {
+        CPlayScene* scene = dynamic_cast<CPlayScene*>(CGame::GetInstance()->GetCurrentScene());
+        if (scene)
+        {
+            scene->AddObject(effect); // hoặc push vào vector<objects> tùy bạn tổ chức
+        }
+    }
 }
 void CKoopaSensor::OnCollisionWithParaGoomba(LPCOLLISIONEVENT e)
 {
     CParaGoomba* goomba = dynamic_cast<CParaGoomba*>(e->obj);
-    if (goomba->GetState() != PARAGOOMBA_STATE_DIEBYSHELL)
+    if (goomba->GetState() != PARAGOOMBA_STATE_DIEBYSHELL && goomba->GetState() != PARAGOOMBA_STATE_DIE)
     {
         goomba->SetState(PARAGOOMBA_STATE_DIEBYSHELL);
         owner->SetState(KOOPA_STATE_DIEBYSHELL);
+    }
+    LPGAMEOBJECT effect = nullptr;
+    effect = new CHitEnemyEffect(x, y);
+    if (effect)
+    {
+        CPlayScene* scene = dynamic_cast<CPlayScene*>(CGame::GetInstance()->GetCurrentScene());
+        if (scene)
+        {
+            scene->AddObject(effect); // hoặc push vào vector<objects> tùy bạn tổ chức
+        }
     }
 }
 void CKoopaSensor::OnCollisionWithItemBox(LPCOLLISIONEVENT e) {

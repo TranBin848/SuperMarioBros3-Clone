@@ -44,6 +44,7 @@ protected:
 
 public:
 	CVenusFire(float x, float y) : CGameObject(x, y) {
+		this->renderLayer = 20;
 		originalY = y;
 		state = VENUSFIRE_STATE_ARISE;
 	};
